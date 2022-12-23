@@ -1,3 +1,20 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+*{
+  box-sizing: border-box;
+  color: white;
+  font-family: 'Nunito', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+*:focus, *:hover, *:active{
+  outline: none;
+}
+body{
+  background-color: black;
+}

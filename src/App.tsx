@@ -1,12 +1,19 @@
-import { useState } from 'react'
+import { useState, lazy } from 'react'
+import {Routes, Route} from 'react-router-dom'
 
-import Signup from './pages/Signup'
+import * as routes from './constants/route'
+
+const Signup = lazy(()=>import('./pages/Signup'))
+const Login = lazy(()=>import('./pages/Login'))
 
 function App() {
 
   return (
     <div className="App">
-      <Signup/>
+      <Routes>
+        <Route path={routes.signup} element={<Signup/>}/>
+        <Route index element={<Login/>}/>
+      </Routes>
     </div>
   )
 }
