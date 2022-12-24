@@ -5,6 +5,7 @@ import * as routes from './constants/route'
 
 const Signup = lazy(()=>import('./pages/Signup'))
 const Login = lazy(()=>import('./pages/Login'))
+const Dashboard = lazy(()=>import('./pages/Dashboard'))
 
 function App() {
 
@@ -12,7 +13,8 @@ function App() {
     <div className="App">
       <Routes>
         <Route path={routes.signup} element={<Signup/>}/>
-        <Route index element={<Login/>}/>
+        <Route path={routes.login} element={<Login/>}/>
+        <Route index element={<Dashboard/>}/>
       </Routes>
     </div>
   )

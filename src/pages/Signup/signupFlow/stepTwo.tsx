@@ -32,7 +32,6 @@ export default function StepTwo({next, prev}:{
       password: pwd
     })
     next()
-
   }
 
 
@@ -61,7 +60,7 @@ export default function StepTwo({next, prev}:{
         placeholder=""
         className="w-[90%] mt-6"
         changeHandler={(e)=>setConPwd(e.target.value)}/>
-        <FlowButton>
+        <FlowButton className='fixed bottom-[15px]'>
           Next
         </FlowButton>
       </form>

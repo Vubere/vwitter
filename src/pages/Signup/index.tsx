@@ -6,7 +6,7 @@ import Container from "../../components/container"
 import Modal from '../../components/Modal'
 import SignupFlow from './signupFlow'
 
-import google from "../../assets/search.png"
+import google from "../../assets/google.png"
 
 export default function Signup() {
   const [signupModal, setSignUpModal] = useState(false)
@@ -47,7 +47,7 @@ export default function Signup() {
   )
 }
 
-function Options ({children, className, click}:{children: React.ReactNode, className?:string, click?:()=>void}) {
+export function Options ({children, className, click}:{children: React.ReactNode, className?:string, click?:()=>void}) {
   return (
     <li className={`bg-white m-2 p-2  w-[80vw] h-[42px] rounded-[30px] text-black text-center font-[700] flex items-center justify-center ${className} `}
     onClick={click}>

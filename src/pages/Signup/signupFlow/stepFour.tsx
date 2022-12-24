@@ -16,7 +16,7 @@ export default function stepFour({close}:{
   const [username, setUsername] = useState('vubere')
   const [profile, setProfile] = useState<any>(undefined)
 
-  
+
   return (
     <div className='flex flex-col'>
       <div className="flex items-center mt-4 ml-4">
@@ -51,7 +51,7 @@ export default function stepFour({close}:{
           onChange={e=>setProfile(e.target.value)}
           className="hidden"/>
         </label>
-        <FlowButton click={close}>
+        <FlowButton click={close} className='fixed bottom-[15px]'>
           Complete
         </FlowButton>
       </form>

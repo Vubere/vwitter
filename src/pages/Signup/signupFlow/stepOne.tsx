@@ -73,9 +73,9 @@ export default function StepOne({close, next}:{
               value={dob}
               changeHandler={(e) => setDob(e.target.value)}
               className='mt-8'
-              inputClassname={`w-[12px] ${dob!=''?'block':'visibility-none'}`} />
+              inputClassname={`w-[12px] ${dob!=''?'block':'visibility-none text-white'}`} />
           </div>
-          <FlowButton >
+          <FlowButton className='fixed bottom-[15px] left-[50%] translate-x-[-50%] w-[86%]'>
             Next
           </FlowButton>
         </form>

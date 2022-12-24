@@ -1,18 +1,18 @@
-import {useContext} from 'react'
+import { useContext } from 'react'
 
 import Back from "../../../components/Back"
 import FlowButton from "./button"
 
 import check from "../../../assets/checkmark.png"
 
-import {FlowContext} from '.'
+import { FlowContext } from '.'
 
-export default function stepThree({next, prev}:{
-  next: ()=>void,
-  prev: ()=>void
+export default function stepThree({ next, prev }: {
+  next: () => void,
+  prev: () => void
 }) {
-  const {details} = useContext(FlowContext)
-  
+  const { details } = useContext(FlowContext)
+
 
   return (
     <div>
@@ -25,19 +25,19 @@ export default function stepThree({next, prev}:{
         <p className="w-[90%] h-[60px] border pl-2 bg-transparent border-[#fff4] text-[#fff] rounded-[5px] flex flex-col justify-center mt-5">
           {details.name}
           <img src={check} alt=''
-          width='20px' height='20px' className='absolute right-[30px]'/>
-          </p>
+            width='20px' height='20px' className='absolute right-[30px]' />
+        </p>
         <p className="w-[90%] h-[60px] border pl-2 bg-transparent border-[#fff4] text-[#fff] rounded-[5px] flex flex-col justify-center mt-5">
           {details.email}
           <img src={check} alt=''
             width='20px' height='20px' className='absolute right-[30px]' />
-          </p>
+        </p>
         <p className="w-[90%] h-[60px] border pl-2 bg-transparent border-[#fff4] text-[#fff] rounded-[5px] flex flex-col justify-center mt-5">
           {details.dob}
           <img src={check} alt=''
             width='20px' height='20px' className='absolute right-[30px]' />
-          </p>
-        <FlowButton click={next}>
+        </p>
+        <FlowButton click={next} className='fixed bottom-[15px]'>
           Next
         </FlowButton>
       </div>
