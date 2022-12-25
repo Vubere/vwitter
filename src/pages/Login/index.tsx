@@ -34,7 +34,7 @@ export default function Login() {
   return (
     <div className="flex flex-col items-center">
       <header className="relative flex justify-center w-full p-3">
-        <Cancel click={() => null}
+        <Cancel onClick={() => null}
           className="absolute left-[18px] top-[18px]" />
         <TwitterIcon />
       </header>
@@ -68,7 +68,7 @@ export default function Login() {
         <Modal>
           <div>
             <header className="relative flex justify-center w-full p-3">
-              <Cancel click={() => setLoginModal(false)}
+              <Cancel onClick={() => setLoginModal(false)}
                 className="absolute left-[18px] top-[18px]" />
               <TwitterIcon />
             </header>

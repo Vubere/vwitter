@@ -1,5 +1,5 @@
 
-import Avatar from "../Avatar"
+import Avatar from "../icon"
 
 import avatar from "../../assets/avatar.jpg"
 

@@ -1,0 +1,19 @@
+
+
+@keyframes snAnimation{
+  from{
+    width: 0;
+  }
+  to{
+    width: 80vw;
+  }
+}
+
+.animation{
+  animation-name: snAnimation;
+  animation-duration: 0.2s;
+  animation-iteration-count: 1;
+  max-width: 80vw;
+  width:80vw;
+  overflow: hidden;
+}

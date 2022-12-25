@@ -38,7 +38,7 @@ export default function StepOne({close, next}:{
     <div>
       <div className="p-3  pl-5 flex items-center  h-[70px] ">
         <Cancel className="left-[18px]" 
-        click={close}/>
+        onClick={close}/>
         <p className="font-[700] ml-8">Step 1 of 4</p>
       </div>
       <div className=" w-[85vw] ml-auto mr-auto flex flex-col ">

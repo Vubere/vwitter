@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 import Back from "../../../components/Back"
 import Input from "../../../components/input"
-import Avatar from '../../../components/Avatar'
+import Avatar from '../../../components/icon'
 import FlowButton from './button'
 
 import avatar from '../../../assets/avatar.jpg'
@@ -20,7 +20,7 @@ export default function stepFour({close}:{
   return (
     <div className='flex flex-col'>
       <div className="flex items-center mt-4 ml-4">
-        <Cancel click={close} className='m-2'/>
+        <Cancel onClick={close} className='m-2'/>
         <p> Step 4 of 4</p>
       </div>
 
