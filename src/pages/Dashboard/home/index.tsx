@@ -11,7 +11,7 @@ import {Sidenav} from '../index'
 export default function Home() {
   const {sidenavOpen, setSidenav} = useContext(Sidenav)
 
-  const [posts, setPosts] = useState<PItype[]>([{
+  const [posts, setPosts] = useState<PItype[]>([/* {
     comments:[{
       comment: 'aum',
       likes: [''],
@@ -30,7 +30,7 @@ export default function Home() {
     likes: [''],
     caption: 'this is a test data',
     date: '20m'
-  }])
+  } */])
 
   return (
     <main>
@@ -44,7 +44,7 @@ export default function Home() {
         <TwitterIcon />
       </header>
       <section className='w-full '>
-        {posts.map((item)=><PostItem details={item}/>)}
+        {posts.length?posts.map((item)=><PostItem details={item}/>):<p className='text-[#fff6] m-3 text-[14px]'>Follow users to see feed content...</p>}
       </section>
     </main>
   )

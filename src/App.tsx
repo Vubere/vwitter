@@ -11,6 +11,7 @@ const Home = lazy(() => import('./pages/Dashboard/home'))
 const Search = lazy(() => import('./pages/Dashboard/search'))
 const Notification = lazy(() => import('./pages/Dashboard/Notification'))
 const Message = lazy(() => import('./pages/Dashboard/message'))
+
 function App() {
 
   return (
