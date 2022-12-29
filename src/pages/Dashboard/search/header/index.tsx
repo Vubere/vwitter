@@ -1,12 +1,13 @@
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import Icon from "../../../../components/icon";
 
+import { Sidenav } from '../..';
 
 import avatar from "../../../../assets/avatar.jpg"
 import searchImg from "../../../../components/assets/search.png"
 
 export default function SearchHeader({search, setSearch}:{search:string, setSearch:(v:string)=>void}){
-  
+  const { sidenavOpen, setSidenav } = useContext(Sidenav)
 
  return  (
   <header className="p-4 border-b border-[#fff1] flex gap-6 items-center">
@@ -14,7 +15,8 @@ export default function SearchHeader({search, setSearch}:{search:string, setSear
     src={avatar}
     width='30px'
     height='30px'
-    className="rounded-full"/>
+    className="rounded-full"
+       onClick={() => setSidenav(!sidenavOpen)} />
     <form onSubmit={()=>null}
     className="min-w-210px h-30px relative">
       <input type="search"

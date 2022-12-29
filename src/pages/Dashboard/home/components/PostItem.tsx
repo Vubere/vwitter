@@ -40,17 +40,22 @@ export type PostItem = {
   photoUrl: string,
   likes: string[],
   comments: Comments[],
-  date: string
+  date: string,
+  id: string
 }
 
 export type Comments = {
-  comment: string,
+  text: string,
+  photoUrl: string,
+  replies:Comments[],
   likes: string[],
   commentOwner: user_details,
+  date: string
 }
 
 export type user_details = {
   avatar: string,
   username: string,
   full_name: string,
+  id: string
 }

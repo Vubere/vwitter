@@ -1,10 +1,10 @@
+import Icon from '../../../../../components/icon'
 
 import like from './like.png'
 import likeFilled from './likeFilled.png'
 import retweet from './retweet.png'
 import retweetFilled from './retweetFilled.png'
 import reply from './reply.png'
-import Icon from '../../../../../components/icon'
 import { user_details } from '../PostItem'
 
 import { Comments } from '../PostItem'

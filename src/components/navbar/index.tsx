@@ -16,7 +16,7 @@ export default function Navbar() {
   const [currentTab, setCurrentTab] = useState('home')
 
   return (
-    <nav className="fixed mt-auto flex justify-center items-center bottom-0 w-[100%] h-[50px] z-20 border-t border-[#fff4]">
+    <nav className="fixed mt-auto flex justify-center items-center bottom-0 w-[100%] h-[50px] z-20 border-t border-[#fff4] bg-black">
       <ul className='flex justify-around align-center w-full mt-4'>
 
         <li className='flex gap-6 items-center mb-5 font-[600] text-[18px]'
