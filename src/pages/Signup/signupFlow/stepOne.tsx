@@ -5,6 +5,7 @@ import Input from "../../../components/input"
 import Cancel from "../../../components/CancelIcon"
 
 import { FlowContext } from '.'
+import './signup.css'
 
 export default function StepOne({close, next}:{
   close:()=>void,
@@ -72,10 +73,10 @@ export default function StepOne({close, next}:{
               placeholder="Date-of-birth"
               value={dob}
               changeHandler={(e) => setDob(e.target.value)}
-              className='mt-8'
-              inputClassname={`w-[12px] ${dob!=''?'block':'visibility-none text-white'}`} />
+              className='mt-8 retive'
+              inputClassname={`w-[12px] ${dob!=''?'block':'visibility-none text-white'} date`} />
           </div>
-          <FlowButton className='fixed bottom-[15px] left-[50%] translate-x-[-50%] w-[86%]'>
+          <FlowButton className='date fixed bottom-[15px] left-[50%] translate-x-[-50%] w-[86%]'>
             Next
           </FlowButton>
         </form>

@@ -23,7 +23,8 @@ export default function Messages() {
     },
     date: 'Dec 29',
     text: 'what"s up',
-    photo_url: ''
+    photo_url: '',
+    id: 'dd'
   },
     {
     user_details:{
@@ -34,7 +35,8 @@ export default function Messages() {
     },
     date: 'Dec 29',
     text: 'what"s up',
-    photo_url: ''
+    photo_url: '',
+    id:'gg'
   },
 ]
   )
@@ -59,7 +61,7 @@ export default function Messages() {
         </form>
         <section className='mt-6 '>
           {messages ?
-            messages.map((item) => <MessageDisplay item={item}/>) :
+            messages.map((item) => <MessageDisplay key={item.id} item={item}/>) :
             <p className='text-[#fff8]'>You have no open chat...</p>}
         </section>
       </main>
@@ -73,4 +75,5 @@ export type message = {
   text: string,
   photo_url: string,
   date: string,
+  id: string
 }

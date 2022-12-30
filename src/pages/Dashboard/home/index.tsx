@@ -16,6 +16,13 @@ export default function Home() {
   const { sidenavOpen, setSidenav } = useContext(Sidenav)
 
   const [posts, setPosts] = useState<PItype[]>([{
+    type: 'retweet',
+    retweeter: {
+      avatar: '',
+      username: 'victorubere',
+      full_name: 'Victor Ubere',
+      id: 'asduhp'
+    },
     comments: [{
       text: 'aum',
       likes: [''],

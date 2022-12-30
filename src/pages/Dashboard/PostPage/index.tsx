@@ -18,6 +18,7 @@ import Comment from "./components/comment"
 
 export default function PostPage() {
   const [post, setPost] = useState<PostItem | undefined>({
+    type: 'tweet',
     comments: [{
       text: 'aum',
       likes: [''],
@@ -29,12 +30,24 @@ export default function PostPage() {
         full_name: 'Victor Ubere',
         id: 'u23h'
       },
+      postOwner: {
+        avatar: '',
+        username: 'victorubere',
+        full_name: 'Victor Ubere',
+        id: 'u23h'
+      },
       replies: [{
         text: 'text',
         photoUrl: avatar,
         likes: [''],
         date: '40m',
         commentOwner: {
+          avatar: '',
+          username: 'hakk',
+          full_name: 'hakk rubee',
+          id: 'adhs',
+        },
+        postOwner: {
           avatar: '',
           username: 'hakk',
           full_name: 'hakk rubee',
@@ -118,7 +131,7 @@ export default function PostPage() {
           </div>
         </section>
       </section>
-      <section>
+      <section className="flex flex-col justify-center">
         {post.comments.map((item) => <Comment details={item} postowner={post.post_owner}/>)}
       </section>
     </section>

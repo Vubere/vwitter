@@ -6,13 +6,20 @@ import avatar from '../../../assets/avatar.jpg'
 import { user_details } from "../home/components/PostItem"
 import LikedNotif from "./components/LikedNotif"
 import Comment from "../PostPage/components/comment"
+import FollowedNotif from "./components/FollowedNotif"
 
 
 
 export default function Notification() {
   const { sidenavOpen, setSidenav } = useContext(Sidenav)
-  const [user, setUser] = useState<any>()
-  const [notifications, setNotifications] = useState<notifications[]>([{
+  const [user, setUser] = useState<any>({
+    username: 'victor',
+    full_name: 'victor ubere',
+    avatar: '',
+    id: 'dad'
+  })
+  const [notifications, setNotifications] = useState<notifications[]>([
+    {
     type: 'like',
     user: {
       username: 'godab',
@@ -23,8 +30,46 @@ export default function Notification() {
     ref: {
       res: 'Tweet',
       info: 'i am a ewagoin'
-    }
-  }])
+    },
+    id: 'dj'
+  },
+    {
+    type: 'follow',
+    user: {
+      username: 'godab',
+      full_name: 'go dab',
+      avatar: '',
+      id: 'dad'
+    },
+    ref: '',
+    id: 'audp'
+  },
+    {
+    type: 'reply',
+    user: {
+      username: 'godab',
+      full_name: 'go dab',
+      avatar: '',
+      id: 'dad'
+    },
+    ref: {
+      res: {
+        text: 'home',
+        likes: [''],
+        photoUrl: '',
+        date: '40d',
+        replies: ['', ''],
+        commentOwner: {
+          username: 'visd',
+          full_name: 'visd dsiv',
+          avatar: '',
+          id: ''
+        }
+      }
+    },
+    id: 'adufap'
+  },
+])
 
 
   return (
@@ -41,12 +86,12 @@ export default function Notification() {
     <main>
       {notifications.map((item)=>{
         if(item.type=='like'){
-          return (<LikedNotif details={item}/>)
+          return (<LikedNotif key={item.id} details={item}/>)
         }else if(item.type=='reply'){
-          return(<Comment details={item.ref.res} postowner={user}/>)
+          return(<Comment key={item.id} details={item.ref.res} postowner={user}/>)
         }else{
           return (
-            null
+            <FollowedNotif key={item.id} details={item.user}/>
           )
         }
       })}
@@ -57,5 +102,6 @@ export default function Notification() {
 export type notifications = {
   type: 'reply'|'like'|'follow',
   user: user_details,
-  ref: any
+  ref: any,
+  id: string
 }
