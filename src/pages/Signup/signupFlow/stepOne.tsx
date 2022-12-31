@@ -5,41 +5,46 @@ import Input from "../../../components/input"
 import Cancel from "../../../components/CancelIcon"
 
 import { FlowContext } from '.'
-import './signup.css'
 
-export default function StepOne({close, next}:{
-  close:()=>void,
-  next:()=>void
+
+export default function StepOne({ close, next }: {
+  close: () => void,
+  next: () => void
 }) {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
-  const [dob, setDob] = useState('')
+  const [dob, setDob] = useState({
+    year: '',
+    month: '',
+    day: ''
+  })
   const [error, setError] = useState('')
-  const {details, setDetails} = useContext(FlowContext)
+  const { details, setDetails } = useContext(FlowContext)
 
-  const onSubmit = (e:React.FormEvent) =>{
+  const onSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if(!name.length){
-      setError('Fill in name field')
+    if (!name.length) {
+      setError('Fill in fasf field')
       return
     }
-    if(!email.length){
+    if (!email.length) {
       setError('Fill in email field')
       return
     }
-    if(!dob.length){
+    if (!dob.year || !dob.month || !dob.day) {
       setError('You must provide a birth date')
       return
     }
-    setDetails({...details, name, email, dob})
+    setDetails({ ...details, name, email, dob, username: name.split(' ').join('') })
     next()
   }
+  const date = new Date()
 
   return (
     <div>
       <div className="p-3  pl-5 flex items-center  h-[70px] ">
-        <Cancel className="left-[18px]" 
-        onClick={close}/>
+        <Cancel className="left-[18px]"
+          onClick={close} />
         <p className="font-[700] ml-8">Step 1 of 4</p>
       </div>
       <div className=" w-[85vw] ml-auto mr-auto flex flex-col ">
@@ -47,7 +52,7 @@ export default function StepOne({close, next}:{
           Create your account
         </h2>
         <form onSubmit={onSubmit}
-        className='w-full flex flex-col'>
+          className='w-full flex flex-col'>
           <Input
             type="name"
             name="Name"
@@ -67,14 +72,22 @@ export default function StepOne({close, next}:{
           <div className="mt-8">
             <h4 className="font-[500] text-[14px] mb-2">Date of birth</h4>
             <p className="text-[#fff6] text-[14px]">This will not be shown publicly. Confirm your own age, even if this account is for a business, a pet, or something else.</p>
-            <Input
-              type="date"
-              name="Date-of-birth"
-              placeholder="Date-of-birth"
-              value={dob}
-              changeHandler={(e) => setDob(e.target.value)}
-              className='mt-8 retive'
-              inputClassname={`w-[12px] ${dob!=''?'block':'visibility-none text-white'} date`} />
+            <div className='mt-3'>
+              <select className='bg-transparent'
+                value={dob.year}
+                onChange={({ target }) => setDob((prev) => ({ ...prev, year: target.value }))}>
+                <Options min={1940} max={date.getFullYear()} />
+              </select>
+              <select className='bg-transparent' value={dob.month}
+                onChange={({ target }) => setDob((prev) => ({ ...prev, month: target.value }))}>
+                <Options min={1} max={12} />
+              </select>
+              <select className='bg-transparent'
+                value={dob.day}
+                onChange={({ target }) => setDob((prev) => ({ ...prev, day: target.value }))}>
+                <Options min={1} max={31} />
+              </select>
+            </div>
           </div>
           <FlowButton className='date fixed bottom-[15px] left-[50%] translate-x-[-50%] w-[86%]'>
             Next
@@ -82,5 +95,17 @@ export default function StepOne({close, next}:{
         </form>
       </div>
     </div>
+  )
+}
+
+function Options({ min, max }: { min: number, max: number }) {
+  const arr: number[] = []
+  for (let i = max; i >= min; i--) {
+    arr.push(i)
+  }
+  return (
+    <>
+      {arr.map((item) => (<option className='bg-black p-3' value={item}>{item}</option>))}
+    </>
   )
 }

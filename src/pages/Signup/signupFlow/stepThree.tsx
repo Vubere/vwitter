@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import React, { useContext } from 'react'
 
 import Back from "../../../components/Back"
 import FlowButton from "./button"
@@ -6,13 +6,59 @@ import FlowButton from "./button"
 import check from "../../../assets/checkmark.png"
 
 import { FlowContext } from '.'
+import { user_details } from '../../Dashboard/home/components/PostItem'
+
+import { details as Dtype } from '.'
+
+import { createUserWithEmailAndPassword, getAuth, updateProfile } from 'firebase/auth'
+import { addDoc, collection, doc, setDoc } from 'firebase/firestore'
+import { db } from '../../../main'
+
+import { UserCon, user_info } from '../../../context/UserContext'
 
 export default function stepThree({ next, prev }: {
   next: () => void,
   prev: () => void
 }) {
   const { details } = useContext(FlowContext)
+  const userContext = useContext(UserCon)
 
+  const signup = () => {
+    const auth = getAuth()
+    return async () => {
+      try {
+        const { user } = await createUserWithEmailAndPassword(auth, details.email, details.password)
+        const col = doc(db, 'users', user.uid)
+        
+        const userInfo:user_info = {
+          details,
+          id: user.uid,
+          followers: [],
+          following: [],
+          notifications: [],
+          messages: [],
+          avatar: '',
+          likes: [],
+          replies: [],
+          posts: [],
+          unread_notifications: 0,
+          unread_messages: 0
+        }
+     
+        await setDoc(col, userInfo)
+        
+        if (userContext) {
+          userContext.setUser(userInfo)
+        }
+      }catch(error){
+        console.log(error)
+      }
+    }
+  }
+  const submit = () => {
+    signup()()
+    next()
+  }
 
   return (
     <div>
@@ -33,11 +79,11 @@ export default function stepThree({ next, prev }: {
             width='20px' height='20px' className='absolute right-[30px]' />
         </p>
         <p className="w-[90%] h-[60px] border pl-2 bg-transparent border-[#fff4] text-[#fff] rounded-[5px] flex flex-col justify-center mt-5">
-          {details.dob}
+          {details.dob.year + '-' + details.dob.month + '-' + details.dob.day}
           <img src={check} alt=''
             width='20px' height='20px' className='absolute right-[30px]' />
         </p>
-        <FlowButton click={next} className='fixed bottom-[15px]'>
+        <FlowButton click={submit} className='fixed bottom-[15px]'>
           Next
         </FlowButton>
       </div>

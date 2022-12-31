@@ -1,18 +1,20 @@
-import React, {Suspense} from 'react'
+import React, { Suspense } from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
 import './index.css'
 import { BrowserRouter } from "react-router-dom"
-
+import UserContext from './context/UserContext'
 
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <BrowserRouter>
-      <Suspense fallback={'...loading'}>
-        <App />
-      </Suspense>
-    </BrowserRouter>
+    <UserContext>
+      <BrowserRouter>
+        <Suspense fallback={'...loading'}>
+          <App />
+        </Suspense>
+      </BrowserRouter>
+    </UserContext>
   </React.StrictMode>,
 )
 
@@ -22,7 +24,8 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth } from 'firebase/auth'
-import {getFirestore} from 'firebase/firestore'
+import { getFirestore } from 'firebase/firestore'
+import { getStorage } from 'firebase/storage'
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -43,3 +46,4 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const auth = getAuth(app)
 export const db = getFirestore(app)
+const storage = getStorage(app)

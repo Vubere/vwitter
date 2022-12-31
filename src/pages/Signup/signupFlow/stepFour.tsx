@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
+
 
 import Back from "../../../components/Back"
 import Input from "../../../components/input"
@@ -8,19 +9,126 @@ import FlowButton from './button'
 import avatar from '../../../assets/avatar.jpg'
 import camera from '../../../assets/cameraBlack.png'
 import Cancel from '../../../components/CancelIcon'
+import { FlowContext } from '.'
+import { UserCon } from '../../../context/UserContext'
+import { doc, updateDoc } from 'firebase/firestore'
+
+
+import { uploadBytes, ref, getStorage, getDownloadURL } from 'firebase/storage'
+import { setDoc} from 'firebase/firestore'
+import {
+  getAuth, reauthenticateWithCredential, updateProfile,
+  EmailAuthProvider, updateEmail, updatePassword
+} from 'firebase/auth'
+import { db } from '../../../main'
+import { useNavigate } from 'react-router-dom'
+
+
 
 
 export default function stepFour({close}:{
   close: ()=>void
 }) {
-  const [username, setUsername] = useState('vubere')
-  const [profile, setProfile] = useState<any>(undefined)
+  const {details, setDetails} = useContext(FlowContext)
+  const userCon = useContext(UserCon)
+  const auth = getAuth()
+ 
+  const [file, setFile] = useState<any>(undefined)
+  const [ava, setAva] = useState<any>(undefined)
 
+  const imageRef = useRef<any>()
+  const navigate = useNavigate()
+  
 
+  const handleFileChange = (e:any) => {
+    if (file != null) {
+        setAva(file[0])
+        if (file[0]) {
+          const reader = new FileReader()
+          reader.onload = (e) => {
+            if (imageRef.current != undefined) {
+              imageRef.current.style.backgroundImage = `url(${e.target?.result||''})`
+            }
+          }
+          reader.readAsDataURL(file[0])
+        }
+    }
+  }
+
+  const updateAvatar = async () => {
+  
+    const storage = getStorage();
+    try {
+      if (ava != undefined)
+        if (!ava.type.includes('image')) {
+          throw 'You can only send images or videos.'
+        }
+      if (auth.currentUser != null) {
+        if (ava) return
+        const filePath = `users/${auth.currentUser.uid}/avatar`
+        const storageRef = ref(storage, filePath)
+        let path = ''
+
+        const res = await uploadBytes(storageRef, file)
+        path = await getDownloadURL(res.ref)
+        const docRef = doc(db, 'users', auth.currentUser.uid)
+        await setDoc(docRef, {
+          avatar: path
+        }, { merge: true })
+        updateProfile(auth.currentUser, {
+          photoURL: path
+        })
+        if(userCon){
+          if(userCon.user)
+          userCon.setUser({...userCon.user, avatar: path})
+        }
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const updateUsername = async() => {
+    if(auth.currentUser){
+    try{
+        const docRef = doc(db, 'users', auth.currentUser.uid)
+        await updateDoc(docRef, {
+          ['details.username']: details.username,
+        })
+        updateProfile(auth.currentUser, {
+           displayName: details.username,
+         })
+        if(userCon){
+          if(userCon.user){
+            userCon.setUser({...userCon.user, details:{
+              ...userCon.user.details,
+              username: details.username
+            }})
+          }
+        }
+      }catch(err){
+        console.log(err)
+      }
+    }
+  }
+
+  const submit = (e:any) => {
+    e.preventDefault()
+    updateAvatar()
+    updateUsername()
+    if(auth.currentUser){
+      navigate('/home')
+    }
+  }
+  const done = () => {
+    close()
+    navigate('/home')
+  }
+ 
   return (
     <div className='flex flex-col'>
       <div className="flex items-center mt-4 ml-4">
-        <Cancel onClick={close} className='m-2'/>
+        <Cancel onClick={done} className='m-2'/>
         <p> Step 4 of 4</p>
       </div>
 
@@ -32,23 +140,26 @@ export default function stepFour({close}:{
           type="username"
           name="Username"
           placeholder=""
-          value={username}
-          changeHandler={e=>setUsername(e.target.value)} 
+          value={details.username}
+          changeHandler={e=>setDetails({...details,username:e.target.value})} 
           className="mt-8"/>
         <label htmlFor="file"
         className='w-[120px] block mt-8 ml-auto mr-auto rounded full relative'>
           <div>
             <img src={camera} alt="camera icon" 
             className='absolute top-[50%] left-[50%] transform translate-y-[-50%] translate-x-[-50%]'/>
-            <Avatar
-            src={avatar}
-            width='120px'
-            height='120px'
-            className='rounded-full'/>
+            <div className='w-[80px] h-[80px]'
+            ref={imageRef}
+            style={{
+              backgroundImage: avatar,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat'
+            }}></div>
           </div>
           <input type="file" name="profile" id="file" 
-          value={profile}
-          onChange={e=>setProfile(e.target.value)}
+          value={file}
+          onChange={handleFileChange}
           className="hidden"/>
         </label>
         <FlowButton click={close} className='fixed bottom-[15px]'>

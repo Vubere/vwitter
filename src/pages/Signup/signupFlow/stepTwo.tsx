@@ -30,6 +30,7 @@ export default function StepTwo({next, prev}:{
     setDetails({
       ...details,
       password: pwd
+      
     })
     next()
   }
@@ -44,7 +45,7 @@ export default function StepTwo({next, prev}:{
       </div>
 
       <h3 className='w-[90%] ml-auto mr-auto mt-8 font-[700] text-[22px]'>Choose your Password</h3>
-      <form onSubmit={e=>e.preventDefault()}
+      <form onSubmit={onSubmit}
       className='w-full flex flex-col items-center mt-6'>
         <Input
         type="password"

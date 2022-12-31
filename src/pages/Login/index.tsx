@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import {Link} from "react-router-dom"
+import {Link, Navigate, useNavigate} from "react-router-dom"
 
 import Cancel from "../../components/CancelIcon";
 import TwitterIcon from "../../components/twitterLogo";
@@ -13,22 +13,30 @@ import check from '../../assets/checkmark.png'
 
 import * as routes from '../../constants/route'
 import { twitterColor } from '../../constants/color';
+import { signInWithEmailAndPassword, getAuth } from 'firebase/auth';
 
 export default function Login() {
   const [email, setEmail] = useState('')
   const [pwd, setPwd] = useState('')
   const [loginModal, setLoginModal] = useState(false)
+  const navigate = useNavigate()
+  const auth = getAuth()
 
   const [error, setError] = useState('')
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!email.length) {
       setError('email field is empty')
       return
     }
-
-    setLoginModal(true)
+    if(pwd.length){
+      setError('must input a password')
+      return
+    }
+    await signInWithEmailAndPassword(auth, email, pwd)
+    setLoginModal(false)
+    navigate('/home')
   }
 
   return (
@@ -51,7 +59,7 @@ export default function Login() {
             <div className="bg-black text-white text-center">or</div>
             <hr className="w-[42%] border-[#fff4]" />
           </div>
-          <form onSubmit={onSubmit} className='w-[95%] mr-auto ml-auto flex flex-col items-center'>
+          <form onSubmit={e=>e.preventDefault()} className='w-[95%] mr-auto ml-auto flex flex-col items-center'>
             <Input
               type="email"
               name="Email"
@@ -75,7 +83,7 @@ export default function Login() {
           </div>
 
           <h3 className='w-[90%] mr-auto ml-auto font-[700] text-[24px]'>Enter your password</h3>
-          <form onSubmit={(e) => e.preventDefault()} className="flex flex-col items-center">
+          <form onSubmit={onSubmit} className="flex flex-col items-center">
             <p className="w-[90%] h-[60px] border pl-2 bg-transparent border-[#fff4] text-[#fff] rounded-[5px] flex flex-col justify-center mt-5 relative">
               <span className='text-[#fff8] text-[12px]'>Email</span>
               <span className='text-[#fff5] text-[14px]'>{email}</span>
