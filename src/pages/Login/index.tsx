@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import {Link, Navigate, useNavigate} from "react-router-dom"
+import { useContext, useState } from 'react'
+import { Link, Navigate, useNavigate } from "react-router-dom"
 
 import Cancel from "../../components/CancelIcon";
 import TwitterIcon from "../../components/twitterLogo";
@@ -13,7 +13,10 @@ import check from '../../assets/checkmark.png'
 
 import * as routes from '../../constants/route'
 import { twitterColor } from '../../constants/color';
-import { signInWithEmailAndPassword, getAuth } from 'firebase/auth';
+import { signInWithEmailAndPassword, getAuth, setPersistence } from 'firebase/auth';
+import { UserCon } from '../../context/UserContext';
+import getUserByUsername from '../../services/getUserByUsername';
+import getUserById from '../../services/getUserById';
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -21,22 +24,38 @@ export default function Login() {
   const [loginModal, setLoginModal] = useState(false)
   const navigate = useNavigate()
   const auth = getAuth()
+  const userContext = useContext(UserCon)
 
   const [error, setError] = useState('')
 
-  const onSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!email.length) {
-      setError('email field is empty')
-      return
-    }
-    if(pwd.length){
-      setError('must input a password')
-      return
-    }
-    await signInWithEmailAndPassword(auth, email, pwd)
-    setLoginModal(false)
-    navigate('/home')
+  const onSubmit = () => {
+
+    (async () => {
+
+      if (!email.length) {
+        setError('email field is empty')
+        return
+      }
+      if (!pwd.length) {
+        setError('must input a password')
+        return
+      }
+
+      if (userContext) {
+        const h = await signInWithEmailAndPassword(auth, email, pwd)
+
+        if (h) {
+          setLoginModal(false)
+          console.log(h.user.uid)
+          const details = await getUserById(h.user.uid)
+          
+          navigate('/home')
+          userContext.setUser(details)
+
+        }
+      }
+    })()
+
   }
 
   return (
@@ -59,7 +78,11 @@ export default function Login() {
             <div className="bg-black text-white text-center">or</div>
             <hr className="w-[42%] border-[#fff4]" />
           </div>
-          <form onSubmit={e=>e.preventDefault()} className='w-[95%] mr-auto ml-auto flex flex-col items-center'>
+          <form onSubmit={e => {
+            e.preventDefault()
+            setLoginModal(true)
+          }
+          } className='w-[95%] mr-auto ml-auto flex flex-col items-center'>
             <Input
               type="email"
               name="Email"
@@ -71,19 +94,24 @@ export default function Login() {
             </FlowButton>
           </form>
         </ul>
+        <div className='w-[88%] mb-6 p-3'>
+          <p className='inline text-[14px] text-[#fff8]'>Don't have an account?</p>{' '}
+          <Link to={routes.signup}
+            className={`text-[${twitterColor}] text-[14px]`}>Sign up</Link>
+        </div>
       </div>
       {loginModal && (
         <Modal>
           <div>
             <header className="relative flex justify-center w-full p-3">
               <Cancel onClick={() => setLoginModal(false)}
-                className="absolute left-[18px] top-[18px]" />
+                className="absolute left-[18px] top-[18px] z-[8987283]" />
               <TwitterIcon />
             </header>
           </div>
 
-          <h3 className='w-[90%] mr-auto ml-auto font-[700] text-[24px]'>Enter your password</h3>
-          <form onSubmit={onSubmit} className="flex flex-col items-center">
+          <h3 className='w-[90%] mdr-auto ml-auto font-[700] text-[24px]'>Enter your password</h3>
+          <form onSubmit={e => e.preventDefault()} className="flex flex-col items-center">
             <p className="w-[90%] h-[60px] border pl-2 bg-transparent border-[#fff4] text-[#fff] rounded-[5px] flex flex-col justify-center mt-5 relative">
               <span className='text-[#fff8] text-[12px]'>Email</span>
               <span className='text-[#fff5] text-[14px]'>{email}</span>
@@ -95,20 +123,16 @@ export default function Login() {
               name='password'
               placeholder=''
               className='w-[90%] mt-6 '
-              changeHandler={(e) => e.preventDefault()}
-              value='' />
+              value={pwd}
+              changeHandler={({ target }) => setPwd(target.value)}
+            />
             <p className='w-[90%] text-[12px] text-[#00acee] mt-1'>forgot password?</p>
           </form>
           <div className='fixed bottom-0 h-[150px] w-full flex flex-col items-center justify-center'>
- 
-            <FlowButton className='w-[90%]'>
+
+            <FlowButton className='w-[90%]' click={onSubmit}>
               Log in
             </FlowButton>
-            <div className='w-[88%] mb-6 '>
-              <p className='inline text-[14px] text-[#fff8]'>Don't have an account?</p>{' '}
-              <Link to={routes.signup}
-              className={`text-[${twitterColor}] text-[14px]`}>Sign up</Link>
-            </div>
           </div>
         </Modal>)}
     </div>

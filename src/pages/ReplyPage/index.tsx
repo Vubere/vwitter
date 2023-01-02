@@ -1,18 +1,18 @@
 import { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom'
 
-import Back from "../../../components/Back";
-import Icon from '../../../components/icon';
+import Back from "../../components/Back";
+import Icon from '../../components/icon';
 
 import avatar from '../../../assets/avatar.jpg'
 import imagePic from '../../../assets/image.png'
 import { arrayUnion, doc, setDoc, updateDoc } from 'firebase/firestore';
-import { db } from '../../../main';
+import { db } from '../../main';
 import { getAuth } from 'firebase/auth';
-import { UserCon } from '../../../context/UserContext';
+import { UserCon } from '../../context/UserContext';
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
 
-import Cancel from '../../../components/CancelIcon';
+import Cancel from '../../components/CancelIcon';
 
 export default function SendPost() {
   const [post, setPost] = useState('')
@@ -34,12 +34,12 @@ export default function SendPost() {
   const handleFileChange = (e: any) => {
 
     if (e.target.files) {
-      
+
       setImage(e.target.files[0])
       if (e.target.files[0]) {
         const reader = new FileReader()
         reader.onload = (e) => {
-          
+
           if (viewRef.current != undefined) {
             viewRef.current.src = e.target?.result
           }
@@ -72,13 +72,13 @@ export default function SendPost() {
             full_name: user.details.name,
             id: user.id
           },
-          photoUrl: path||'',
+          photoUrl: path || '',
           likes: [],
           caption: post,
           date: Date.now(),
           id: id
         })
-        const userRef  = doc(db, 'users', currentUser.uid)
+        const userRef = doc(db, 'users', currentUser.uid)
         await updateDoc(userRef, {
           posts: arrayUnion(id)
         })
@@ -108,8 +108,8 @@ export default function SendPost() {
         <label htmlFor="file" className='pt-3  block'>
           <Icon width='20px' height='20px' src={imagePic} />
           <input type="file" name="file" id="file" className='hidden'
-          ref={imageRef}
-          multiple={true} onChange={handleFileChange} />
+            ref={imageRef}
+            multiple={true} onChange={handleFileChange} />
         </label>
         {image != undefined &&
           <div className="mt-3 flex flex-col gap-2">

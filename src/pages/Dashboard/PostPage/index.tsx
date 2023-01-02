@@ -17,7 +17,7 @@ import Comment from "./components/comment"
 
 
 export default function PostPage() {
-  const [post, setPost] = useState<PostItem | undefined>({
+  const [post, setPost] = useState<PostItem | undefined>(/* {
     type: 'tweet',
     comments: [{
       text: 'aum',
@@ -67,7 +67,7 @@ export default function PostPage() {
     caption: 'this is a test data',
     date: '20m',
     id: 'dah'
-  })
+  } */)
   const navigate = useNavigate()
 
   if (post == undefined) {
@@ -88,7 +88,7 @@ export default function PostPage() {
             className="rounded-full"
           />
           <div className="">
-            <p className="font-[600]">{post.post_owner.full_name}</p>
+            <p className="font-[600]">{post.post_owner.name}</p>
             <p className="text-[#fff6]">@{post.post_owner.username}</p>
           </div>
         </div>

@@ -5,8 +5,25 @@ import Reactions from "./Reactions"
 import Icon from "../../../../components/icon"
 
 import retweet from '../components/Reactions/retweet.png'
+import { useLayoutEffect, useState } from "react"
+import getPostById from "../../../../services/getPostById"
+import { details } from "../../../Signup/signupFlow"
 
-export default function PostItem({ details }: { details: PostItem }) {
+export default function PostItem({ id }: {id:string}) {
+  const [details, setDetails] = useState<PostItem>()
+
+  useLayoutEffect(()=>{
+    (async ()=>{
+      const post = await getPostById(id)
+      if(post){
+        setDetails(post)
+      }
+    })()
+  }, [id])
+  if(details==undefined){
+    return null
+  }
+
   return (
     <section className="w-full p-3 pt-2 pt-6 pb-5 flex gap-1 border-b border-[#fff2] flex-col">
       {(details.type == 'retweet' && details.retweeter) && (
@@ -29,7 +46,7 @@ export default function PostItem({ details }: { details: PostItem }) {
         </div>
         <div className="w-full pr-4">
           <div className="flex gap-1">
-            <p className="font-[600]">{details.post_owner.full_name}</p>
+            <p className="font-[600]">{details.post_owner.name}</p>
             <p className="text-[#fff6]">@{details.post_owner.username}</p>
             <p className="text-[#fff6]">{details.date}</p>
           </div>
@@ -40,7 +57,9 @@ export default function PostItem({ details }: { details: PostItem }) {
                 width='100%' className='rounded-[10px]' />
             </div>
           </div>
-          <Reactions likes={details.likes} comments={details.comments} />
+          <Reactions details={details} id={details.id} likes={details.likes} 
+          retweets={details.retweets}
+          comments={details.comments} />
         </div>
       </div>
     </section>
@@ -49,12 +68,13 @@ export default function PostItem({ details }: { details: PostItem }) {
 
 export type PostItem = {
   type: 'tweet' | 'retweet',
-  retweeter?: user_details,
-  post_owner: user_details,
+  retweeter?: details,
+  post_owner: details,
   caption: string,
   photoUrl: string,
   likes: string[],
   comments: Comments[],
+  retweets: string[]
   date: string,
   id: string
 }
@@ -64,14 +84,8 @@ export type Comments = {
   photoUrl: string,
   replies: Comments[],
   likes: string[],
-  commentOwner: user_details,
+  commentOwner: details,
   date: string,
-  postOwner: user_details
+  postOwner: details
 }
 
-export type user_details = {
-  avatar: string,
-  username: string,
-  full_name: string,
-  id: string
-}

@@ -4,18 +4,16 @@ import { Navigate, useNavigate } from "react-router-dom"
 
 export default function ProtectedRoutes({children}:{children:React.ReactNode}){
   const navigate = useNavigate()
-  const auth = getAuth()
+  const {currentUser} = getAuth()
 
   useEffect(()=>{
-    if(auth.currentUser==null){
+    if(currentUser==null){
       navigate('/login')
     }
   }, [])
   return(
     <>
-    {
-      auth.currentUser?children: null
-    }
+      {currentUser&&children}
     </>
   )
 }

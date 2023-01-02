@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useContext, useLayoutEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import { Sidenav } from '../index'
@@ -11,11 +11,15 @@ import * as routes from '../../../constants/route'
 import avatar from '../../../assets/avatar.jpg'
 import tweetIcon from '../../../assets/tweetIcon.png'
 import { twitterColor } from '../../../constants/color'
+import { UserCon } from '../../../context/UserContext'
+import getUserById from '../../../services/getUserById'
 
 export default function Home() {
   const { sidenavOpen, setSidenav } = useContext(Sidenav)
-
-  const [posts, setPosts] = useState<PItype[]>([{
+  
+  const context = useContext(UserCon)
+  
+  const [posts, setPosts] = useState<string[]>(/* [{
     type: 'retweet',
     retweeter: {
       avatar: '',
@@ -34,7 +38,13 @@ export default function Home() {
         username: 'victorubere',
         full_name: 'Victor Ubere',
         id: 'asduhp'
-      }
+      },
+      postOwner: {
+        avatar: '',
+        username: 'victorubere',
+        full_name: 'Victor Ubere',
+        id: 'aupsd'
+      },
     }],
     post_owner: {
       avatar: '',
@@ -48,7 +58,29 @@ export default function Home() {
     date: '20m',
     id: 'adfas'
   },
-  ])
+] */)
+if(posts==undefined||context==undefined||context.user==undefined){
+  return null
+}
+
+  useLayoutEffect(()=>{
+    if(context.user){
+      const arr = context.user.following
+      arr.push(context.user.id)
+    
+      let postArr:string[] = [];
+      arr.forEach((id)=>{
+        (async()=>{
+          const {posts:p} = await getUserById(id)
+          p.forEach((i)=>{
+            postArr.push(i)
+          })
+        })
+      })
+      setPosts(posts.concat(postArr))
+    }
+    
+  }, [])
 
   return (
     <main className='overflow-y-auto h-[100vh] w-[100vw] pb-[100px]'>
@@ -63,8 +95,8 @@ export default function Home() {
       </header>
       <section className='w-full '>
         {posts.length ? posts.map((item) =>
-          <Link to={routes.postpage}>
-            <PostItem details={item} />
+          <Link to={routes.postpage} key={item}>
+            <PostItem id={item} />
           </Link>
         ) : <p className='text-[#fff6] m-3 text-[14px]'>Follow users to see feed content...</p>}
       </section>

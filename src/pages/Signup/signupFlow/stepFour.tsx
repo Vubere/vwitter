@@ -15,7 +15,7 @@ import { doc, updateDoc } from 'firebase/firestore'
 
 
 import { uploadBytes, ref, getStorage, getDownloadURL } from 'firebase/storage'
-import { setDoc} from 'firebase/firestore'
+import { setDoc } from 'firebase/firestore'
 import {
   getAuth, reauthenticateWithCredential, updateProfile,
   EmailAuthProvider, updateEmail, updatePassword
@@ -26,37 +26,39 @@ import { useNavigate } from 'react-router-dom'
 
 
 
-export default function stepFour({close}:{
-  close: ()=>void
+export default function stepFour({ close }: {
+  close: () => void
 }) {
-  const {details, setDetails} = useContext(FlowContext)
+  const { details, setDetails } = useContext(FlowContext)
   const userCon = useContext(UserCon)
   const auth = getAuth()
- 
+
   const [file, setFile] = useState<any>(undefined)
   const [ava, setAva] = useState<any>(undefined)
 
   const imageRef = useRef<any>()
   const navigate = useNavigate()
-  
 
-  const handleFileChange = (e:any) => {
-    if (file != null) {
-        setAva(file[0])
-        if (file[0]) {
-          const reader = new FileReader()
-          reader.onload = (e) => {
-            if (imageRef.current != undefined) {
-              imageRef.current.style.backgroundImage = `url(${e.target?.result||''})`
-            }
+
+  console.log(ava, file)
+  const handleFileChange = (e: any) => {
+    setFile(e.target.file)
+    if (file ) {
+      setAva(file[0])
+      if (file[0]) {
+        const reader = new FileReader()
+        reader.onload = (e) => {
+          if (imageRef.current != undefined) {
+            imageRef.current.style.backgroundImage = `url(${e.target?.result || ''})`
           }
-          reader.readAsDataURL(file[0])
         }
+        reader.readAsDataURL(file[0])
+      }
     }
   }
 
   const updateAvatar = async () => {
-  
+
     const storage = getStorage();
     try {
       if (ava != undefined)
@@ -73,14 +75,14 @@ export default function stepFour({close}:{
         path = await getDownloadURL(res.ref)
         const docRef = doc(db, 'users', auth.currentUser.uid)
         await setDoc(docRef, {
-          avatar: path
+          ['details.avatar']:path
         }, { merge: true })
         updateProfile(auth.currentUser, {
           photoURL: path
         })
-        if(userCon){
-          if(userCon.user)
-          userCon.setUser({...userCon.user, avatar: path})
+        if (userCon) {
+          if (userCon.user)
+            userCon.setUser({ ...userCon.user, details:{...userCon.user.details, avatar: path} })
         }
       }
     } catch (error) {
@@ -88,35 +90,39 @@ export default function stepFour({close}:{
     }
   }
 
-  const updateUsername = async() => {
-    if(auth.currentUser){
-    try{
+  const updateUsername = async () => {
+    if (auth.currentUser) {
+      try {
         const docRef = doc(db, 'users', auth.currentUser.uid)
         await updateDoc(docRef, {
           ['details.username']: details.username,
         })
-        updateProfile(auth.currentUser, {
-           displayName: details.username,
-         })
-        if(userCon){
-          if(userCon.user){
-            userCon.setUser({...userCon.user, details:{
-              ...userCon.user.details,
-              username: details.username
-            }})
+        await updateProfile(auth.currentUser, {
+          displayName: details.username,
+        })
+        if (userCon) {
+          if (userCon.user) {
+            userCon.setUser({
+              ...userCon.user, details: {
+                ...userCon.user.details,
+                username: details.username
+              }
+            })
           }
         }
-      }catch(err){
+      } catch (err) {
         console.log(err)
       }
     }
   }
 
-  const submit = (e:any) => {
+  const submit = (e: any) => {
     e.preventDefault()
+    
     updateAvatar()
+    if(ava)
     updateUsername()
-    if(auth.currentUser){
+    if (auth.currentUser) {
       navigate('/home')
     }
   }
@@ -124,11 +130,11 @@ export default function stepFour({close}:{
     close()
     navigate('/home')
   }
- 
+
   return (
     <div className='flex flex-col'>
       <div className="flex items-center mt-4 ml-4">
-        <Cancel onClick={done} className='m-2'/>
+        <Cancel onClick={done} className='m-2' />
         <p> Step 4 of 4</p>
       </div>
 
@@ -141,26 +147,26 @@ export default function stepFour({close}:{
           name="Username"
           placeholder=""
           value={details.username}
-          changeHandler={e=>setDetails({...details,username:e.target.value})} 
-          className="mt-8"/>
+          changeHandler={e => setDetails({ ...details, username: e.target.value })}
+          className="mt-8" />
         <label htmlFor="file"
-        className='w-[120px] block mt-8 ml-auto mr-auto rounded full relative'>
+          className='w-[120px] block mt-8 ml-auto mr-auto rounded full relative'>
           <div>
-            <img src={camera} alt="camera icon" 
-            className='absolute top-[50%] left-[50%] transform translate-y-[-50%] translate-x-[-50%]'/>
+            <img src={camera} alt="camera icon"
+              className='absolute top-[50%] left-[50%] transform translate-y-[-50%] translate-x-[-50%]' />
             <div className='w-[80px] h-[80px]'
-            ref={imageRef}
-            style={{
-              backgroundImage: avatar,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              backgroundRepeat: 'no-repeat'
-            }}></div>
+              ref={imageRef}
+              style={{
+                backgroundImage: avatar,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat'
+              }}></div>
           </div>
-          <input type="file" name="profile" id="file" 
-          value={file}
-          onChange={handleFileChange}
-          className="hidden"/>
+          <input type="file" name="profile" id="file"
+            value={file}
+            onChange={handleFileChange}
+            className="hidden" />
         </label>
         <FlowButton click={close} className='fixed bottom-[15px]'>
           Complete

@@ -4,18 +4,19 @@ import { details } from "../pages/Signup/signupFlow";
 import { Dispatch, SetStateAction } from "react";
 
 export const UserCon = createContext < {
-  user: user_info | undefined, setUser: (u:user_info)=>void}|undefined>(undefined)
+  user: user_info | undefined, setUser: (u:user_info|undefined)=>void}|undefined>(undefined)
 
 export default function UserContext({children}:{children:React.ReactNode}){
 
   const [user, set] = useState<user_info|undefined>()
   const auth = getAuth()
 
-  const setUser = (u:user_info) => {
+  const setUser = (u:user_info|undefined) => {
     localStorage.setItem('user', JSON.stringify(u))
     set(u)
   }
 
+  
   useEffect(()=>{
     if(auth.currentUser!=null){
       const ls = localStorage.getItem('user') 
@@ -43,7 +44,6 @@ export type user_info = {
   following: string[],
   notifications: string[],
   messages: string[],
-  avatar: string,
   likes: string[],
   replies: string[],
   posts: string[],

@@ -12,11 +12,13 @@ export const FlowContext = createContext<any>(undefined)
 export default function SignupFlow({ close }: { close: () => void }) {
   const [details, setDetails] = useState<details>({
     name: '',
+    avatar: '',
     email: '',
     username: '',
     password: '',
     dob: '',
-    bio: ''
+    bio: '',
+    id: ''
   })
   const [step, setStep] = useState(1)
 
@@ -51,9 +53,11 @@ export default function SignupFlow({ close }: { close: () => void }) {
 
 export type details = {
   name: string,
+  avatar: string,
   username: string,
   email: string,
   dob: string,
   password: string,
-  bio: string
+  bio: string,
+  id: string,
 }

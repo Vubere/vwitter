@@ -6,7 +6,7 @@ import FlowButton from "./button"
 import check from "../../../assets/checkmark.png"
 
 import { FlowContext } from '.'
-import { user_details } from '../../Dashboard/home/components/PostItem'
+
 
 import { details as Dtype } from '.'
 
@@ -31,13 +31,12 @@ export default function stepThree({ next, prev }: {
         const col = doc(db, 'users', user.uid)
         
         const userInfo:user_info = {
-          details,
+          details:{...details, id: user.uid},
           id: user.uid,
           followers: [],
           following: [],
           notifications: [],
           messages: [],
-          avatar: '',
           likes: [],
           replies: [],
           posts: [],

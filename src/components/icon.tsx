@@ -8,8 +8,8 @@ export default function Icon({width, height, src, className, onClick}:{
   onClick?: ()=>void,
 }){
   return (
-    <div aria-label="profile picture"
-    className={className}
+    <span aria-label="profile picture"
+    className={className+' block'}
     onClick={onClick}
     style={{
       backgroundImage: `url(${src})`,
@@ -18,7 +18,7 @@ export default function Icon({width, height, src, className, onClick}:{
       backgroundPosition: 'center',
       height: `${height}`,
       width: `${width}`
-    }}></div>
+    }}></span>
   )
 }
 

@@ -4,13 +4,20 @@ import people from '../../assets/people.png'
 import { Link } from 'react-router-dom'
 
 import * as routes from '../../constants/route'
+import { useContext } from 'react'
+import { UserCon } from '../../context/UserContext'
 
 export default function SN_Nav() {
 
+  const user = useContext(UserCon)
+
+  if(user?.user==undefined){
+    return null
+  } 
   return (
     <nav className='w-[100%]'>
       <ul className="w-full p-4">
-        <Link to={routes.profile}>
+        <Link to={routes.profile+'/'+user.user.details.username}>
           <li className='flex gap-6 items-center mb-5 font-[600] text-[18px]'>
             <div
               className='w-[25px] h-[25px]'

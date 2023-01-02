@@ -1,7 +1,8 @@
-import { useState } from "react"
+import { useContext, useEffect, useLayoutEffect, useState } from "react"
 import PostItem, { PostItem as itemtype } from "../Dashboard/home/components/PostItem"
 
 import avatar from '../../assets/avatar.jpg'
+import { UserCon } from "../../context/UserContext"
 
 export default function tweets(){
   const [posts, setPosts] = useState<itemtype[]>(/* [{
@@ -38,6 +39,14 @@ export default function tweets(){
     id: 'adfas'
   },
   ] */)
+
+  const user = useContext(UserCon)
+  if(user?.user==undefined){
+    return null
+  }
+  useLayoutEffect(()=>{
+    
+  }, [])
 
   return(
     <section className="flex flex-col justify-center items-center w-[100%]">

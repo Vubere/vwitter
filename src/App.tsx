@@ -4,6 +4,7 @@ import { Routes, Route } from 'react-router-dom'
 import * as routes from './constants/route'
 import ProtectedRoutes from './helpers/ProtectedRoutes'
 
+
 const Signup = lazy(() => import('./pages/Signup'))
 const Login = lazy(() => import('./pages/Login'))
 const Dashboard = lazy(() => import('./pages/Dashboard'))
@@ -15,6 +16,7 @@ const Message = lazy(() => import('./pages/Dashboard/message'))
 const Chat = lazy(() => import('./pages/Chat'))
 const ComposeTweet = lazy(() => import('./pages/Dashboard/Compose'))
 const PostPage = lazy(() => import('./pages/Dashboard/PostPage'))
+const ReplyPage = lazy(()=>import('./pages/ReplyPage'))
 const Profile = lazy(() => import('./pages/Profile'))
 
 const Tweets = lazy(() => import('./pages/Profile/tweets'))
@@ -30,28 +32,63 @@ function App() {
       <Routes>
         <Route path={routes.signup} element={<Signup />} />
         <Route path={routes.login} element={<Login />} />
-        <Route path='/' element={<Dashboard />}>
+        <Route path='/' element={
           <ProtectedRoutes>
-            <Route path={routes.home} element={<Home />} />
-            <Route path={routes.search} element={<Search />} />
-            <Route path={routes.notifications} element={<Notification />} />
-            <Route path={routes.messages} element={<Message />} />
-            <Route path={routes.compose} element={<ComposeTweet />} />
+            <Dashboard />
           </ProtectedRoutes>
-           <Route path={routes.postpage} element={<PostPage />} />
+        }>
+          <Route path={routes.home} element={
+            <ProtectedRoutes>
+              <Home />
+            </ProtectedRoutes>
+          } />
+          <Route path={routes.search} element={
+            <ProtectedRoutes>
+              <Search />
+            </ProtectedRoutes>
+          } />
+          <Route path={routes.notifications} element={
+            <ProtectedRoutes>
+              <Notification />
+            </ProtectedRoutes>
+          } />
+          <Route path={routes.messages} element={
+            <ProtectedRoutes>
+              <Message />
+            </ProtectedRoutes>
+          } />
+          <Route path={routes.compose} element={
+            <ProtectedRoutes>
+              <ComposeTweet />
+            </ProtectedRoutes>
+          } />
+          <Route path={routes.postpage} element={<PostPage />} />
         </Route>
-        <ProtectedRoutes>
-          <Route path={routes.users} element={<Users />} />
-          <Route path={routes.todo} element={<Todo />} />
-          <Route path={routes.chat}>
-            <Route path=':chatId' element={<Chat />} />
-          </Route>
-        </ProtectedRoutes>
-        <Route path={routes.profile} element={<Profile />}>
-          <Route index element={<Tweets />} />
-          <Route path='/profile/replies' element={<Replies />} />
-          <Route path='/profile/likes' element={<Likes />} />
+        <Route path={routes.users} element={
+          <ProtectedRoutes>
+            <Users />
+          </ProtectedRoutes>
+        } />
+        <Route path={routes.todo} element={
+          <ProtectedRoutes>
+            <Todo />
+          </ProtectedRoutes>
+        } />
+        <Route path={routes.chat}>
+          <Route path=':chatId' element={
+            <ProtectedRoutes>
+              <Chat />
+            </ProtectedRoutes>
+          } />
         </Route>
+        <Route path={'reply'}>
+          <Route path=':reply' element={
+            <ProtectedRoutes>
+              <ReplyPage />
+            </ProtectedRoutes>
+          } />
+        </Route>
+        <Route path={`${routes.profile}/:username`} element={<Profile />} />
       </Routes>
     </div>
   )
