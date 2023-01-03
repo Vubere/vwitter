@@ -1,5 +1,5 @@
-import { useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { useContext, useState } from "react"
+import { Link, useNavigate, useParams } from "react-router-dom"
 
 import { PostItem } from "../home/components/PostItem"
 import Icon from "../../../components/icon"
@@ -13,6 +13,10 @@ import likeFilled from '../home/components/Reactions/likeFilled.png'
 import retweet from '../home/components/Reactions/retweet.png'
 import retweetFilled from '../home/components/Reactions/retweetFilled.png'
 import Comment from "./components/comment"
+import { arrayRemove, arrayUnion, deleteDoc, doc, setDoc, updateDoc } from "firebase/firestore"
+import { getAuth } from "firebase/auth"
+import { UserCon } from "../../../context/UserContext"
+import { db } from "../../../main"
 
 
 
@@ -68,7 +72,91 @@ export default function PostPage() {
     date: '20m',
     id: 'dah'
   } */)
+  const { postId } = useParams()
+  if (!post || !postId) {
+    return null
+  }
   const navigate = useNavigate()
+
+  const [likedCheck, setLiked] = useState<string[]>(post.likes)
+  const [retweeted, setRetweeted] = useState<string[]>(post.retweets)
+  const { currentUser } = getAuth()
+  const user = useContext(UserCon)
+
+  const toggleLike = async () => {
+    if (currentUser) {
+      const docRef = doc(db, 'posts', postId)
+      const userRef = doc(db, 'users', currentUser.uid)
+      if (likedCheck.includes(currentUser.uid)) {
+        try {
+           await updateDoc(docRef, {
+            likes: arrayRemove(currentUser.uid)
+          })
+          setLiked(likedCheck.filter(v => v != currentUser.uid))
+          await updateDoc(userRef, {
+            likes: arrayRemove(postId)
+          })
+        } catch (err) {
+
+        }
+      } else {
+        try {
+          await updateDoc(docRef, {
+            likes: arrayUnion(currentUser.uid)
+          })
+          setLiked(likedCheck.concat([currentUser.uid]))
+          await updateDoc(docRef, {
+            likes: arrayUnion(postId)
+          })
+        } catch (err) {
+
+        }
+      }
+    }
+  }
+
+  const toggleRetweet = async () => {
+    const docRef = doc(db, 'posts', postId)
+    if (currentUser && user?.user) {
+      if (retweeted.includes(currentUser.uid)) {
+        try {
+          await updateDoc(docRef, {
+            retweets: arrayRemove(currentUser.uid)
+          })
+          setRetweeted(retweeted.filter(i => i != currentUser.uid))
+          const userRef = doc(db, 'users', currentUser.uid)
+          await updateDoc(userRef, {
+            posts: arrayRemove(postId + '' + currentUser.uid)
+          })
+          const delRef = doc(db, 'posts', postId + '' + currentUser.uid)
+          await deleteDoc(delRef)
+        } catch (err) {
+
+        }
+      } else {
+        try {
+          await updateDoc(docRef, {
+            retweets: arrayUnion(currentUser.uid)
+          })
+          setRetweeted(retweeted.concat([currentUser.uid]))
+          const userRef = doc(db, 'users', currentUser.uid)
+          const retId = postId + '' + currentUser.uid
+          const retRef = doc(db, 'posts', retId)
+          await setDoc(retRef, {
+            ...post,
+            type: retweet,
+            retweeter: user.user.details
+          })
+          await updateDoc(userRef, {
+            posts: arrayUnion(retId),
+          })
+        } catch (err) {
+
+        }
+      }
+    }
+  }
+
 
   if (post == undefined) {
     return (<p>loading</p>)
@@ -108,17 +196,20 @@ export default function PostPage() {
           </div>
           <div className="flex  w-[75%] justify-between p-5 h-[30px]">
             <p className='text-[12px] text-[#fff4] flex gap-1 items-center'>
-              <Icon
-                src={reply}
-                width="20px"
-                height='20px'
-              />
+              <Link to={'/reply/' + postId}>
+                <Icon
+                  src={reply}
+                  width="20px"
+                  height='20px'
+                />
+              </Link>
             </p>
             <p className='text-[12px] text-[#fff4] flex gap-1 items-center'>
               <Icon
                 src={retweet}
                 width="25px"
                 height='25px'
+                onClick={toggleRetweet}
               />
             </p>
             <p className='text-[12px] text-[#fff4] flex gap-1 items-center'>
@@ -126,13 +217,14 @@ export default function PostPage() {
                 src={like}
                 width="20px"
                 height='20px'
+                onClick={toggleLike}
               />
             </p>
           </div>
         </section>
       </section>
       <section className="flex flex-col justify-center">
-        {post.comments.map((item) => <Comment details={item} postowner={post.post_owner}/>)}
+        {post.comments.map((item) => <Comment details={item} postowner={post.post_owner} />)}
       </section>
     </section>
   )

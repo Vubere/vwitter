@@ -1,15 +1,25 @@
-import { Comments, user_details } from "../../home/components/PostItem";
+import { Comments} from "../../home/components/PostItem";
+import { user_info } from "../../../../context/UserContext";
+
 import Avatar from "../../../../components/icon"
 
 import avatar from '../../../../assets/avatar.jpg'
-import Reactions from "../../home/components/Reactions"
 
+import Icon from "../../../../components/icon";
 
+import { getAuth } from "firebase/auth";
 
-export default function Comment({details, postowner}:{details:Comments, postowner:user_details}){
+import like from '../../home/components/Reactions/like.png'
+import likeFilled from '../../home/components/Reactions/likeFilled.png'
+import { useState } from "react";
+import { details } from "../../../Signup/signupFlow";
 
+export default function Comment({details, postowner}:{details:Comments, postowner:details}){
+  const [likedCheck, setLikes] = useState<string[]>(details.likes)
 
   const {text, likes, commentOwner, photoUrl, replies,date } = details
+
+  const {currentUser} = getAuth()
 
 
   return(
@@ -25,7 +35,7 @@ export default function Comment({details, postowner}:{details:Comments, postowne
         </div>
         <div className="w-full pr-4">
           <div className="flex gap-1">
-            <p className="font-[600]">{commentOwner.full_name}</p>
+            <p className="font-[600]">{commentOwner.name}</p>
             <p className="text-[#fff6]">@{commentOwner.username}</p>
             <p className="text-[#fff6]">{date}</p>
           </div>
@@ -37,7 +47,16 @@ export default function Comment({details, postowner}:{details:Comments, postowne
                 width='100%' className='rounded-[10px]' />
             </div>
           </div>
-          <Reactions likes={likes} comments={replies} />
+          <div className='flex justify-between pt-3 w-[85%]'>
+            <p className='text-[12px] text-[#fff4] flex gap-1 items-center'>
+              <Icon
+                src={currentUser ? likedCheck.includes(currentUser.uid) ? likeFilled : like : like}
+                width="20px"
+                height='20px'
+              />{' '}
+              {likes.length}
+            </p>
+          </div>
         </div>
       </section>
     </div>

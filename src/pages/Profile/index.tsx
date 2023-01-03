@@ -1,5 +1,5 @@
 import { Link, Outlet, useNavigate, useParams } from "react-router-dom";
-import { lazy, useContext, useLayoutEffect, useState } from "react";
+import { lazy, useContext, useDeferredValue, useLayoutEffect, useState } from "react";
 
 
 import Icon from "../../components/icon";
@@ -8,7 +8,7 @@ import Back from "../../components/Back";
 
 
 import * as routes from '../../constants/route'
-import { user_details } from "../Dashboard/home/components/PostItem";
+
 import getUserByUsername from "../../services/getUserByUsername";
 import UserContext, { UserCon, user_info } from "../../context/UserContext";
 
@@ -32,34 +32,38 @@ export default function Profile() {
   useLayoutEffect(() => {
     if (username) {
       const fetchUser = async () => {
-        const userDetails = await getUserByUsername(username)
-        setUser(userDetails)
+        try{
+          const userDetails = await getUserByUsername(username)
+          setUser(userDetails)
+        }catch(err){
+          navigate(-1)
+        }
       }
       fetchUser()
     }
-    console.log(username)
+   
   }, [username])
-  if (!user ) {
+  if (!user ||currentUser==null) {
     return null
   }
+  console.log(user.id, currentUser.uid)
 
   return (
     <div>
       <header>
-        <div className="relative">
+        <div className="relative h-[120px] w-full border-b border-[#fff1]">
           <div className=" absolute left-2 top-2 bg-[#0003] rounded-full p-1">
             <Back click={() => navigate('/home')} className="w-[20px] h-[20px]" />
           </div>
-          <Icon src={avatar}
-            width="100%" height='120px' />
-          <Icon src={avatar}
-            width='70px' height='70px' className='rounded-full outline outline-black absolute bottom-[-30px] left-[15px]' />
+        
+          <Icon src={user.details.avatar || avatar}
+            width='70px' height='70px' className='rounded-full outline outline-[#fff1] absolute bottom-[-30px] left-[15px]' />
         </div>
-        {currentUser?.uid == user.id ? (<Link to={routes.editprofile} className='w-full'>
+        {currentUser.uid == user.id ? (<Link to={routes.edit_profile+'/'+user.id} className='w-full'>
           <button className="float-right border border-[#fff4]  rounded-full w-[110px] h-[35px] m-2 clear-both">Edit Profile</button>
-        </Link>) : (<div className="flex flex-row gap-2 float-right clear-both">
+        </Link>) : (<div className="flex flex-row gap-2 float-right clear-both items-center">
           <Link to={'/chat' + '/' + user.details.username}>
-            <Icon src={mail} width='30px' height="30px" />
+            <Icon src={mail} width='26px' height="26px" />
           </Link>
           <button className=" border border-[#fff4]  rounded-full w-[90px] h-[35px] m-2">
             {UserInfo?.user?.following.includes(user.id) ? 'unfollow' : 'follow'}

@@ -54,8 +54,8 @@ export default function stepThree({ next, prev }: {
       }
     }
   }
-  const submit = () => {
-    signup()()
+  const submit = async () => {
+    await signup()()
     next()
   }
 
@@ -82,7 +82,7 @@ export default function stepThree({ next, prev }: {
           <img src={check} alt=''
             width='20px' height='20px' className='absolute right-[30px]' />
         </p>
-        <FlowButton click={submit} className='fixed bottom-[15px]'>
+        <FlowButton click={submit} className='fixed bottom-[15px] w-[86%]'>
           Next
         </FlowButton>
       </div>

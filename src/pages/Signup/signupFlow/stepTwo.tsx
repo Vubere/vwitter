@@ -56,12 +56,13 @@ export default function StepTwo({next, prev}:{
         changeHandler={(e)=>setPwd(e.target.value)}/>
         <Input
         type="password"
+        id='confirmPwd'
         name="Confirm Password"
         value={conPwd}
         placeholder=""
         className="w-[90%] mt-6"
         changeHandler={(e)=>setConPwd(e.target.value)}/>
-        <FlowButton className='fixed bottom-[15px]'>
+        <FlowButton className='fixed w-[86%] bottom-[15px]'>
           Next
         </FlowButton>
       </form>

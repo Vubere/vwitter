@@ -1,7 +1,7 @@
-import { getAuth } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import React, { createContext, useEffect, useState } from "react";
 import { details } from "../pages/Signup/signupFlow";
-import { Dispatch, SetStateAction } from "react";
+
 
 export const UserCon = createContext < {
   user: user_info | undefined, setUser: (u:user_info|undefined)=>void}|undefined>(undefined)
@@ -9,24 +9,31 @@ export const UserCon = createContext < {
 export default function UserContext({children}:{children:React.ReactNode}){
 
   const [user, set] = useState<user_info|undefined>()
+
   const auth = getAuth()
 
   const setUser = (u:user_info|undefined) => {
-    localStorage.setItem('user', JSON.stringify(u))
-    set(u)
+    if(u){
+      localStorage.setItem('user', JSON.stringify(u))
+      set(u)
+    }  
   }
 
   
   useEffect(()=>{
-    if(auth.currentUser!=null){
+  
       const ls = localStorage.getItem('user') 
       if(ls){
         const lsUser:user_info = JSON.parse(ls)
         set(lsUser)
+        if(auth.currentUser==null){
+         (async () => {
+          await signInWithEmailAndPassword(auth, lsUser.details.email, lsUser.details.password)
+          
+         })()
+        }
       }
-    }else{
-      localStorage.removeItem('user')
-    }
+    
   }, [])
 
   return(

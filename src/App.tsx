@@ -24,6 +24,7 @@ const Likes = lazy(() => import('./pages/Profile/likes'))
 const Replies = lazy(() => import('./pages/Profile/replies'))
 const Users = lazy(() => import('./pages/users'))
 const Todo = lazy(() => import('./pages/Todo'))
+const EditProfile = lazy(()=>import('./pages/EditProfile'))
 
 function App() {
 
@@ -62,7 +63,9 @@ function App() {
               <ComposeTweet />
             </ProtectedRoutes>
           } />
-          <Route path={routes.postpage} element={<PostPage />} />
+          <Route path={routes.postpage} >
+            <Route path=':postId' element={<PostPage />}/>
+          </Route>
         </Route>
         <Route path={routes.users} element={
           <ProtectedRoutes>
@@ -89,6 +92,7 @@ function App() {
           } />
         </Route>
         <Route path={`${routes.profile}/:username`} element={<Profile />} />
+        <Route path={`${routes.edit_profile}/:username`} element={<EditProfile />} />
       </Routes>
     </div>
   )

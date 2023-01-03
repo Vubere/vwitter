@@ -7,14 +7,15 @@ export default function Input({
   value,
   changeHandler,
   inputClassname,
+  id,
   placeholder
 }:InputType) {
   const inputRef:any = useRef()
   return (
-    <label htmlFor={type} className={`w-[100%] h-[60px] border pl-2 bg-transparent border-[#fff4] text-[#fff5] rounded-[5px] flex flex-col justify-center ${className}`}>
+    <label htmlFor={id||type} className={`w-[100%] h-[60px] border pl-2 bg-transparent border-[#fff4] text-[#fff5] rounded-[5px] flex flex-col justify-center ${className}`}>
       {name}
       <input
-        id={type}
+        id={id||type}
         ref={inputRef}
         name={name}
         type={type}
@@ -29,6 +30,7 @@ export default function Input({
 
 type InputType = {
   type: string,
+  id?: string,
   name: string,
   className?: string,
   value: string,

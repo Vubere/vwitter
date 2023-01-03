@@ -1,20 +1,25 @@
 import { useContext, useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import Back from "../../components/Back";
 import Icon from '../../components/icon';
+import Cancel from '../../components/CancelIcon';
 
 import avatar from '../../../assets/avatar.jpg'
 import imagePic from '../../../assets/image.png'
-import { arrayUnion, doc, setDoc, updateDoc } from 'firebase/firestore';
-import { db } from '../../main';
-import { getAuth } from 'firebase/auth';
-import { UserCon } from '../../context/UserContext';
-import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
 
-import Cancel from '../../components/CancelIcon';
+import { arrayUnion, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
+import { getAuth } from 'firebase/auth';
+import { db } from '../../main';
+
+
+import { UserCon } from '../../context/UserContext';
+
+import Postshow, { PostItem } from '../Dashboard/home/components/PostItem';
 
 export default function SendPost() {
+  const { reply } = useParams()
   const [post, setPost] = useState('')
   const [image, setImage] = useState<any>()
   const navigate = useNavigate()
@@ -26,9 +31,25 @@ export default function SendPost() {
   const { currentUser } = getAuth()
   const context = useContext(UserCon)
 
+  const [details, setDetails] = useState<PostItem>()
 
+  if (!details) {
+    return null
+  }
   useEffect(() => {
     input_ref.current.focus()
+  }, [])
+  useEffect(() => {
+    (async () => {
+      if (reply && currentUser) {
+        const docRef = doc(db, 'posts', reply)
+        const res = await getDoc(docRef)
+        const data = res.data() as PostItem | undefined
+        if (data) {
+          setDetails(data)
+        }
+      }
+    })()
   }, [])
 
   const handleFileChange = (e: any) => {
@@ -50,13 +71,12 @@ export default function SendPost() {
   }
   const submit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (currentUser && context?.user) {
+    if (currentUser && context?.user && reply) {
       try {
         const user = context.user
-        const id = currentUser.uid + '' + Date.now()
-        const docRef = doc(db, 'posts', id)
+        const docRef = doc(db, 'posts', reply)
         const storage = getStorage()
-        const filePath = `users/${currentUser.uid}/post/${Date.now}`
+        const filePath = `users/${currentUser.uid}/post/replies/${Date.now}`
         const storageRef = ref(storage, filePath)
         let path = ''
         if (image != undefined) {
@@ -64,30 +84,23 @@ export default function SendPost() {
           path = await getDownloadURL(res.ref)
         }
         await setDoc(docRef, {
-          type: 'tweet',
-          comments: [],
-          post_owner: {
-            avatar: user.details.avatar,
-            username: user.details.username,
-            full_name: user.details.name,
-            id: user.id
-          },
-          photoUrl: path || '',
-          likes: [],
-          caption: post,
-          date: Date.now(),
-          id: id
+          ...details,
+          comments: arrayUnion({
+            text: post,
+            photoUrl: path,
+            replies: [],
+            likes: [],
+            commentOwner: context.user,
+            date: Date.now(),
+            postOwner: details.post_owner
+          })
         })
-        const userRef = doc(db, 'users', currentUser.uid)
-        await updateDoc(userRef, {
-          posts: arrayUnion(id)
-        })
+
         setImage(undefined)
         imageRef.current.value = undefined
       } catch (err) {
 
       }
-
     }
   }
 
@@ -97,6 +110,32 @@ export default function SendPost() {
         className="w-[20px] h-[20px] absolute top-2 left-3"
         click={() => navigate('/home')} />
       <Icon width='50px' height='50px' src={avatar} className='rounded-full min-w-[50px]' />
+      <section className="w-[80%] p-3 pt-2 pt-6 pb-5 flex gap-1 border border-[#fff2] flex-col">
+        <div className="flex gap-3">
+          <div>
+            <Icon
+              src={`${details.post_owner.avatar != '' ? details.post_owner.avatar : avatar}`}
+              width='45px'
+              height="45px"
+              className="rounded-full"
+            />
+          </div>
+          <div className="w-full pr-4">
+            <div className="flex gap-1">
+              <p className="font-[600]">{details.post_owner.name}</p>
+              <p className="text-[#fff6]">@{details.post_owner.username}</p>
+              <p className="text-[#fff6]">{details.date}</p>
+            </div>
+            <div>
+              <p className="text-[#fff9] pb-3">{details.caption}</p>
+              <div className="max-h-[300px] overflow-hidden flex items-center rounded-[10px]">
+                <img src={details.photoUrl}
+                  width='100%' className='rounded-[10px]' />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
       <form onSubmit={submit} className='w-[95%] h-[150px]'>
 
         <textarea name="post" id="post"

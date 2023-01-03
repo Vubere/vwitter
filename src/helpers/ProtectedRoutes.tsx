@@ -1,19 +1,34 @@
-import React, {useEffect} from "react"
-import { getAuth } from "firebase/auth"
+import React, { useContext, useEffect, useState } from "react"
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth"
 import { Navigate, useNavigate } from "react-router-dom"
+import { UserCon, user_info } from "../context/UserContext"
 
-export default function ProtectedRoutes({children}:{children:React.ReactNode}){
+
+export default function ProtectedRoutes({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate()
-  const {currentUser} = getAuth()
+  const auth = getAuth()
 
-  useEffect(()=>{
-    if(currentUser==null){
+  
+  const [userauth, setUserAuth] = useState<any>(auth.currentUser)
+
+  useEffect(() => {
+    const ls = localStorage.getItem('user')
+    if (ls) {
+      const user:user_info = JSON.parse(ls)
+      if (auth.currentUser == null) { 
+        (async () => {
+          if (user?.details)
+          await signInWithEmailAndPassword(auth, user.details.email, user.details.password)
+          setUserAuth(auth.currentUser)
+        })()
+      }
+    } else {
       navigate('/login')
     }
   }, [])
-  return(
+  return (
     <>
-      {currentUser&&children}
+      {userauth && children}
     </>
   )
 }

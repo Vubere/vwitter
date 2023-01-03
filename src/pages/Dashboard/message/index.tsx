@@ -8,44 +8,53 @@ import { Sidenav } from '..'
 import avatar from '../../../assets/avatar.jpg'
 import searchImg from '../../../components/assets/search.png'
 
-import { user_details } from '../home/components/PostItem'
+
+import { UserCon } from '../../../context/UserContext'
+
+import { details } from '../../Signup/signupFlow'
 
 
 export default function Messages() {
   const { sidenavOpen, setSidenav } = useContext(Sidenav)
   const [messages, setMessages] = useState<message[] | undefined>([
     {
-    user_details:{
-      full_name: 'Victor Ubere',
-      username: "vubere",
-      avatar: '',
-      id: ''
+      user_details: {
+        name: 'Victor Ubere',
+        username: "vubere",
+        avatar: '',
+        id: ''
+      },
+      date: 'Dec 29',
+      text: 'what"s up',
+      photo_url: '',
+      id: 'dd'
     },
-    date: 'Dec 29',
-    text: 'what"s up',
-    photo_url: '',
-    id: 'dd'
-  },
     {
-    user_details:{
-      full_name: 'Victor Ubere',
-      username: "vubere",
-      avatar: '',
-      id: ''
+      user_details: {
+        name: 'Victor Ubere',
+        username: "vubere",
+        avatar: '',
+        id: ''
+      },
+      date: 'Dec 29',
+      text: 'what"s up',
+      photo_url: '',
+      id: 'gg'
     },
-    date: 'Dec 29',
-    text: 'what"s up',
-    photo_url: '',
-    id:'gg'
-  },
-]
+  ]
   )
+  const context = useContext(UserCon)
+
+  if(!context?.user?.details){
+    
+    return null
+  }
 
   return (
     <section>
       <header className='p-3 flex gap-4 items-center border-b border-[#fff1]'>
         <Icon
-          src={avatar}
+          src={context.user.details.avatar || avatar}
           width='30px'
           height='30px'
           className='rounded-full'
@@ -54,14 +63,14 @@ export default function Messages() {
       </header>
       <main className='p-3 w-full'>
         <form onSubmit={() => null} className="relative ml-auto mr-auto w-[100%]">
-          <input type="text" 
-          className='bg-transparent w-[100%] rounded-full h-[40px] pl-9 placeholder-[#fff4] border border-[#fff4]'
-          placeholder='Search Direct Messages'/>
+          <input type="text"
+            className='bg-transparent w-[100%] rounded-full h-[40px] pl-9 placeholder-[#fff4] border border-[#fff4]'
+            placeholder='Search Direct Messages' />
           <button className='absolute left-3 top-[50%] transform translate-y-[-50%]'><Icon width='15px' height='14px' src={searchImg} className="" /></button>
         </form>
         <section className='mt-6 '>
           {messages ?
-            messages.map((item) => <MessageDisplay key={item.id} item={item}/>) :
+            messages.map((item) => <MessageDisplay key={item.id} item={item} />) :
             <p className='text-[#fff8]'>You have no open chat...</p>}
         </section>
       </main>
@@ -71,7 +80,12 @@ export default function Messages() {
 
 
 export type message = {
-  user_details: user_details,
+  user_details: {
+    name: string,
+    username: string,
+    avatar: string,
+    id: string
+  },
   text: string,
   photo_url: string,
   date: string,

@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 
 
 import Back from "../../../components/Back"
@@ -33,17 +33,18 @@ export default function stepFour({ close }: {
   const userCon = useContext(UserCon)
   const auth = getAuth()
 
-  const [file, setFile] = useState<any>(undefined)
+  const [files, setFiles] = useState<any>(undefined)
   const [ava, setAva] = useState<any>(undefined)
 
   const imageRef = useRef<any>()
+  const fileRef = useRef<any>()
   const navigate = useNavigate()
 
 
-  console.log(ava, file)
+
   const handleFileChange = (e: any) => {
-    setFile(e.target.file)
-    if (file ) {
+    const file = e.target.files
+    if (file) {
       setAva(file[0])
       if (file[0]) {
         const reader = new FileReader()
@@ -71,18 +72,18 @@ export default function stepFour({ close }: {
         const storageRef = ref(storage, filePath)
         let path = ''
 
-        const res = await uploadBytes(storageRef, file)
+        const res = await uploadBytes(storageRef, ava)
         path = await getDownloadURL(res.ref)
         const docRef = doc(db, 'users', auth.currentUser.uid)
         await setDoc(docRef, {
-          ['details.avatar']:path
+          ['details.avatar']: path
         }, { merge: true })
         updateProfile(auth.currentUser, {
           photoURL: path
         })
         if (userCon) {
           if (userCon.user)
-            userCon.setUser({ ...userCon.user, details:{...userCon.user.details, avatar: path} })
+            userCon.setUser({ ...userCon.user, details: { ...userCon.user.details, avatar: path } })
         }
       }
     } catch (error) {
@@ -116,15 +117,16 @@ export default function stepFour({ close }: {
     }
   }
 
-  const submit = (e: any) => {
-    e.preventDefault()
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    (async()=>{
+      await  updateUsername()
+      if (ava)
+        await updateAvatar()
+      done()
     
-    updateAvatar()
-    if(ava)
-    updateUsername()
-    if (auth.currentUser) {
-      navigate('/home')
-    }
+    })()
+
   }
   const done = () => {
     close()
@@ -139,7 +141,7 @@ export default function stepFour({ close }: {
       </div>
 
       <h3 className='w-[90%] ml-auto mr-auto mt-8 font-[700] text-[22px]'>Pick Username and Profile Picture</h3>
-      <form onSubmit={e => e.preventDefault}
+      <form onSubmit={submit}
         className="w-[90%] flex flex-col items-center mr-auto ml-auto">
 
         <Input
@@ -164,11 +166,11 @@ export default function stepFour({ close }: {
               }}></div>
           </div>
           <input type="file" name="profile" id="file"
-            value={file}
+            ref={fileRef}
             onChange={handleFileChange}
             className="hidden" />
         </label>
-        <FlowButton click={close} className='fixed bottom-[15px]'>
+        <FlowButton className='w-[86%] fixed bottom-[15px]'>
           Complete
         </FlowButton>
       </form>

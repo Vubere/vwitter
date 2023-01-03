@@ -20,7 +20,7 @@ export default function MessageDisplay({ item }: { item: message }) {
         item.id}>
           <div className="flex h-[14px] gap-2">
             <div className="flex h-[16px] gap-[7px]">
-              <p className="font-[600] text-[14px]">{item.user_details.full_name}</p>
+              <p className="font-[600] text-[14px]">{item.user_details.name}</p>
               <p className="text-[#fff6] text-[14px]">@{item.user_details.username.slice(0, 20)}</p>
             </div>
             <span className="flex items-center h-[14px] justify-center font-[700] text-[#fff6]">.</span>

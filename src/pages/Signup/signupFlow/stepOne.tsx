@@ -14,9 +14,9 @@ export default function StepOne({ close, next }: {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [dob, setDob] = useState({
-    year: '',
-    month: '',
-    day: ''
+    year: '2000',
+    month: '6',
+    day: '2'
   })
   const [error, setError] = useState('')
   const { details, setDetails } = useContext(FlowContext)
@@ -105,7 +105,7 @@ function Options({ min, max }: { min: number, max: number }) {
   }
   return (
     <>
-      {arr.map((item) => (<option className='bg-black p-3' value={item}>{item}</option>))}
+      {arr.map((item) => (<option className='bg-black p-3' key={item} value={item}>{item}</option>))}
     </>
   )
 }

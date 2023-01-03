@@ -12,6 +12,7 @@ import { details } from "../../../Signup/signupFlow"
 export default function PostItem({ id }: {id:string}) {
   const [details, setDetails] = useState<PostItem>()
 
+
   useLayoutEffect(()=>{
     (async ()=>{
       const post = await getPostById(id)
@@ -20,6 +21,9 @@ export default function PostItem({ id }: {id:string}) {
       }
     })()
   }, [id])
+
+  
+
   if(details==undefined){
     return null
   }

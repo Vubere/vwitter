@@ -19,7 +19,10 @@ export default function Home() {
   
   const context = useContext(UserCon)
   
-  const [posts, setPosts] = useState<string[]>(/* [{
+  if(context==undefined||context.user==undefined){
+    return null
+  }
+  const [posts, setPosts] = useState<string[]>(context.user.posts/* [{
     type: 'retweet',
     retweeter: {
       avatar: '',
@@ -59,9 +62,6 @@ export default function Home() {
     id: 'adfas'
   },
 ] */)
-if(posts==undefined||context==undefined||context.user==undefined){
-  return null
-}
 
   useLayoutEffect(()=>{
     if(context.user){
@@ -88,7 +88,7 @@ if(posts==undefined||context==undefined||context.user==undefined){
         <Avatar
           width="30px"
           height="30px"
-          src={avatar}
+          src={context.user.details.avatar||avatar}
           className='rounded-full left-3 top-4'
           onClick={() => setSidenav(!sidenavOpen)} />
         <h2 className='font-[600] text-[18px]'>Home</h2>
@@ -98,7 +98,8 @@ if(posts==undefined||context==undefined||context.user==undefined){
           <Link to={routes.postpage} key={item}>
             <PostItem id={item} />
           </Link>
-        ) : <p className='text-[#fff6] m-3 text-[14px]'>Follow users to see feed content...</p>}
+        ) : <p className='text-[#fff6] m-3 text-[14px]'>Follow users to see feed content...
+        <Link to={routes.users} className='m-2 bg-[#00acee] block border w-[120px] font-[600] text-[16px] text-white text-center p-2 rounded-full border-[#fff1]'>See Users</Link></p>}
       </section>
       <Link to={routes.compose} className='absolute bottom-[70px] right-[10px]'>
         <button className={`block w-[55px] h-[55px] rounded-full bg-[#447cef] z-20 flex items-center justify-center`}>

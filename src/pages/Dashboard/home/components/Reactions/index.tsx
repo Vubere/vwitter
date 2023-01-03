@@ -19,28 +19,34 @@ export default function Reactions({ details, id, likes, comments, retweets }: { 
 
   const [likedCheck, setLiked] = useState<string[]>(likes)
   const [retweeted, setRetweeted] = useState<string[]>(retweets)
-  const [replies, setReplies] = useState<Comments[]>(comments)
   const { currentUser } = getAuth()
   const user = useContext(UserCon)
 
   const toggleLike = async () => {
     if (currentUser) {
       const docRef = doc(db, 'posts', id)
+      const userRef = doc(db, 'users', currentUser.uid)
       if (likedCheck.includes(currentUser.uid)) {
         try {
-          const res = await updateDoc(docRef, {
+          await updateDoc(docRef, {
             likes: arrayRemove(currentUser.uid)
           })
           setLiked(likedCheck.filter(v => v != currentUser.uid))
+          await updateDoc(userRef, {
+            likes: arrayRemove(currentUser.uid)
+          })
         } catch (err) {
 
         }
       } else {
         try {
-          const res = await updateDoc(docRef, {
+          await updateDoc(docRef, {
             likes: arrayUnion(currentUser.uid)
           })
           setLiked(likedCheck.concat([currentUser.uid]))
+          await updateDoc(userRef, {
+            likes: arrayUnion(currentUser.uid)
+          })
         } catch (err) {
 
         }

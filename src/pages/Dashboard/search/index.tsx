@@ -1,12 +1,12 @@
 import { useState } from 'react'
-import { user_details } from '../home/components/PostItem'
+import { user_info } from '../../../context/UserContext'
 
 
 import SearchHeader from "./header"
 import SearchResult from "./searchResult"
 
 export default function Search() {
-  const [result, setSearchResult] = useState<user_details[] | string|undefined>()
+  const [result, setSearchResult] = useState<user_info[] | undefined>()
   const [search, setSearch] = useState('')
 
   return (

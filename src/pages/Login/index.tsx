@@ -46,7 +46,7 @@ export default function Login() {
 
         if (h) {
           setLoginModal(false)
-          console.log(h.user.uid)
+          
           const details = await getUserById(h.user.uid)
           
           navigate('/home')
@@ -61,8 +61,6 @@ export default function Login() {
   return (
     <div className="flex flex-col items-center">
       <header className="relative flex justify-center w-full p-3">
-        <Cancel onClick={() => null}
-          className="absolute left-[18px] top-[18px]" />
         <TwitterIcon />
       </header>
       <div className='flex flex-col justify-center h-[80vh]'>
