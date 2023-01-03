@@ -11,7 +11,7 @@ export default function Search() {
 
   return (
     <section>
-      <SearchHeader  search={search} setSearch={setSearch}/>
+      <SearchHeader  search={search} setSearch={setSearch} setSearchResult={setSearchResult}/>
       {
         result!=undefined?
       <SearchResult result={result} search={search} />:

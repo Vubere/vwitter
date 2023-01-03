@@ -74,6 +74,7 @@ export default function SendPost() {
           },
           photoUrl: path||'',
           likes: [],
+          retweets: [],
           caption: post,
           date: Date.now(),
           id: id

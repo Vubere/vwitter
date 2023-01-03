@@ -1,4 +1,4 @@
-import { useContext, useState } from "react"
+import { useContext, useLayoutEffect, useState } from "react"
 import { Link, useNavigate, useParams } from "react-router-dom"
 
 import { PostItem } from "../home/components/PostItem"
@@ -17,6 +17,8 @@ import { arrayRemove, arrayUnion, deleteDoc, doc, setDoc, updateDoc } from "fire
 import { getAuth } from "firebase/auth"
 import { UserCon } from "../../../context/UserContext"
 import { db } from "../../../main"
+import getUserById from "../../../services/getUserById"
+import getPostById from "../../../services/getPostById"
 
 
 
@@ -72,27 +74,47 @@ export default function PostPage() {
     date: '20m',
     id: 'dah'
   } */)
+
   const { postId } = useParams()
-  if (!post || !postId) {
-    return null
-  }
   const navigate = useNavigate()
 
-  const [likedCheck, setLiked] = useState<string[]>(post.likes)
-  const [retweeted, setRetweeted] = useState<string[]>(post.retweets)
   const { currentUser } = getAuth()
   const user = useContext(UserCon)
+  const [likes, setLiked] = useState<string[]>([])
+  const [retweeted, setRetweeted] = useState<string[]>([])
 
+  useLayoutEffect(() => {
+    if (postId) {
+      (async () => {
+        const post = await getPostById(postId)
+
+        if (post) {
+          setPost(post)
+          setLiked(post.likes)
+          setRetweeted(post.retweets)
+        }
+      })()
+    }
+  }, [postId])
+  if (post == undefined) {
+    return (<p>loading...</p>)
+  }
+  
+  
+  if (!postId) {
+    navigate('/home')
+    return null
+  }
   const toggleLike = async () => {
-    if (currentUser) {
+    if (currentUser && user?.user?.details) {
       const docRef = doc(db, 'posts', postId)
       const userRef = doc(db, 'users', currentUser.uid)
-      if (likedCheck.includes(currentUser.uid)) {
+      if (likes?.includes(currentUser.uid)) {
         try {
-           await updateDoc(docRef, {
+          setLiked(likes?.filter(v => v != currentUser.uid))
+          await updateDoc(docRef, {
             likes: arrayRemove(currentUser.uid)
           })
-          setLiked(likedCheck.filter(v => v != currentUser.uid))
           await updateDoc(userRef, {
             likes: arrayRemove(postId)
           })
@@ -101,12 +123,33 @@ export default function PostPage() {
         }
       } else {
         try {
+          setLiked(likes?.concat([currentUser.uid]))
           await updateDoc(docRef, {
             likes: arrayUnion(currentUser.uid)
           })
-          setLiked(likedCheck.concat([currentUser.uid]))
-          await updateDoc(docRef, {
+
+          await updateDoc(userRef, {
             likes: arrayUnion(postId)
+          })
+          const ownerRef = doc(db, 'users', post.post_owner.id)
+          const notifId = postId + 'l' + currentUser.uid
+          const notifRef = doc(db, 'notifications', notifId)
+          await updateDoc(notifRef, {
+            type: 'like',
+            user: {
+              username: user?.user?.details.id,
+              name: user?.user?.details.name,
+              avatar: user?.user?.details.avatar,
+              id: user?.user?.details.id
+            },
+            ref: {
+              res: 'tweet',
+              info: `${post.caption}`
+            },
+            id: notifId
+          })
+          await updateDoc(ownerRef, {
+            notifications: arrayUnion([notifId])
           })
         } catch (err) {
 
@@ -117,7 +160,7 @@ export default function PostPage() {
 
   const toggleRetweet = async () => {
     const docRef = doc(db, 'posts', postId)
-    if (currentUser && user?.user) {
+    if (currentUser && user?.user?.details) {
       if (retweeted.includes(currentUser.uid)) {
         try {
           await updateDoc(docRef, {
@@ -150,6 +193,26 @@ export default function PostPage() {
           await updateDoc(userRef, {
             posts: arrayUnion(retId),
           })
+          const ownerRef = doc(db, 'users', post.post_owner.id)
+          const notifId = postId + 'r' + currentUser.uid
+          const notifRef = doc(db, 'notifications', notifId)
+          await updateDoc(notifRef, {
+            type: 'retweet',
+            user: {
+              username: user?.user?.details.id,
+              name: user?.user?.details.name,
+              avatar: user?.user?.details.avatar,
+              id: user?.user?.details.id
+            },
+            ref: {
+              res: 'tweet',
+              info: `${post.caption}`
+            },
+            id: notifId
+          })
+          await updateDoc(ownerRef, {
+            notifications: arrayUnion([notifId])
+          })
         } catch (err) {
 
         }
@@ -158,9 +221,8 @@ export default function PostPage() {
   }
 
 
-  if (post == undefined) {
-    return (<p>loading</p>)
-  }
+
+
   return (
     <section className="overflow-auto pb-20 pt-10">
       <header className="w-full min-h-[20px] p-3 pl-14 bg-black fixed top-0">
@@ -191,8 +253,8 @@ export default function PostPage() {
           </div>
           <div className="flex gap-5 pl-4 items-center h-[50px] border-b border-[#fff4]">
             <p>{post.comments.length} <span className="text-[#fff4]">Replies</span></p>
-            <p>{post.likes.length} <span className="text-[#fff4]">Retweets</span></p>
-            <p>{post.likes.length} <span className="text-[#fff4]">Likes</span></p>
+            <p>{retweeted.length} <span className="text-[#fff4]">Retweets</span></p>
+            <p>{likes.length} <span className="text-[#fff4]">Likes</span></p>
           </div>
           <div className="flex  w-[75%] justify-between p-5 h-[30px]">
             <p className='text-[12px] text-[#fff4] flex gap-1 items-center'>
@@ -206,7 +268,7 @@ export default function PostPage() {
             </p>
             <p className='text-[12px] text-[#fff4] flex gap-1 items-center'>
               <Icon
-                src={retweet}
+                src={user?.user&&retweeted.includes(user.user?.details.id)?retweetFilled:retweet}
                 width="25px"
                 height='25px'
                 onClick={toggleRetweet}
@@ -214,7 +276,7 @@ export default function PostPage() {
             </p>
             <p className='text-[12px] text-[#fff4] flex gap-1 items-center'>
               <Icon
-                src={like}
+                src={user?.user && likes.includes(user.user?.details.id)?likeFilled: like}
                 width="20px"
                 height='20px'
                 onClick={toggleLike}

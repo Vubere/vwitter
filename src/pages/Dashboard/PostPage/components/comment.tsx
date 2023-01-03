@@ -14,7 +14,12 @@ import likeFilled from '../../home/components/Reactions/likeFilled.png'
 import { useState } from "react";
 import { details } from "../../../Signup/signupFlow";
 
-export default function Comment({details, postowner}:{details:Comments, postowner:details}){
+export default function Comment({details, postowner}:{details:Comments, postowner:{
+  name: string,
+  username: string,
+  avatar: string,
+  id: string
+}}){
   const [likedCheck, setLikes] = useState<string[]>(details.likes)
 
   const {text, likes, commentOwner, photoUrl, replies,date } = details

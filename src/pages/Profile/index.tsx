@@ -21,6 +21,7 @@ import mail from '../../components/assets/mail.png'
 
 
 export default function Profile() {
+  
   const navigate = useNavigate()
   const [user, setUser] = useState<user_info | undefined>()
   const { username } = useParams()
@@ -41,7 +42,6 @@ export default function Profile() {
       }
       fetchUser()
     }
-   
   }, [username])
   if (!user ||currentUser==null) {
     return null

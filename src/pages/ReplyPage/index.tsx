@@ -5,8 +5,8 @@ import Back from "../../components/Back";
 import Icon from '../../components/icon';
 import Cancel from '../../components/CancelIcon';
 
-import avatar from '../../../assets/avatar.jpg'
-import imagePic from '../../../assets/image.png'
+import avatar from '../../assets/avatar.jpg'
+import imagePic from '../../assets/image.png'
 
 import { arrayUnion, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
@@ -33,12 +33,12 @@ export default function SendPost() {
 
   const [details, setDetails] = useState<PostItem>()
 
-  if (!details) {
-    return null
-  }
   useEffect(() => {
-    input_ref.current.focus()
-  }, [])
+    if (input_ref.current) {
+      input_ref.current.focus()
+      input_ref.current.scrollIntoView()
+    }
+  }, [details])
   useEffect(() => {
     (async () => {
       if (reply && currentUser) {
@@ -51,6 +51,9 @@ export default function SendPost() {
       }
     })()
   }, [])
+  if (!details) {
+    return null
+  }
 
   const handleFileChange = (e: any) => {
 
@@ -105,13 +108,14 @@ export default function SendPost() {
   }
 
   return (
-    <section className='relative w-full flex gap-3 pt-[50px] p-3'>
-      <Back
-        className="w-[20px] h-[20px] absolute top-2 left-3"
-        click={() => navigate('/home')} />
-      <Icon width='50px' height='50px' src={avatar} className='rounded-full min-w-[50px]' />
-      <section className="w-[80%] p-3 pt-2 pt-6 pb-5 flex gap-1 border border-[#fff2] flex-col">
-        <div className="flex gap-3">
+    <section className='relative w-full flex flex-col gap-3 pt-[50px] p-3 pb-[200px] items-center'>
+      <div className='fixed top-0 w-full h-[45px] bg-[#000d]'>
+        <Back
+          className="w-[20px] h-[20px] fixed top-2 left-3"
+          click={() => navigate(-1)} />
+      </div>
+      <section className="w-[100%] p-3 pt-2 pt-6 pb-5 flex gap-1 border border-[#fff2] flex-col p-3 items-center">
+        <div className="flex flex-col gap-3">
           <div>
             <Icon
               src={`${details.post_owner.avatar != '' ? details.post_owner.avatar : avatar}`}
@@ -141,7 +145,7 @@ export default function SendPost() {
         <textarea name="post" id="post"
           value={post} onChange={({ target }) => setPost(target.value)}
           ref={input_ref} className='resize-none border-b border-[#fff2] bg-transparent placeholder:text-[#fff4] w-[90%] h-[100px]' placeholder="What's happening?"></textarea>
-        <button className='bg-[#447cef] w-[80px] h-[30px] rounded-full absolute top-2 right-3 '>
+        <button className='bg-[#447cef] w-[80px] h-[30px] rounded-full fixed top-2 right-3 '>
           Tweet
         </button>
         <label htmlFor="file" className='pt-3  block'>

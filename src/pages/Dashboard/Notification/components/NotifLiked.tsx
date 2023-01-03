@@ -18,7 +18,7 @@ export default function LikedNotif ({
       />
       <div>
         <Icon src={avatar} width="40px" height="40px" className="rounded-full mb-2 border border-[#fff3]"/>
-        <p className="mb-2"><span className="font-[700]">{details.user.full_name}</span> liked your {details.ref.res}</p>
+        <p className="mb-2"><span className="font-[700]">{details.user.name}</span> {details.type}d your {details.ref.res}</p>
         <p className="text-[#fff4]">{details.ref.info}</p>
       </div>
     </div>

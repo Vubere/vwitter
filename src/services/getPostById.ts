@@ -8,5 +8,5 @@ export default async function getPostById(id:string) {
   const docRef = doc(db, 'posts', id)
   const result = await getDoc(docRef)
   const post = result.data() as PostItem
-  return result.exists()?undefined:post
+  return result.exists()?post:undefined
 }

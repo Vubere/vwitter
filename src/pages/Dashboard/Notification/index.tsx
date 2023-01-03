@@ -4,7 +4,7 @@ import { Sidenav } from ".."
 import Icon from "../../../components/icon"
 import avatar from '../../../assets/avatar.jpg'
 
-import LikedNotif from "./components/LikedNotif"
+import LikedNotif from "./components/NotifLiked"
 import Comment from "../PostPage/components/comment"
 import FollowedNotif from "./components/FollowedNotif"
 import { UserCon } from "../../../context/UserContext"
@@ -91,6 +91,8 @@ export default function Notification() {
           return (<LikedNotif key={item.id} details={item}/>)
         }else if(item.type=='reply'){
           return(<Comment key={item.id} details={item.ref.res} postowner={item.user}/>)
+        }else if(item.type=='retweete'){
+          return (<LikedNotif key={item.id} details={item}/>)
         }else{
           return (
             <FollowedNotif key={item.id} details={item.user}/>
@@ -102,8 +104,13 @@ export default function Notification() {
 }
 
 export type notifications = {
-  type: 'reply'|'like'|'follow',
-  user: details,
+  type: 'reply'|'like'|'follow'|'retweete',
+  user: {
+    name: string,
+    id: string,
+    avatar: string,
+    username: string
+  },
   ref: any,
   id: string
 }

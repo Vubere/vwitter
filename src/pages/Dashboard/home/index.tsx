@@ -67,17 +67,23 @@ export default function Home() {
     if(context.user){
       const arr = context.user.following
       arr.push(context.user.id)
+      
     
       let postArr:string[] = [];
       arr.forEach((id)=>{
+    
         (async()=>{
           const {posts:p} = await getUserById(id)
-          p.forEach((i)=>{
-            postArr.push(i)
+        
+          p.forEach((v, i)=>{
+            postArr.push(v)
+            if(i==p.length-1){
+              const set = new Set(postArr)
+              setPosts(Array.from(set))
+            }
           })
-        })
+        })()
       })
-      setPosts(posts.concat(postArr))
     }
     
   }, [])
@@ -94,10 +100,11 @@ export default function Home() {
         <h2 className='font-[600] text-[18px]'>Home</h2>
       </header>
       <section className='w-full '>
-        {posts.length ? posts.map((item) =>
-          <Link to={routes.postpage} key={item}>
+        {posts.length ? posts.map((item) =>{
+          return (<Link to={routes.postpage+'/'+item} key={item}>
             <PostItem id={item} />
-          </Link>
+          </Link>)
+          }
         ) : <p className='text-[#fff6] m-3 text-[14px]'>Follow users to see feed content...
         <Link to={routes.users} className='m-2 bg-[#00acee] block border w-[120px] font-[600] text-[16px] text-white text-center p-2 rounded-full border-[#fff1]'>See Users</Link></p>}
       </section>
