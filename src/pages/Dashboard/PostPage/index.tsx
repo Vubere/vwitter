@@ -13,7 +13,7 @@ import likeFilled from '../home/components/Reactions/likeFilled.png'
 import retweet from '../home/components/Reactions/retweet.png'
 import retweetFilled from '../home/components/Reactions/retweetFilled.png'
 import Comment from "./components/comment"
-import { arrayRemove, arrayUnion, deleteDoc, doc, setDoc, updateDoc } from "firebase/firestore"
+import { arrayRemove, arrayUnion, deleteDoc, doc, increment, setDoc, updateDoc } from "firebase/firestore"
 import { getAuth } from "firebase/auth"
 import { UserCon } from "../../../context/UserContext"
 import { db } from "../../../main"
@@ -134,7 +134,7 @@ export default function PostPage() {
           const ownerRef = doc(db, 'users', post.post_owner.id)
           const notifId = postId + 'l' + currentUser.uid
           const notifRef = doc(db, 'notifications', notifId)
-          await updateDoc(notifRef, {
+          await setDoc(notifRef, {
             type: 'like',
             user: {
               username: user?.user?.details.id,
@@ -149,8 +149,10 @@ export default function PostPage() {
             id: notifId
           })
           await updateDoc(ownerRef, {
-            notifications: arrayUnion([notifId])
+            notifications: arrayUnion([notifId]),
+            unread_notifications: increment(1)
           })
+          
         } catch (err) {
 
         }
@@ -163,10 +165,10 @@ export default function PostPage() {
     if (currentUser && user?.user?.details) {
       if (retweeted.includes(currentUser.uid)) {
         try {
+          setRetweeted(retweeted.filter(i => i != currentUser.uid))
           await updateDoc(docRef, {
             retweets: arrayRemove(currentUser.uid)
           })
-          setRetweeted(retweeted.filter(i => i != currentUser.uid))
           const userRef = doc(db, 'users', currentUser.uid)
           await updateDoc(userRef, {
             posts: arrayRemove(postId + '' + currentUser.uid)
@@ -178,10 +180,10 @@ export default function PostPage() {
         }
       } else {
         try {
+          setRetweeted(retweeted.concat([currentUser.uid]))
           await updateDoc(docRef, {
             retweets: arrayUnion(currentUser.uid)
           })
-          setRetweeted(retweeted.concat([currentUser.uid]))
           const userRef = doc(db, 'users', currentUser.uid)
           const retId = postId + '' + currentUser.uid
           const retRef = doc(db, 'posts', retId)
@@ -196,7 +198,7 @@ export default function PostPage() {
           const ownerRef = doc(db, 'users', post.post_owner.id)
           const notifId = postId + 'r' + currentUser.uid
           const notifRef = doc(db, 'notifications', notifId)
-          await updateDoc(notifRef, {
+          await setDoc(notifRef, {
             type: 'retweet',
             user: {
               username: user?.user?.details.id,
@@ -211,7 +213,8 @@ export default function PostPage() {
             id: notifId
           })
           await updateDoc(ownerRef, {
-            notifications: arrayUnion([notifId])
+            notifications: arrayUnion(notifId),
+            unread_messages: increment(1)
           })
         } catch (err) {
 

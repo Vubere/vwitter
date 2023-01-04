@@ -1,4 +1,4 @@
-import { useContext, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 
 import { Sidenav } from ".."
 import Icon from "../../../components/icon"
@@ -7,14 +7,16 @@ import avatar from '../../../assets/avatar.jpg'
 import LikedNotif from "./components/NotifLiked"
 import Comment from "../PostPage/components/comment"
 import FollowedNotif from "./components/FollowedNotif"
-import { UserCon } from "../../../context/UserContext"
+import { UserCon, user_info } from "../../../context/UserContext"
 import { details } from "../../Signup/signupFlow"
+import { doc, getDoc } from "firebase/firestore"
+import { db } from "../../../main"
 
 
 
 export default function Notification() {
   const { sidenavOpen, setSidenav } = useContext(Sidenav)
-  
+
   const [notifications, setNotifications] = useState<notifications[]>(/* [
     {
     type: 'like',
@@ -71,40 +73,66 @@ export default function Notification() {
   const userContext = useContext(UserCon)
 
 
-  if(userContext?.user?.details==undefined){
+  if (userContext?.user?.details == undefined) {
     return null
   }
-  return (
-  <section>
-    <header className="pl-3 pt-1 pb-1 border-b border-[#fff2] flex gap-4 relative min-h-[50px] items-center">
-      <Icon
-        width="30px"
-        height="30px"
-        src={userContext.user.details.avatar||avatar}
-        className='rounded-full left-3 top-4'
-        onClick={() => setSidenav(!sidenavOpen)} />
-      <h2 className='font-[600] text-[18px]'>Notifications</h2>
-    </header>
-    <main>
-      {notifications?.length?notifications.map((item)=>{
-        if(item.type=='like'){
-          return (<LikedNotif key={item.id} details={item}/>)
-        }else if(item.type=='reply'){
-          return(<Comment key={item.id} details={item.ref.res} postowner={item.user}/>)
-        }else if(item.type=='retweete'){
-          return (<LikedNotif key={item.id} details={item}/>)
-        }else{
-          return (
-            <FollowedNotif key={item.id} details={item.user}/>
-          )
+  useEffect(() => {
+    const arr: notifications[] = []
+    let notifArr: string[] = [];
+    (async () => {
+      if (userContext.user?.details) {
+        const res = await getDoc(doc(db, 'users', userContext.user.details.id))
+        const userInfo = res.data() as user_info | undefined
+        if (userInfo) {
+          notifArr = userInfo.notifications
+          console.log(userInfo.notifications)
         }
-      }):<p className="p-4">you have no notifications...</p>}
-    </main>
-  </section>)
+        notifArr.map((id, i) => {
+          const notifRef = doc(db, 'notifications', id)
+          const fetchNotifications = async () => {
+            const res = await getDoc(notifRef)
+            arr.push(res.data() as notifications)
+          }
+          fetchNotifications()
+          if (i == notifArr.length - 1) {
+            setNotifications(arr)
+          }
+        })
+      }
+    })()
+  }, [])
+
+  return (
+    <section>
+      <header className="pl-3 pt-1 pb-1 border-b border-[#fff2] flex gap-4 relative min-h-[50px] items-center">
+        <Icon
+          width="30px"
+          height="30px"
+          src={userContext.user.details.avatar || avatar}
+          className='rounded-full left-3 top-4'
+          onClick={() => setSidenav(!sidenavOpen)} />
+        <h2 className='font-[600] text-[18px]'>Notifications</h2>
+      </header>
+      <main>
+        {notifications?.length ? notifications.map((item) => {
+          if (item.type == 'like') {
+            return (<LikedNotif key={item.id} details={item} />)
+          } else if (item.type == 'reply') {
+            return (<Comment key={item.id} details={item.ref.res} postowner={item.user} />)
+          } else if (item.type == 'retweete') {
+            return (<LikedNotif key={item.id} details={item} />)
+          } else {
+            return (
+              <FollowedNotif key={item.id} details={item.user} />
+            )
+          }
+        }) : <p className="p-4">you have no notifications...</p>}
+      </main>
+    </section>)
 }
 
 export type notifications = {
-  type: 'reply'|'like'|'follow'|'retweete',
+  type: 'reply' | 'like' | 'follow' | 'retweete',
   user: {
     name: string,
     id: string,

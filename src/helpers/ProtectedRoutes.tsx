@@ -20,6 +20,7 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
           if (user?.details)
           await signInWithEmailAndPassword(auth, user.details.email, user.details.password)
           setUserAuth(auth.currentUser)
+          
         })()
       }
     } else {

@@ -6,214 +6,64 @@ import Icon from "../../components/icon"
 
 
 import avatar from '../../assets/avatar.jpg'
-import { useEffect, useRef, useState } from "react"
-import { user_details } from "../Dashboard/home/components/PostItem"
+import { useContext, useEffect, useLayoutEffect, useRef, useState } from "react"
+
 import Input from "./Input"
+import { UserCon } from "../../context/UserContext"
+import { doc, getDoc, onSnapshot } from "firebase/firestore"
+import { db } from "../../main"
+import getUserByUsername from "../../services/getUserByUsername"
+
 
 export default function Chat() {
   const { chatId } = useParams()
-  const [user, setUser] = useState<user_details>({
-    username: 'victor',
-    full_name: 'victor ubere',
-    id: 'ba',
-    avatar: ''
-  })
   const navigate = useNavigate()
   const lastMessage = useRef<any>()
 
-  useEffect(()=>{
-    if(lastMessage.current){
+  const userContext = useContext(UserCon)
+
+  useEffect(() => {
+    if (lastMessage.current) {
       lastMessage.current.scrollIntoView()
     }
-  },[lastMessage.current])
+  }, [lastMessage.current])
+  
+  const [party, setParty] = useState<user_basic_info>()
 
-  const [chat, setChat] = useState<Chat>({
-    id: 'as',
-    parties: {
-      one: {
-        username: 'victor',
-        full_name: 'victor ubere',
-        id: 'ba',
-        avatar: ''
-      },
-      two: {
-        username: 'victor',
-        full_name: 'victor ubere',
-        id: 'ba',
-        avatar: ''
-      },
-    },
-    chat: [
-      {
-        text: 'upgauda',
-        time: 1,
-        photoUrl: '',
-        sender: {
-          username: 'victor',
-          full_name: 'victor ubere',
-          id: 'ba',
-          avatar: ''
-        },
-        id: 'aphuhdp'
-      },
-      {
-        text: 'downauda',
-        time: 2,
-        photoUrl: '',
-        sender: {
-          username: 'vhak',
-          full_name: 'vicr ubere',
-          id: 'da',
-          avatar: ''
-        },
-        id: 'apuvhdp'
-      },
-      {
-        text: 'upgauda',
-        time: 3,
-        photoUrl: '',
-        sender: {
-          username: 'victor',
-          full_name: 'victor ubere',
-          id: 'ba',
-          avatar: ''
-        },
-        id: 'apushdp'
-      },
-      {
-        text: 'downauda',
-        time: 4,
-        photoUrl: '',
-        sender: {
-          username: 'vhak',
-          full_name: 'vior ubre',
-          id: 'da',
-          avatar: ''
-        },
-        id: 'apuhadp'
-      },
-      {
-        text: 'downauda',
-        time: 4,
-        photoUrl: '',
-        sender: {
-          username: 'vhak',
-          full_name: 'vior ubre',
-          id: 'ba',
-          avatar: ''
-        },
-        id: 'apuhadp'
-      },
-      {
-        text: 'downauda',
-        time: 4,
-        photoUrl: '',
-        sender: {
-          username: 'vhak',
-          full_name: 'vior ubre',
-          id: 'da',
-          avatar: ''
-        },
-        id: 'apuhadp'
-      },
-      {
-        text: 'downauda',
-        time: 4,
-        photoUrl: '',
-        sender: {
-          username: 'vhak',
-          full_name: 'vior ubre',
-          id: 'ba',
-          avatar: ''
-        },
-        id: 'apuhadp'
-      },
-      {
-        text: 'downauda',
-        time: 4,
-        photoUrl: '',
-        sender: {
-          username: 'vhak',
-          full_name: 'vior ubre',
-          id: 'da',
-          avatar: ''
-        },
-        id: 'apuhadp'
-      },
-      {
-        text: 'downauda',
-        time: 4,
-        photoUrl: '',
-        sender: {
-          username: 'vhak',
-          full_name: 'vior ubre',
-          id: 'da',
-          avatar: ''
-        },
-        id: 'apuhadp'
-      },
-      {
-        text: 'downauda',
-        time: 4,
-        photoUrl: '',
-        sender: {
-          username: 'vhak',
-          full_name: 'vior ubre',
-          id: 'ba',
-          avatar: ''
-        },
-        id: 'apuhadp'
-      },
-      {
-        text: 'downauda',
-        time: 4,
-        photoUrl: '',
-        sender: {
-          username: 'vhak',
-          full_name: 'vior ubre',
-          id: 'da',
-          avatar: ''
-        },
-        id: 'apuhadp'
-      },
-      {
-        text: 'downauda',
-        time: 4,
-        photoUrl: '',
-        sender: {
-          username: 'vhak',
-          full_name: 'vior ubre',
-          id: 'ba',
-          avatar: ''
-        },
-        id: 'apuhadp'
-      },
-      {
-        text: 'downauda',
-        time: 4,
-        photoUrl: '',
-        sender: {
-          username: 'vhak',
-          full_name: 'vior ubre',
-          id: 'da',
-          avatar: ''
-        },
-        id: 'apuhadp'
-      },
-      {
-        text: 'downauda',
-        time: 4,
-        photoUrl: '',
-        sender: {
-          username: 'vhak',
-          full_name: 'vior ubre',
-          id: 'da',
-          avatar: ''
-        },
-        id: 'apuhadp'
-      },
-    ]
-  })
+  const [chat, setChat] = useState<Chat>()
+  if (!userContext?.user?.details) {
+    return null
+  }
+  const user = userContext.user
+
+  
+  useLayoutEffect(() => {
+    if(chatId){
+      let resp
+      const fetchChat = async () => {
+        
+        const res = await getUserByUsername(chatId)
+        if (res) {
+          setParty(res.details)
+          const id = [user.id, res.id].sort().join('')
+          const chatRef = doc(db, 'chats', id)
+          resp = onSnapshot(chatRef,(doc)=>{
+            const chatDetails = doc.data() as Chat | undefined
+            if (chatDetails) {
+              setChat(chatDetails)
+            }
+          })
+        }
+      }
+      fetchChat()
+      if(resp){
+        return resp
+      }
+    }
+  }, [])
+  if(!party){
+    return null
+  }
 
   return (
     <div className="w-full max-h-[100vh] relative">
@@ -221,18 +71,17 @@ export default function Chat() {
         <Back click={() => navigate(-1)}
           className='w-[30px] h-[20px]' />
         <div className="ml-5 flex items-center gap-3">
-          <Icon src={avatar} width='30px' height='30px' className="rounded-full border border-[#fff3]" />
-          <p className="font-[600]">victor ubere</p>
+          <Icon src={party.avatar||avatar} width='30px' height='30px' className="rounded-full border border-[#fff3]" />
+          <p className="font-[600]">{party.name}</p>
         </div>
       </header>
       <main className="pt-[50px] w-full overflow-auto mb-[50px] pb-[55px]" >
-        {chat.chat.sort((a, b) => a.time - b.time).map((item, i) => (<ChatBubble details={item}
-          ref={i == chat.chat.length - 1 ? lastMessage : undefined}
+        {chat?chat.chat.sort((a, b) => a.time - b.time).map((item, i) => (<ChatBubble details={item}
+          refM={i == chat.chat.length - 1 ? lastMessage : undefined}
           className={item.sender.id != user.id ? 'left' : 'right'} />
-
-        ))}
+        )): <p className="p-4 text-[#fff3]">send a message to start conversation... </p>}
       </main>
-      <Input />
+      <Input id={chatId}/>
     </div>
   )
 }
@@ -240,21 +89,19 @@ export default function Chat() {
 export type Chat = {
   id: string,
   chat: singleChat[]
-  parties: {
-    one: user_details,
-    two: user_details
-  }
 }
 
 export type singleChat = {
   text: string,
   time: number,
   photoUrl: string,
-  sender: {
-    username: string,
-    full_name: string,
-    id: string,
-    avatar: string
-  },
+  sender: user_basic_info,
   id: string
+}
+
+export type user_basic_info = {
+  username: string,
+  name: string,
+  id: string,
+  avatar: string
 }

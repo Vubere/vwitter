@@ -69,7 +69,7 @@ export default function SendPost() {
           post_owner: {
             avatar: user.details.avatar,
             username: user.details.username,
-            full_name: user.details.name,
+            name: user.details.name,
             id: user.id
           },
           photoUrl: path||'',

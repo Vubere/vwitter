@@ -1,5 +1,7 @@
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
 import React, { createContext, useEffect, useState } from "react";
+import { db } from "../main";
 import { details } from "../pages/Signup/signupFlow";
 
 
@@ -29,7 +31,7 @@ export default function UserContext({children}:{children:React.ReactNode}){
         if(auth.currentUser==null){
          (async () => {
           await signInWithEmailAndPassword(auth, lsUser.details.email, lsUser.details.password)
-          
+         
          })()
         }
       }

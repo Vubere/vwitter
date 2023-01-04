@@ -9,22 +9,25 @@ import { useLayoutEffect, useState } from "react"
 import getPostById from "../../../../services/getPostById"
 import { details } from "../../../Signup/signupFlow"
 
-export default function PostItem({ id }: {id:string}) {
+import * as routes from '../../../../constants/route'
+import { Link } from "react-router-dom"
+
+export default function PostItem({ id }: { id: string }) {
   const [details, setDetails] = useState<PostItem>()
 
-  useLayoutEffect(()=>{
-    (async ()=>{
+  useLayoutEffect(() => {
+    (async () => {
       const post = await getPostById(id)
-     
-      if(post){
+
+      if (post) {
         setDetails(post)
       }
     })()
   }, [id])
 
-  
 
-  if(details==undefined){
+
+  if (details == undefined) {
     return null
   }
 
@@ -49,21 +52,24 @@ export default function PostItem({ id }: {id:string}) {
           />
         </div>
         <div className="w-full pr-4">
-          <div className="flex gap-1">
-            <p className="font-[600]">{details.post_owner.name}</p>
+          <div className="flex gap-2">
+            <p className="font-[600] text-wrap">{details.post_owner.name}</p>
             <p className="text-[#fff6]">@{details.post_owner.username}</p>
             <p className="text-[#fff6]">{details.date}</p>
           </div>
           <div>
-            <p className="text-[#fff9] pb-3">{details.caption}</p>
-            <div className="max-h-[300px] overflow-hidden flex items-center rounded-[10px]">
-              <img src={details.photoUrl}
-                width='100%' className='rounded-[10px]' />
-            </div>
+            <Link to={routes.postpage + '/' + id} >
+
+              <p className="text-[#fff9] pb-3">{details.caption}</p>
+              <div className="max-h-[300px] overflow-hidden flex items-center rounded-[10px]">
+                {details.photoUrl&&<img src={details.photoUrl}
+                  width='100%' className='rounded-[10px]' />}
+              </div>
+            </Link>
           </div>
-          <Reactions details={details} id={details.id} likes={details.likes} 
-          retweets={details.retweets}
-          comments={details.comments} />
+          <Reactions details={details} id={details.id} likes={details.likes}
+            retweets={details.retweets}
+            comments={details.comments} />
         </div>
       </div>
     </section>

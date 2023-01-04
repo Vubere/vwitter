@@ -9,7 +9,7 @@ import { PostItem } from '../PostItem'
 
 import { Comments } from '../PostItem'
 import { useContext, useState } from 'react'
-import { arrayRemove, arrayUnion, deleteDoc, doc, setDoc, updateDoc } from 'firebase/firestore'
+import { arrayRemove, arrayUnion, deleteDoc, doc, increment, setDoc, updateDoc } from 'firebase/firestore'
 import { db } from '../../../../../main'
 import { getAuth } from 'firebase/auth'
 import { UserCon } from '../../../../../context/UserContext'
@@ -28,10 +28,10 @@ export default function Reactions({ details, id, likes, comments, retweets }: { 
       const userRef = doc(db, 'users', currentUser.uid)
       if (likedCheck.includes(currentUser.uid)) {
         try {
+          setLiked(likedCheck.filter(v => v != currentUser.uid))
           await updateDoc(docRef, {
             likes: arrayRemove(currentUser.uid)
           })
-          setLiked(likedCheck.filter(v => v != currentUser.uid))
           await updateDoc(userRef, {
             likes: arrayRemove(currentUser.uid)
           })
@@ -40,12 +40,33 @@ export default function Reactions({ details, id, likes, comments, retweets }: { 
         }
       } else {
         try {
+          setLiked(likedCheck.concat([currentUser.uid]))
           await updateDoc(docRef, {
             likes: arrayUnion(currentUser.uid)
           })
-          setLiked(likedCheck.concat([currentUser.uid]))
           await updateDoc(userRef, {
             likes: arrayUnion(currentUser.uid)
+          })
+          const ownerRef = doc(db, 'users', details.post_owner.id)
+          const notifId = id + 'l' + currentUser.uid
+          const notifRef = doc(db, 'notifications', notifId)
+          await setDoc(notifRef, {
+            type: 'like',
+            user: {
+              username: user?.user?.details.id,
+              name: user?.user?.details.name,
+              avatar: user?.user?.details.avatar,
+              id: user?.user?.details.id
+            },
+            ref: {
+              res: 'tweet',
+              info: `${details.caption}`
+            },
+            id: notifId
+          })
+          await updateDoc(ownerRef, {
+            notifications: arrayUnion([notifId]),
+            unread_notifications: increment(1)
           })
         } catch (err) {
 
@@ -59,10 +80,10 @@ export default function Reactions({ details, id, likes, comments, retweets }: { 
     if (currentUser && user?.user) {
       if (retweeted.includes(currentUser.uid)) {
         try {
+          setRetweeted(retweeted.filter(i => i != currentUser.uid))
           await updateDoc(docRef, {
             retweets: arrayRemove(currentUser.uid)
           })
-          setRetweeted(retweeted.filter(i => i != currentUser.uid))
           const userRef = doc(db, 'users', currentUser.uid)
           await updateDoc(userRef, {
             posts: arrayRemove(id + '' + currentUser.uid)
@@ -74,12 +95,12 @@ export default function Reactions({ details, id, likes, comments, retweets }: { 
         }
       } else {
         try {
+          setRetweeted(retweeted.concat([currentUser.uid]))
           await updateDoc(docRef, {
             retweets: arrayUnion(currentUser.uid)
           })
-          setRetweeted(retweeted.concat([currentUser.uid]))
           const userRef = doc(db, 'users', currentUser.uid)
-          const retId = id + '' + currentUser.uid
+          const retId = id + 'r' + currentUser.uid
           const retRef = doc(db, 'posts', retId)
           await setDoc(retRef, {
             ...details,
@@ -88,6 +109,27 @@ export default function Reactions({ details, id, likes, comments, retweets }: { 
           })
           await updateDoc(userRef, {
             posts: arrayUnion(retId),
+          })
+          const ownerRef = doc(db, 'users', details.post_owner.id)
+          const notifId = id + 'r' + currentUser.uid
+          const notifRef = doc(db, 'notifications', notifId)
+          await updateDoc(notifRef, {
+            type: 'retweet',
+            user: {
+              username: user?.user?.details.id,
+              name: user?.user?.details.name,
+              avatar: user?.user?.details.avatar,
+              id: user?.user?.details.id
+            },
+            ref: {
+              res: 'tweet',
+              info: `${details.caption}`
+            },
+            id: notifId
+          })
+          await updateDoc(ownerRef, {
+            notifications: arrayUnion(notifId),
+            unread_messages: increment(1)
           })
         } catch (err) {
 
@@ -113,16 +155,18 @@ export default function Reactions({ details, id, likes, comments, retweets }: { 
           src={currentUser ? retweeted.includes(currentUser.uid) ? retweetFilled : retweet : retweet}
           width="20px"
           height='20px'
+          onClick={toggleRetweet}
         />{' '}
-        {retweets.length}
+        {retweeted.length}
       </p>
       <p className='text-[12px] text-[#fff4] flex gap-1 items-center'>
         <Icon
           src={currentUser ? likedCheck.includes(currentUser.uid) ? likeFilled : like : like}
           width="20px"
           height='20px'
+          onClick={toggleLike}
         />{' '}
-        {likes.length}
+        {likedCheck.length}
       </p>
     </div>
   )

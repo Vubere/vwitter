@@ -101,9 +101,9 @@ export default function Home() {
       </header>
       <section className='w-full '>
         {posts.length ? posts.map((item) =>{
-          return (<Link to={routes.postpage+'/'+item} key={item}>
+          return (
             <PostItem id={item} />
-          </Link>)
+          )
           }
         ) : <p className='text-[#fff6] m-3 text-[14px]'>Follow users to see feed content...
         <Link to={routes.users} className='m-2 bg-[#00acee] block border w-[120px] font-[600] text-[16px] text-white text-center p-2 rounded-full border-[#fff1]'>See Users</Link></p>}
