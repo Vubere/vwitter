@@ -17,6 +17,7 @@ import Replies from "./replies";
 import Likes from "./likes";
 import { getAuth } from "firebase/auth";
 import mail from '../../components/assets/mail.png'
+import Load from "../../components/load";
 
 
 
@@ -29,6 +30,7 @@ export default function Profile() {
   const [view, setView] = useState<'tweet' | 'replies' | 'likes'>('tweet')
   const { currentUser } = getAuth()
   const UserInfo = useContext(UserCon)
+  const [loading,setLoading] = useState(false)
 
   useLayoutEffect(() => {
     if (username) {
@@ -43,10 +45,14 @@ export default function Profile() {
       fetchUser()
     }
   }, [username])
+
+  if(loading){
+    return <Load/>
+  }
+
   if (!user ||currentUser==null) {
     return null
   }
-  console.log(user.id, currentUser.uid)
 
   return (
     <div>

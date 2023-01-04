@@ -19,6 +19,7 @@ import { UserCon } from "../../../context/UserContext"
 import { db } from "../../../main"
 import getUserById from "../../../services/getUserById"
 import getPostById from "../../../services/getPostById"
+import Load from "../../../components/load"
 
 
 
@@ -82,22 +83,25 @@ export default function PostPage() {
   const user = useContext(UserCon)
   const [likes, setLiked] = useState<string[]>([])
   const [retweeted, setRetweeted] = useState<string[]>([])
+  const [loading,setLoading] = useState(false)
+
 
   useLayoutEffect(() => {
     if (postId) {
       (async () => {
+        setLoading(true)
         const post = await getPostById(postId)
-
         if (post) {
           setPost(post)
           setLiked(post.likes)
           setRetweeted(post.retweets)
         }
+        setLoading(false)
       })()
     }
   }, [postId])
-  if (post == undefined) {
-    return (<p>loading...</p>)
+  if (post == undefined||loading) {
+    return (<Load/>)
   }
   
   

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useLayoutEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import home from '../assets/home.png'
@@ -14,6 +14,15 @@ import * as routes from '../../constants/route'
 
 export default function Navbar() {
   const [currentTab, setCurrentTab] = useState('home')
+
+  useLayoutEffect(()=>{
+    const pathname = window.location.pathname
+    if(pathname){
+      setCurrentTab(pathname.slice(1, pathname.length))
+    }
+  }, [])
+
+
 
   return (
     <nav className="fixed mt-auto flex justify-center items-center bottom-0 w-[100%] h-[50px] z-20 border-t border-[#fff4] bg-black">
@@ -48,13 +57,13 @@ export default function Navbar() {
           </Link>
         </li>
         <li className='flex gap-6 items-center mb-5 font-[600] text-[18px]'
-          onClick={() => setCurrentTab('notification')} >
+          onClick={() => setCurrentTab('notifications')} >
           <Link to={routes.notifications}>
 
             <div
               className='w-[25px] h-[25px]'
               style={{
-                backgroundImage: `url(${currentTab == 'notification' ? notifFilled : notif})`,
+                backgroundImage: `url(${currentTab == 'notifications' ? notifFilled : notif})`,
                 backgroundRepeat: 'no-repeat',
                 backgroundPosition: 'center',
                 backgroundSize: 'cover',
@@ -62,13 +71,13 @@ export default function Navbar() {
           </Link>
         </li>
         <li className='flex gap-6 items-center mb-5 font-[600] text-[18px]'
-          onClick={() => setCurrentTab('message')} >
+          onClick={() => setCurrentTab('messages')} >
           <Link to={routes.messages}>
 
             <div
               className='w-[25px] h-[25px]'
               style={{
-                backgroundImage: `url(${currentTab == 'message' ? mailFilled : mail})`,
+                backgroundImage: `url(${currentTab == 'messages' ? mailFilled : mail})`,
                 backgroundRepeat: 'no-repeat',
                 backgroundPosition: 'center',
                 backgroundSize: 'cover',

@@ -1,5 +1,5 @@
 import { useContext, useLayoutEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 import { Sidenav } from '../index'
 import Avatar from "../../../components/icon"
@@ -13,55 +13,21 @@ import tweetIcon from '../../../assets/tweetIcon.png'
 import { twitterColor } from '../../../constants/color'
 import { UserCon } from '../../../context/UserContext'
 import getUserById from '../../../services/getUserById'
+import Load from '../../../components/load'
 
 export default function Home() {
   const { sidenavOpen, setSidenav } = useContext(Sidenav)
   
   const context = useContext(UserCon)
+  const navigate = useNavigate()
   
   if(context==undefined||context.user==undefined){
+    navigate('/login')
     return null
   }
-  const [posts, setPosts] = useState<string[]>(context.user.posts/* [{
-    type: 'retweet',
-    retweeter: {
-      avatar: '',
-      username: 'victorubere',
-      full_name: 'Victor Ubere',
-      id: 'asduhp'
-    },
-    comments: [{
-      text: 'aum',
-      likes: [''],
-      replies: [],
-      photoUrl: '',
-      date: '',
-      commentOwner: {
-        avatar: '',
-        username: 'victorubere',
-        full_name: 'Victor Ubere',
-        id: 'asduhp'
-      },
-      postOwner: {
-        avatar: '',
-        username: 'victorubere',
-        full_name: 'Victor Ubere',
-        id: 'aupsd'
-      },
-    }],
-    post_owner: {
-      avatar: '',
-      username: 'victorubere',
-      full_name: 'Victor Ubere',
-      id: 'aupsd'
-    },
-    photoUrl: avatar,
-    likes: [''],
-    caption: 'this is a test data',
-    date: '20m',
-    id: 'adfas'
-  },
-] */)
+  const [posts, setPosts] = useState<string[]>(context.user.posts)
+  const [loading,setLoading] = useState(false)
+
 
   useLayoutEffect(()=>{
     if(context.user){
@@ -73,6 +39,7 @@ export default function Home() {
       arr.forEach((id)=>{
     
         (async()=>{
+          setLoading(true)
           const {posts:p} = await getUserById(id)
         
           p.forEach((v, i)=>{
@@ -82,11 +49,16 @@ export default function Home() {
               setPosts(Array.from(set))
             }
           })
+          setLoading(false)
         })()
       })
     }
     
   }, [])
+
+  if(loading){
+    return <Load/>
+  }
 
   return (
     <main className='overflow-y-auto h-[100vh] w-[100vw] pb-[100px]'>

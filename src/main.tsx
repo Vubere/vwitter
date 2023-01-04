@@ -4,13 +4,13 @@ import App from './App'
 import './index.css'
 import { BrowserRouter } from "react-router-dom"
 import UserContext from './context/UserContext'
-
+import Load from './components/load'
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <UserContext>
       <BrowserRouter>
-        <Suspense fallback={'...loading'}>
+        <Suspense fallback={<Load/>}>
           <App />
         </Suspense>
       </BrowserRouter>

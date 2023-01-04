@@ -25,6 +25,7 @@ export default function Login() {
   const navigate = useNavigate()
   const auth = getAuth()
   const userContext = useContext(UserCon)
+  const [loading, setLoading] = useState(false)
 
   const [error, setError] = useState('')
 
@@ -42,17 +43,19 @@ export default function Login() {
       }
 
       if (userContext) {
+        setLoading(true)
         const h = await signInWithEmailAndPassword(auth, email, pwd)
 
         if (h) {
           setLoginModal(false)
           
           const details = await getUserById(h.user.uid)
-          
+          setLoading(false)
           navigate('/home')
           userContext.setUser(details)
 
         }
+        setLoading(false)
       }
     })()
 

@@ -11,6 +11,7 @@ import { details } from "../../../Signup/signupFlow"
 
 import * as routes from '../../../../constants/route'
 import { Link } from "react-router-dom"
+import Load from "../../../../components/load"
 
 export default function PostItem({ id }: { id: string }) {
   const [details, setDetails] = useState<PostItem>()
@@ -28,7 +29,7 @@ export default function PostItem({ id }: { id: string }) {
 
 
   if (details == undefined) {
-    return null
+    return <Load/>
   }
 
   return (

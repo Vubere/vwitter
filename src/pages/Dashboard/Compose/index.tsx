@@ -85,8 +85,9 @@ export default function SendPost() {
         })
         setImage(undefined)
         imageRef.current.value = undefined
+        navigate('/home')
       } catch (err) {
-
+        
       }
 
     }

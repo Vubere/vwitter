@@ -11,6 +11,8 @@ import { UserCon, user_info } from "../../../context/UserContext"
 import { details } from "../../Signup/signupFlow"
 import { doc, getDoc } from "firebase/firestore"
 import { db } from "../../../main"
+import { useNavigate } from "react-router-dom"
+import Load from "../../../components/load"
 
 
 
@@ -71,9 +73,11 @@ export default function Notification() {
 ] */)
 
   const userContext = useContext(UserCon)
-
+  const navigate = useNavigate()
+  const [loading, setLoading] = useState(false)
 
   if (userContext?.user?.details == undefined) {
+    navigate('/login')
     return null
   }
   useEffect(() => {
@@ -81,6 +85,7 @@ export default function Notification() {
     let notifArr: string[] = [];
     (async () => {
       if (userContext.user?.details) {
+        setLoading(true)
         const res = await getDoc(doc(db, 'users', userContext.user.details.id))
         const userInfo = res.data() as user_info | undefined
         if (userInfo) {
@@ -98,10 +103,15 @@ export default function Notification() {
             setNotifications(arr)
           }
         })
+        setLoading(false)
       }
     })()
   }, [])
 
+
+  if(loading){
+    return <Load/>
+  }
   return (
     <section>
       <header className="pl-3 pt-1 pb-1 border-b border-[#fff2] flex gap-4 relative min-h-[50px] items-center">

@@ -12,6 +12,8 @@ import searchImg from '../../../components/assets/search.png'
 import UserContext, { UserCon, user_info } from '../../../context/UserContext'
 import { doc, getDoc, onSnapshot } from 'firebase/firestore'
 import { db } from '../../../main'
+import { useNavigate } from 'react-router-dom'
+import Load from '../../../components/load'
 
 
 
@@ -20,14 +22,17 @@ export default function Messages() {
   const { sidenavOpen, setSidenav } = useContext(Sidenav)
   const [messages, setMessages] = useState<string[]>()
   const context = useContext(UserCon)
+  const navigate = useNavigate()
+  const [loading, setLoading] = useState(false)
 
   if (!context?.user?.details) {
-
+    navigate('/login')
     return null
   }
   useLayoutEffect(() => {
     let unsub:any
     const fetchMessages = async () => {
+      setLoading(true)
       if (context.user?.details) {
         const docRef = doc(db, 'users', context.user.details.id)
         const res = await getDoc(docRef)
@@ -37,6 +42,7 @@ export default function Messages() {
             setMessages(data.messages)
           }
         })
+        setLoading(false)
       }
     }
     fetchMessages()
@@ -44,6 +50,9 @@ export default function Messages() {
       return unsub
     }
   }, [])
+  if(loading){
+    return <Load/>
+  }
 
   return (
     <section>

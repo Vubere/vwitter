@@ -17,6 +17,7 @@ import { db } from '../../main';
 import { UserCon } from '../../context/UserContext';
 
 import Postshow, { PostItem } from '../Dashboard/home/components/PostItem';
+import Load from '../../components/load';
 
 export default function SendPost() {
   const { reply } = useParams()
@@ -32,6 +33,7 @@ export default function SendPost() {
   const context = useContext(UserCon)
 
   const [details, setDetails] = useState<PostItem>()
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     if (input_ref.current) {
@@ -42,17 +44,19 @@ export default function SendPost() {
   useEffect(() => {
     (async () => {
       if (reply && currentUser) {
+        setLoading(true)
         const docRef = doc(db, 'posts', reply)
         const res = await getDoc(docRef)
         const data = res.data() as PostItem | undefined
         if (data) {
           setDetails(data)
         }
+        setLoading(false)
       }
     })()
   }, [])
-  if (!details) {
-    return null
+  if (!details||loading) {
+    return <Load/>
   }
 
   const handleFileChange = (e: any) => {

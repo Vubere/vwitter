@@ -10,7 +10,7 @@ import { collection } from 'firebase/firestore';
 import { db } from '../../../../main';
 import getUserByUsername from '../../../../services/getUserByUsername';
 
-export default function SearchHeader({ search, setSearch, setSearchResult }: { search: string, setSearch: (v: string) => void, setSearchResult: (v: any[]) => void }) {
+export default function SearchHeader({ search, setSearch, setSearchResult, setLoading }: { search: string, setSearch: (v: string) => void, setSearchResult: (v: any[]) => void, setLoading: (v:boolean)=>void }) {
   const { sidenavOpen, setSidenav } = useContext(Sidenav)
   const context = useContext(UserCon)
 
@@ -20,8 +20,10 @@ export default function SearchHeader({ search, setSearch, setSearchResult }: { s
 
   const runSearch = async (e: React.FormEvent) => {
     e.preventDefault()
+    setLoading(true)
     const res = await getUserByUsername(search)
     setSearchResult([res])
+    setLoading(false)
   }
 
 

@@ -9,11 +9,12 @@ import { details } from "../Signup/signupFlow"
 import { collection, getDocs } from "firebase/firestore"
 import { db } from "../../main"
 import { UserCon } from "../../context/UserContext"
+import Load from "../../components/load"
 
 export default function Users() {
   const navigate = useNavigate()
   const [users, setUsers] = useState<details[]>([])
-
+const [loading, setLoading] = useState(false)
   const userContext = useContext(UserCon)
 
   if(!userContext?.user?.details){
@@ -26,6 +27,7 @@ export default function Users() {
 
     if(res.length){
       const arr:details[] = []
+      setLoading(true)
       res.forEach((v, t)=>{
         const u = v.data().details as details
         if(u.id!=userContext.user?.details.id){
@@ -35,12 +37,14 @@ export default function Users() {
           setUsers(users.concat(arr))
         }
       })
+      setLoading(false)
     }
   }
 
   useLayoutEffect(()=>{
     getUsers()
   }, [])
+  
 
   return (
     <section >
@@ -49,7 +53,7 @@ export default function Users() {
         <h3 className="font-[600] text-[18px]">Users</h3>
       </header>
       <main className="p-3">
-        {users.length ? users.map((item) => (
+        {loading?<Load/>:users.length ? users.map((item) => (
           <UserDisplay key={item.id} details={item} />
         )) : <p>Couldn't fetch users...</p>}
       </main>
