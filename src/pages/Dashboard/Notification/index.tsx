@@ -76,15 +76,11 @@ export default function Notification() {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
 
-  if (userContext?.user?.details == undefined) {
-    navigate('/login')
-    return null
-  }
   useEffect(() => {
     const arr: notifications[] = []
     let notifArr: string[] = [];
     (async () => {
-      if (userContext.user?.details) {
+      if (userContext?.user?.details) {
         setLoading(true)
         const res = await getDoc(doc(db, 'users', userContext.user.details.id))
         const userInfo = res.data() as user_info | undefined
@@ -107,7 +103,11 @@ export default function Notification() {
       }
     })()
   }, [])
-
+  
+  if (userContext?.user?.details == undefined) {
+    navigate('/login')
+    return null
+  }
 
   if(loading){
     return <Load/>
@@ -136,7 +136,7 @@ export default function Notification() {
               <FollowedNotif key={item.id} details={item.user} />
             )
           }
-        }) : <p className="p-4">you have no notifications...</p>}
+        }) : <p className="p-4 text-[#fff3]">you have no notifications...</p>}
       </main>
     </section>)
 }

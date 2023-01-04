@@ -5,6 +5,7 @@ import * as routes from './constants/route'
 import ProtectedRoutes from './helpers/ProtectedRoutes'
 
 
+
 const Signup = lazy(() => import('./pages/Signup'))
 const Login = lazy(() => import('./pages/Login'))
 const Dashboard = lazy(() => import('./pages/Dashboard'))
@@ -19,12 +20,11 @@ const PostPage = lazy(() => import('./pages/Dashboard/PostPage'))
 const ReplyPage = lazy(()=>import('./pages/ReplyPage'))
 const Profile = lazy(() => import('./pages/Profile'))
 
-const Tweets = lazy(() => import('./pages/Profile/tweets'))
-const Likes = lazy(() => import('./pages/Profile/likes'))
-const Replies = lazy(() => import('./pages/Profile/replies'))
 const Users = lazy(() => import('./pages/users'))
 const Todo = lazy(() => import('./pages/Todo'))
 const EditProfile = lazy(()=>import('./pages/EditProfile'))
+const Following = lazy(()=>import('./pages/following'))
+const Followers = lazy(()=>import('./pages/followers'))
 
 function App() {
 
@@ -75,6 +75,16 @@ function App() {
         <Route path={routes.todo} element={
           <ProtectedRoutes>
             <Todo />
+          </ProtectedRoutes>
+        } />
+        <Route path={routes.followers} element={
+          <ProtectedRoutes>
+            <Followers />
+          </ProtectedRoutes>
+        } />
+        <Route path={routes.following} element={
+          <ProtectedRoutes>
+            <Following />
           </ProtectedRoutes>
         } />
         <Route path={routes.chat}>

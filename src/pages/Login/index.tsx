@@ -17,6 +17,7 @@ import { signInWithEmailAndPassword, getAuth, setPersistence } from 'firebase/au
 import { UserCon } from '../../context/UserContext';
 import getUserByUsername from '../../services/getUserByUsername';
 import getUserById from '../../services/getUserById';
+import Load from '../../components/load';
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -50,7 +51,6 @@ export default function Login() {
           setLoginModal(false)
           
           const details = await getUserById(h.user.uid)
-          setLoading(false)
           navigate('/home')
           userContext.setUser(details)
 
@@ -59,6 +59,9 @@ export default function Login() {
       }
     })()
 
+  }
+  if(loading){
+    return <Load/>
   }
 
   return (

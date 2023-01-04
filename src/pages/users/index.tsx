@@ -52,7 +52,7 @@ const [loading, setLoading] = useState(false)
         <Back click={() => navigate(-1)} className="w-[20px] h-[20px]" />
         <h3 className="font-[600] text-[18px]">Users</h3>
       </header>
-      <main className="p-3">
+      <main className="p-3 flex flex-col gap-2">
         {loading?<Load/>:users.length ? users.map((item) => (
           <UserDisplay key={item.id} details={item} />
         )) : <p>Couldn't fetch users...</p>}

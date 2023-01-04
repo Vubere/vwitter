@@ -35,10 +35,13 @@ export default function Profile() {
   useLayoutEffect(() => {
     if (username) {
       const fetchUser = async () => {
+        setLoading(true)
         try{
           const userDetails = await getUserByUsername(username)
           setUser(userDetails)
+          setLoading(false)
         }catch(err){
+          setLoading(false)
           navigate(-1)
         }
       }
@@ -59,7 +62,7 @@ export default function Profile() {
       <header>
         <div className="relative h-[120px] w-full border-b border-[#fff1]">
           <div className=" absolute left-2 top-2 bg-[#0003] rounded-full p-1">
-            <Back click={() => navigate('/home')} className="w-[20px] h-[20px]" />
+            <Back click={() => navigate(-1)} className="w-[20px] h-[20px]" />
           </div>
         
           <Icon src={user.details.avatar || avatar}
@@ -80,8 +83,12 @@ export default function Profile() {
           <p className="text-[#fff4] m-0 p-0">@{user?.details.username}</p>
           <p className="text-[14px] mt-3">{user.details.bio}</p>
           <div className="flex gap-4 mt-4">
+            <Link to={routes.following}>
             <p className="text-[#fff4]"><span>{user.following.length}</span> Following</p>
+            </Link>
+            <Link to={routes.followers}>
             <p className="text-[#fff4]"><span>{user.followers.length}</span> Followers</p>
+            </Link>
           </div>
         </section>
       </header>

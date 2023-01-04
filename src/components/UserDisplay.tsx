@@ -9,8 +9,9 @@ import { useContext, useState } from "react"
 import { UserCon } from "../context/UserContext"
 import { arrayRemove, arrayUnion, doc, updateDoc } from "firebase/firestore"
 import { db } from "../main"
+import { user_basic_info } from "../pages/Chat"
 
-export default function UserDisplay({ details }: { details: details }) {
+export default function UserDisplay({ details }: { details: user_basic_info }) {
   const navigate = useNavigate()
   const userContext = useContext(UserCon)
   if (!userContext?.user?.details) {

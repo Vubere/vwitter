@@ -22,6 +22,7 @@ import {
 } from 'firebase/auth'
 import { db } from '../../../main'
 import { useNavigate } from 'react-router-dom'
+import Load from '../../../components/load'
 
 
 
@@ -33,12 +34,13 @@ export default function stepFour({ close }: {
   const userCon = useContext(UserCon)
   const auth = getAuth()
 
-  const [files, setFiles] = useState<any>(undefined)
+
   const [ava, setAva] = useState<any>(undefined)
 
   const imageRef = useRef<any>()
   const fileRef = useRef<any>()
   const navigate = useNavigate()
+  const [loading, setLoading] = useState(false)
 
 
 
@@ -117,20 +119,26 @@ export default function stepFour({ close }: {
     }
   }
 
+
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    (async()=>{
-      await  updateUsername()
+    (async () => {
+      setLoading(true)
+      await updateUsername()
       if (ava)
         await updateAvatar()
       done()
-    
+      setLoading(false)
     })()
 
   }
   const done = () => {
     close()
     navigate('/home')
+  }
+
+  if (loading) {
+    return <Load />
   }
 
   return (
