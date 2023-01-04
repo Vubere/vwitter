@@ -6,16 +6,12 @@ import Comment from "../Dashboard/PostPage/components/comment"
 
 export default function likes(){
 
-  const [likes, setLikes] = useState<(PItype|Comments)[]>()
+  const [likes, setLikes] = useState<string[]>()
 
   return(
     <section>
       {likes?.length?likes.map((item)=>{
-        if('type' in item){
-          return <PostItem details={item}/>
-        }else{
-          return <Comment details={item} postowner={item.postOwner}/>
-        }
+          return <PostItem id={item}/>
       }):<p>no likes...</p>}
     </section>
   )

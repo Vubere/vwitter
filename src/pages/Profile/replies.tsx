@@ -1,6 +1,7 @@
 import { useState } from "react"
+import { user_basic_info } from "../Chat"
 
-import { Comments, user_details } from "../Dashboard/home/components/PostItem"
+import { Comments } from "../Dashboard/home/components/PostItem"
 import Comment from "../Dashboard/PostPage/components/comment"
 
 export default function replies(){
@@ -19,6 +20,6 @@ export default function replies(){
 
 type replies = {
   comment: Comments,
-  postOwner: user_details,
+  postOwner: user_basic_info,
   postId: string
 }
