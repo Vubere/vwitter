@@ -97,7 +97,12 @@ export default function SendPost() {
             photoUrl: path,
             replies: [],
             likes: [],
-            commentOwner: context.user,
+            commentOwner: {
+              name: user.details.name,
+              username: user.details.username,
+              id: user.details.id,
+              avatar: user.details.avatar
+            },
             date: Date.now(),
             postOwner: details.post_owner
           })

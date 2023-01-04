@@ -24,6 +24,7 @@ export default function Followers() {
       (async () => {
         setLoading(true)
         const d = await getUserByUsername(user)
+        console.log(d)
         if (d) {
           const { followers: f } = d;
           const arr: any[] = []
@@ -33,14 +34,16 @@ export default function Followers() {
               if (res) {
                 arr.push(res.details)
               }
+              if (i == f.length - 1) {
+                setFollowers(arr)
+              }
             })()
-            if (i == f.length - 1) {
-              setFollowers(arr)
-            }
           })
         }
         setLoading(false)
       })()
+    }else{
+      navigate(-1)
     }
   }, [])
 

@@ -13,6 +13,7 @@ import like from '../../home/components/Reactions/like.png'
 import likeFilled from '../../home/components/Reactions/likeFilled.png'
 import { useState } from "react";
 import { details } from "../../../Signup/signupFlow";
+import { formatDistanceToNow } from "date-fns";
 
 export default function Comment({details, postowner}:{details:Comments, postowner:{
   name: string,
@@ -39,10 +40,10 @@ export default function Comment({details, postowner}:{details:Comments, postowne
           />
         </div>
         <div className="w-full pr-4">
-          <div className="flex gap-1">
+          <div className="flex gap-1 text-[14px]">
             <p className="font-[600]">{commentOwner.name}</p>
             <p className="text-[#fff6]">@{commentOwner.username}</p>
-            <p className="text-[#fff6]">{date}</p>
+            <p className="text-[#fff6]">{formatDistanceToNow(Number(date))}</p>
           </div>
           <p><span className="text-[#fff3]">Replying to </span><span className="text-[#00acee]">@{postowner.username}</span></p>
           <div>

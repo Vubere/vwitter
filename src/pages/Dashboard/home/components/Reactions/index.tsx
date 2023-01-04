@@ -88,7 +88,7 @@ export default function Reactions({ details, id, likes, comments, retweets }: { 
           await updateDoc(userRef, {
             posts: arrayRemove(id + '' + currentUser.uid)
           })
-          const delRef = doc(db, 'posts', id + '' + currentUser.uid)
+          const delRef = doc(db, 'posts', id + 'r' + currentUser.uid)
           await deleteDoc(delRef)
         } catch (err) {
 
@@ -104,8 +104,9 @@ export default function Reactions({ details, id, likes, comments, retweets }: { 
           const retRef = doc(db, 'posts', retId)
           await setDoc(retRef, {
             ...details,
-            type: retweet,
-            retweeter: user.user.details
+            type: 'retweet',
+            retweeter: user.user.details,
+            retweets: arrayUnion(currentUser.uid)
           })
           await updateDoc(userRef, {
             posts: arrayUnion(retId),

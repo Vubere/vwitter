@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 import home from '../assets/home.png'
 import homeFilled from '../assets/homeFilled.png'
@@ -14,11 +14,17 @@ import * as routes from '../../constants/route'
 
 export default function Navbar() {
   const [currentTab, setCurrentTab] = useState('home')
+  const navigate = useNavigate()
+
 
   useLayoutEffect(()=>{
     const pathname = window.location.pathname
-    if(pathname){
+   
+    if(pathname.length>1){
       setCurrentTab(pathname.slice(1, pathname.length))
+    }else{
+      setCurrentTab('home')
+      navigate('/home')
     }
   }, [])
 

@@ -12,26 +12,35 @@ import { details } from "../../../Signup/signupFlow"
 import * as routes from '../../../../constants/route'
 import { Link } from "react-router-dom"
 import Load from "../../../../components/load"
+import { doc, onSnapshot } from "firebase/firestore"
+import { db } from "../../../../main"
+import { formatDistanceToNow } from "date-fns"
 
 export default function PostItem({ id }: { id: string }) {
   const [details, setDetails] = useState<PostItem>()
 
   useLayoutEffect(() => {
+    let unsub: any
     (async () => {
-      const post = await getPostById(id)
-
-      if (post) {
-        setDetails(post)
-      }
+      const docRef = doc(db, 'posts', id)
+      unsub = onSnapshot(docRef, (doc) => {
+        const data = doc.data() as PostItem | undefined
+        if (data) {
+          setDetails(data)
+        }
+      })
     })()
+    if (unsub) {
+      return unsub
+    }
   }, [id])
 
 
 
   if (details == undefined) {
-    return <Load/>
+    return <Load />
   }
-
+ 
   return (
     <section className="w-full p-3 pt-2 pt-6 pb-5 flex gap-1 border-b border-[#fff2] flex-col">
       {(details.type == 'retweet' && details.retweeter) && (
@@ -52,18 +61,18 @@ export default function PostItem({ id }: { id: string }) {
             className="rounded-full"
           />
         </div>
-        <div className="w-full pr-4">
-          <div className="flex gap-2">
-            <p className="font-[600] text-wrap">{details.post_owner.name}</p>
-            <p className="text-[#fff6]">@{details.post_owner.username}</p>
-            <p className="text-[#fff6]">{details.date}</p>
+        <div className="w-full pr-4 ">
+          <div className="flex gap-2 flex items-center ">
+            <p className="font-[600] text-wrap text-[14px]">{details.post_owner.name}</p>
+            <p className="text-[#fff6] text-[14px]">@{details.post_owner.username}</p>
+            <p className="text-[#fff6] text-[12px]">{formatDistanceToNow(Number(details.date))}</p>
           </div>
           <div>
             <Link to={routes.postpage + '/' + id} >
 
               <p className="text-[#fff9] pb-3">{details.caption}</p>
               <div className="max-h-[300px] overflow-hidden flex items-center rounded-[10px]">
-                {details.photoUrl&&<img src={details.photoUrl}
+                {details.photoUrl && <img src={details.photoUrl}
                   width='100%' className='rounded-[10px]' />}
               </div>
             </Link>

@@ -51,7 +51,7 @@ export default function UserDisplay({ details }: { details: user_basic_info }) {
 
   return (
     <div
-      className='flex gap-12 items-center'>
+      className='flex gap-12 items-center justify-between w-full'>
       <div className="flex gap-2 h-[40px] border-box overflow-hidden">
         <Link to={`/profile/${details.username}`}>
           <Icon
@@ -62,12 +62,12 @@ export default function UserDisplay({ details }: { details: user_basic_info }) {
         </Link>
         <Link to={`/profile/${details.username}`}>
           <div className="h-[40px]">
-            <p className="m-0 p-0 h-[20px] text-white">{details.name}</p>
-            <p className="m-0 p-0 h-[15px] text-[#fff6] text-[14px]">@{details.username}</p>
+            <p className="m-0 p-0 h-[20px] text-white break-words text-[12px]">{details.name}</p>
+            <p className="m-0 p-0 h-[15px] text-[#fff6] text-[12px]">@{details.username}</p>
           </div>
         </Link>
       </div>
-      <button className="w-[80px] h-[30px] font-[500] rounded-full bg-[#00acee]"
+      <button className="min-w-[80px] h-[30px] font-[500] rounded-full bg-[#00acee]"
       onClick={click}>
         {text}
       </button>

@@ -20,6 +20,7 @@ import { db } from "../../../main"
 import getUserById from "../../../services/getUserById"
 import getPostById from "../../../services/getPostById"
 import Load from "../../../components/load"
+import { formatDistanceToNow } from "date-fns/esm"
 
 
 
@@ -256,7 +257,7 @@ export default function PostPage() {
               <img src={post.photoUrl}
                 width='100%' className='rounded-[10px]' />
             </div>
-            <p className="text-[#fff6] mt-3 ">{post.date}</p>
+            <p className="text-[#fff6] mt-3 ">{formatDistanceToNow(Number(post.date))}</p>
           </div>
           <div className="flex gap-5 pl-4 items-center h-[50px] border-b border-[#fff4]">
             <p>{post.comments.length} <span className="text-[#fff4]">Replies</span></p>

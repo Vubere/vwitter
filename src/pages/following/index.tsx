@@ -33,10 +33,10 @@ export default function Following() {
               if (res) {
                 arr.push(res.details)
               }
+              if (i == f.length - 1) {
+                setFollowing(arr)
+              }
             })()
-            if (i == f.length - 1) {
-              setFollowing(arr)
-            }
           })
         }
         setLoading(false)
