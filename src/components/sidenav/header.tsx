@@ -31,10 +31,10 @@ export default function SN_Header() {
       </Link>
     </div>
     <div>
-      <Link to={routes.following}>
+      <Link to={routes.following + '/' + user?.user?.details.username}>
         <p className="inline">{user?.user?.following.length} <span className="text-[14px] text-[#fff6]">Following</span></p>{' '}
       </Link>
-      <Link to={routes.followers}>
+    <Link to={routes.followers + '/' + user?.user?.details.username}>
         <p className="inline ml-2">{user?.user?.followers.length} <span className="text-[14px] text-[#fff6]">Followers</span></p>
       </Link>
     </div>

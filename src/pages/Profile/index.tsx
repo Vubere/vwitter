@@ -83,10 +83,10 @@ export default function Profile() {
           <p className="text-[#fff4] m-0 p-0">@{user?.details.username}</p>
           <p className="text-[14px] mt-3">{user.details.bio}</p>
           <div className="flex gap-4 mt-4">
-            <Link to={routes.following}>
+            <Link to={routes.following + '/' + user.details.username}>
             <p className="text-[#fff4]"><span>{user.following.length}</span> Following</p>
             </Link>
-            <Link to={routes.followers}>
+            <Link to={routes.followers+'/'+user.details.username}>
             <p className="text-[#fff4]"><span>{user.followers.length}</span> Followers</p>
             </Link>
           </div>

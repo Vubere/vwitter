@@ -17,15 +17,12 @@ export default function Users() {
 const [loading, setLoading] = useState(false)
   const userContext = useContext(UserCon)
 
-  if(!userContext?.user?.details){
-    return null
-  }
-
+  
   const getUsers = async() => {
     const col = collection(db, 'users')
     const res = (await getDocs(col)).docs
 
-    if(res.length){
+    if(res.length&&userContext?.user){
       const arr:details[] = []
       setLoading(true)
       res.forEach((v, t)=>{
@@ -45,6 +42,9 @@ const [loading, setLoading] = useState(false)
     getUsers()
   }, [])
   
+  if(!userContext?.user?.details){
+    return null
+  }
 
   return (
     <section >

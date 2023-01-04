@@ -77,12 +77,12 @@ function App() {
             <Todo />
           </ProtectedRoutes>
         } />
-        <Route path={routes.followers} element={
+        <Route path={routes.followers+'/:user'} element={
           <ProtectedRoutes>
             <Followers />
           </ProtectedRoutes>
         } />
-        <Route path={routes.following} element={
+        <Route path={routes.following+'/:user'} element={
           <ProtectedRoutes>
             <Following />
           </ProtectedRoutes>
