@@ -106,7 +106,7 @@ export default function SendPost() {
             date: Date.now(),
             postOwner: details.post_owner
           })
-        })
+        }, {merge: true})
 
         setImage(undefined)
         imageRef.current.value = undefined
