@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react'
+import { useState, useContext, useLayoutEffect } from 'react'
 import Icon from '../../../components/icon'
 
 import MessageDisplay from './messageDisplay'
@@ -9,46 +9,41 @@ import avatar from '../../../assets/avatar.jpg'
 import searchImg from '../../../components/assets/search.png'
 
 
-import { UserCon } from '../../../context/UserContext'
+import UserContext, { UserCon, user_info } from '../../../context/UserContext'
+import { doc, getDoc, onSnapshot } from 'firebase/firestore'
+import { db } from '../../../main'
 
-import { details } from '../../Signup/signupFlow'
+
 
 
 export default function Messages() {
   const { sidenavOpen, setSidenav } = useContext(Sidenav)
-  const [messages, setMessages] = useState<message[] | undefined>([
-    {
-      user_details: {
-        name: 'Victor Ubere',
-        username: "vubere",
-        avatar: '',
-        id: ''
-      },
-      date: 'Dec 29',
-      text: 'what"s up',
-      photo_url: '',
-      id: 'dd'
-    },
-    {
-      user_details: {
-        name: 'Victor Ubere',
-        username: "vubere",
-        avatar: '',
-        id: ''
-      },
-      date: 'Dec 29',
-      text: 'what"s up',
-      photo_url: '',
-      id: 'gg'
-    },
-  ]
-  )
+  const [messages, setMessages] = useState<string[]>()
   const context = useContext(UserCon)
 
-  if(!context?.user?.details){
-    
+  if (!context?.user?.details) {
+
     return null
   }
+  useLayoutEffect(() => {
+    let unsub:any
+    const fetchMessages = async () => {
+      if (context.user?.details) {
+        const docRef = doc(db, 'users', context.user.details.id)
+        const res = await getDoc(docRef)
+        unsub = onSnapshot(docRef, (doc)=>{
+          const data = res.data() as user_info|undefined
+          if(data){
+            setMessages(data.messages)
+          }
+        })
+      }
+    }
+    fetchMessages()
+    if(unsub){
+      return unsub
+    }
+  }, [])
 
   return (
     <section>
@@ -69,8 +64,8 @@ export default function Messages() {
           <button className='absolute left-3 top-[50%] transform translate-y-[-50%]'><Icon width='15px' height='14px' src={searchImg} className="" /></button>
         </form>
         <section className='mt-6 '>
-          {messages ?
-            messages.map((item) => <MessageDisplay key={item.id} item={item} />) :
+          {messages&&messages.length ?
+            messages.map((item:any) => <MessageDisplay key={item.id} id={item} />) :
             <p className='text-[#fff8]'>You have no open chat...</p>}
         </section>
       </main>
@@ -78,16 +73,3 @@ export default function Messages() {
   )
 }
 
-
-export type message = {
-  user_details: {
-    name: string,
-    username: string,
-    avatar: string,
-    id: string
-  },
-  text: string,
-  photo_url: string,
-  date: string,
-  id: string
-}

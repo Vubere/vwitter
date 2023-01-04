@@ -72,6 +72,12 @@ export default function Input({ id }: { id: string | undefined }) {
                 avatar: user.avatar,
                 id: user.id
               },
+              receiver: {
+                username: party.details.username,
+                name: party.details.name,
+                avatar: party.details.avatar,
+                id: party.details.id
+              },
               id: chatId + '' + user.username + '' + Date.now()
             })
           }, {merge:true})

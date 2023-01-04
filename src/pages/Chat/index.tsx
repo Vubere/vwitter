@@ -96,6 +96,7 @@ export type singleChat = {
   time: number,
   photoUrl: string,
   sender: user_basic_info,
+  receiver: user_basic_info,
   id: string
 }
 
