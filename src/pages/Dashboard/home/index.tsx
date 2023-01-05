@@ -14,6 +14,8 @@ import tweetIcon from '../../../assets/tweetIcon.png'
 import { UserCon } from '../../../context/UserContext'
 import getUserById from '../../../services/getUserById'
 import Load from '../../../components/load'
+import { doc, onSnapshot } from 'firebase/firestore'
+import { db } from '../../../main'
 
 export default function Home() {
   const { sidenavOpen, setSidenav } = useContext(Sidenav)
@@ -33,7 +35,7 @@ export default function Home() {
 
       let postArr: postType[] = [];
       arr.forEach((id) => {
-
+        const docRef = doc(db, 'users', id, 'posts');
         (async () => {
           setLoading(true)
           const { posts: p } = await getUserById(id)

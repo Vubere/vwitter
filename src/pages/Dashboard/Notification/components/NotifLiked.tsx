@@ -1,4 +1,4 @@
-import { notifications } from ".";
+import { notifications } from "..";
 import Icon from "../../../../components/icon";
 
 import liked from "../../home/components/Reactions/likeFilled.png"

@@ -12,7 +12,7 @@ const Dashboard = lazy(() => import('./pages/Dashboard'))
 
 const Home = lazy(() => import('./pages/Dashboard/home'))
 const Search = lazy(() => import('./pages/Dashboard/search'))
-const Notification = lazy(() => import('./pages/Dashboard/Notification/components'))
+const Notification = lazy(() => import('./pages/Dashboard/Notification'))
 const Message = lazy(() => import('./pages/Dashboard/message'))
 const Chat = lazy(() => import('./pages/Chat'))
 const ComposeTweet = lazy(() => import('./pages/Dashboard/Compose'))
