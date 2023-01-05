@@ -45,13 +45,13 @@ export default function PostItem({ id, type }:postType) {
 
 
 
-  if (details == undefined) {
-    return null
-  }
-  if (!('post_owner' in details)) {
-    return null
-  }
   useEffect(() => {
+    if (details == undefined) {
+      return 
+    }
+    if (!('post_owner' in details)) {
+      return 
+    };
     (async () => {
       const user = await getUserById(details.post_owner)
       if (user)
@@ -66,7 +66,8 @@ export default function PostItem({ id, type }:postType) {
     })()
   }, [details])
 
-  if (!postOwner) {
+  
+  if (!postOwner || !details) {
     return null
   }
 
