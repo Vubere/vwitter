@@ -129,7 +129,7 @@ export default function Notification() {
             return (<LikedNotif key={item.id} details={item} />)
           } else if (item.type == 'reply') {
             return (<Comment key={item.id} details={item.ref.res} postowner={item.id} />)
-          } else if (item.type == 'retweete') {
+          } else if (item.type == 'retweet') {
             return (<LikedNotif key={item.id} details={item} />)
           } else {
             return (
@@ -142,7 +142,7 @@ export default function Notification() {
 }
 
 export type notifications = {
-  type: 'reply' | 'like' | 'follow' | 'retweete',
+  type: 'reply' | 'like' | 'follow' | 'retweet',
   user: string,
   ref: any,
   id: string

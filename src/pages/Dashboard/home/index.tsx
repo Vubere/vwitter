@@ -35,7 +35,7 @@ export default function Home() {
 
       let postArr: postType[] = [];
       arr.forEach((id) => {
-        const docRef = doc(db, 'users', id, 'posts');
+        const docRef = doc(db, 'users', id);
         (async () => {
           setLoading(true)
           const { posts: p } = await getUserById(id)
