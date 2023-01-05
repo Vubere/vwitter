@@ -5,7 +5,7 @@ import Reactions from "./Reactions"
 import Icon from "../../../../components/icon"
 
 import retweet from '../components/Reactions/retweet.png'
-import { useLayoutEffect, useState } from "react"
+import { useEffect, useLayoutEffect, useState } from "react"
 import getPostById from "../../../../services/getPostById"
 import { details } from "../../../Signup/signupFlow"
 
@@ -15,9 +15,17 @@ import Load from "../../../../components/load"
 import { doc, onSnapshot } from "firebase/firestore"
 import { db } from "../../../../main"
 import { formatDistanceToNow } from "date-fns"
+import { minimalDistance } from "../../../../helpers/date"
+import { user_basic_info } from "../../../Chat"
+import getUserById from "../../../../services/getUserById"
 
-export default function PostItem({ id }: { id: string }) {
+export type postType = { id: string, type: 'tweet' | 'retweet' }
+
+
+export default function PostItem({ id, type }:postType) {
   const [details, setDetails] = useState<PostItem>()
+  const [postOwner, setPostOwner] = useState<user_basic_info>()
+  const [retweeter, setRetweeter] = useState<user_basic_info>()
 
   useLayoutEffect(() => {
     let unsub: any
@@ -38,34 +46,63 @@ export default function PostItem({ id }: { id: string }) {
 
 
   if (details == undefined) {
-    return <Load />
+    return null
   }
- 
+  if (!('post_owner' in details)) {
+    return null
+  }
+  useEffect(() => {
+    (async () => {
+      const user = await getUserById(details.post_owner)
+      if (user)
+        setPostOwner(user.details)
+    })();
+    (async () => {
+      if (details.retweeter) {
+        const user = await getUserById(details.retweeter)
+        if (user)
+          setRetweeter(user.details)
+      }
+    })()
+  }, [details])
+
+  if (!postOwner) {
+    return null
+  }
+
   return (
     <section className="w-full p-3 pt-2 pt-6 pb-5 flex gap-1 border-b border-[#fff2] flex-col">
-      {(details.type == 'retweet' && details.retweeter) && (
+      {(type == 'retweet' && retweeter) && (
         <div className="flex gap-2 pl-3">
           <Icon src={retweet} width='20px' height="20px" />
-          <p className="text-[14px] text-[#fff4]">
-            {details.retweeter.username} retweeted
-          </p>
+          <Link to={routes.profile + '/' + retweeter.username}>
+            <p className="text-[14px] text-[#fff4]">
+              {retweeter.username} retweeted
+            </p>
+          </Link>
         </div>
       )}
       <div className="flex gap-3">
 
         <div>
-          <Avatar
-            src={`${details.post_owner.avatar != '' ? details.post_owner.avatar : avatar}`}
-            width='45px'
-            height="45px"
-            className="rounded-full"
-          />
+          <Link to={routes.profile + '/' + postOwner.username}>
+            <Avatar
+              src={`${postOwner.avatar != '' ? postOwner.avatar : avatar}`}
+              width='45px'
+              height="45px"
+              className="rounded-full"
+            />
+          </Link>
         </div>
         <div className="w-full pr-4 ">
           <div className="flex gap-2 flex items-center ">
-            <p className="font-[600] text-wrap text-[14px]">{details.post_owner.name}</p>
-            <p className="text-[#fff6] text-[14px]">@{details.post_owner.username}</p>
-            <p className="text-[#fff6] text-[12px]">{formatDistanceToNow(Number(details.date))}</p>
+            <Link to={routes.profile + '/' + postOwner.username}>
+              <p className="font-[600] text-wrap text-[14px]">{postOwner.name}</p>
+            </Link>
+            <Link to={routes.profile + '/' + postOwner.username}>
+              <p className="text-[#fff6] text-[14px]">@{postOwner.username}</p>
+            </Link>
+            <p className="text-[#fff6] text-[12px]">{minimalDistance(formatDistanceToNow(Number(details.date)))}</p>
           </div>
           <div>
             <Link to={routes.postpage + '/' + id} >
@@ -87,9 +124,8 @@ export default function PostItem({ id }: { id: string }) {
 }
 
 export type PostItem = {
-  type: 'tweet' | 'retweet',
-  retweeter?: details,
-  post_owner: details,
+  retweeter?: string,
+  post_owner: string,
   caption: string,
   photoUrl: string,
   likes: string[],
@@ -104,8 +140,8 @@ export type Comments = {
   photoUrl: string,
   replies: Comments[],
   likes: string[],
-  commentOwner: details,
+  commentOwner: string,
   date: string,
-  postOwner: details
+  postOwner: string
 }
 

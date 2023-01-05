@@ -17,14 +17,14 @@ const Message = lazy(() => import('./pages/Dashboard/message'))
 const Chat = lazy(() => import('./pages/Chat'))
 const ComposeTweet = lazy(() => import('./pages/Dashboard/Compose'))
 const PostPage = lazy(() => import('./pages/Dashboard/PostPage'))
-const ReplyPage = lazy(()=>import('./pages/ReplyPage'))
+const ReplyPage = lazy(() => import('./pages/ReplyPage'))
 const Profile = lazy(() => import('./pages/Profile'))
 
 const Users = lazy(() => import('./pages/users'))
 const Todo = lazy(() => import('./pages/Todo'))
-const EditProfile = lazy(()=>import('./pages/EditProfile'))
-const Following = lazy(()=>import('./pages/following'))
-const Followers = lazy(()=>import('./pages/followers'))
+const EditProfile = lazy(() => import('./pages/EditProfile'))
+const Following = lazy(() => import('./pages/following'))
+const Followers = lazy(() => import('./pages/followers'))
 
 function App() {
 
@@ -64,7 +64,7 @@ function App() {
             </ProtectedRoutes>
           } />
           <Route path={routes.postpage} >
-            <Route path=':postId' element={<PostPage />}/>
+            <Route path=':postId' element={<PostPage />} />
           </Route>
         </Route>
         <Route path={routes.users} element={
@@ -77,12 +77,12 @@ function App() {
             <Todo />
           </ProtectedRoutes>
         } />
-        <Route path={routes.followers+'/:user'} element={
+        <Route path={routes.followers + '/:user'} element={
           <ProtectedRoutes>
             <Followers />
           </ProtectedRoutes>
         } />
-        <Route path={routes.following+'/:user'} element={
+        <Route path={routes.following + '/:user'} element={
           <ProtectedRoutes>
             <Following />
           </ProtectedRoutes>

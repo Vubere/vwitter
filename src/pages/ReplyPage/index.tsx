@@ -18,6 +18,8 @@ import { UserCon } from '../../context/UserContext';
 
 import Postshow, { PostItem } from '../Dashboard/home/components/PostItem';
 import Load from '../../components/load';
+import { user_basic_info } from '../Chat';
+import getUserById from '../../services/getUserById';
 
 export default function SendPost() {
   const { reply } = useParams()
@@ -34,6 +36,7 @@ export default function SendPost() {
 
   const [details, setDetails] = useState<PostItem>()
   const [loading, setLoading] = useState(false)
+  const [postOwner, setPostOwner] = useState<user_basic_info>()
 
   useEffect(() => {
     if (input_ref.current) {
@@ -50,6 +53,9 @@ export default function SendPost() {
         const data = res.data() as PostItem | undefined
         if (data) {
           setDetails(data)
+          const pO = await getUserById(data.post_owner)
+          if(pO)
+          setPostOwner(pO.details)
         }
         setLoading(false)
       }
@@ -97,12 +103,7 @@ export default function SendPost() {
             photoUrl: path,
             replies: [],
             likes: [],
-            commentOwner: {
-              name: user.details.name,
-              username: user.details.username,
-              id: user.details.id,
-              avatar: user.details.avatar
-            },
+            commentOwner: user.details.id,
             date: Date.now(),
             postOwner: details.post_owner
           })
@@ -114,6 +115,9 @@ export default function SendPost() {
 
       }
     }
+  }
+  if(!postOwner){
+    return <Load/>
   }
 
   return (
@@ -127,7 +131,7 @@ export default function SendPost() {
         <div className="flex flex-col gap-3">
           <div>
             <Icon
-              src={`${details.post_owner.avatar != '' ? details.post_owner.avatar : avatar}`}
+              src={`${postOwner.avatar != '' ? postOwner.avatar : avatar}`}
               width='45px'
               height="45px"
               className="rounded-full"
@@ -135,8 +139,8 @@ export default function SendPost() {
           </div>
           <div className="w-full pr-4">
             <div className="flex gap-1">
-              <p className="font-[600]">{details.post_owner.name}</p>
-              <p className="text-[#fff6]">@{details.post_owner.username}</p>
+              <p className="font-[600]">{postOwner.name}</p>
+              <p className="text-[#fff6]">@{postOwner.username}</p>
               <p className="text-[#fff6]">{details.date}</p>
             </div>
             <div>

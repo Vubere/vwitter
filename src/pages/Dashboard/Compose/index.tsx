@@ -64,14 +64,8 @@ export default function SendPost() {
           path = await getDownloadURL(res.ref)
         }
         await setDoc(docRef, {
-          type: 'tweet',
           comments: [],
-          post_owner: {
-            avatar: user.details.avatar,
-            username: user.details.username,
-            name: user.details.name,
-            id: user.id
-          },
+          post_owner: user.id,
           photoUrl: path||'',
           likes: [],
           retweets: [],
@@ -81,7 +75,7 @@ export default function SendPost() {
         })
         const userRef  = doc(db, 'users', currentUser.uid)
         await updateDoc(userRef, {
-          posts: arrayUnion(id)
+          posts: arrayUnion({id, type: 'tweet'})
         })
         setImage(undefined)
         imageRef.current.value = undefined

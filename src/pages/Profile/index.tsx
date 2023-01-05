@@ -22,25 +22,25 @@ import Load from "../../components/load";
 
 
 export default function Profile() {
-  
+
   const navigate = useNavigate()
   const [user, setUser] = useState<user_info | undefined>()
   const { username } = useParams()
 
-  const [view, setView] = useState<'tweet' | 'replies' | 'likes'>('tweet')
+  const [view, setView] = useState<'tweet' | 'likes'>('tweet')
   const { currentUser } = getAuth()
   const UserInfo = useContext(UserCon)
-  const [loading,setLoading] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   useLayoutEffect(() => {
     if (username) {
       const fetchUser = async () => {
         setLoading(true)
-        try{
+        try {
           const userDetails = await getUserByUsername(username)
           setUser(userDetails)
           setLoading(false)
-        }catch(err){
+        } catch (err) {
           setLoading(false)
           navigate(-1)
         }
@@ -49,11 +49,11 @@ export default function Profile() {
     }
   }, [username])
 
-  if(loading){
-    return <Load/>
+  if (loading) {
+    return <Load />
   }
 
-  if (!user ||currentUser==null) {
+  if (!user || currentUser == null) {
     return null
   }
 
@@ -64,11 +64,11 @@ export default function Profile() {
           <div className=" absolute left-2 top-2 bg-[#0003] rounded-full p-1">
             <Back click={() => navigate(-1)} className="w-[20px] h-[20px]" />
           </div>
-        
+
           <Icon src={user.details.avatar || avatar}
             width='70px' height='70px' className='rounded-full outline outline-[#fff1] absolute bottom-[-30px] left-[15px]' />
         </div>
-        {currentUser.uid == user.id ? (<Link to={routes.edit_profile+'/'+user.id} className='w-full'>
+        {currentUser.uid == user.id ? (<Link to={routes.edit_profile + '/' + user.id} className='w-full'>
           <button className="float-right border border-[#fff4]  rounded-full w-[110px] h-[35px] m-2 clear-both">Edit Profile</button>
         </Link>) : (<div className="flex flex-row gap-2 float-right clear-both items-center">
           <Link to={'/chat' + '/' + user.details.username}>
@@ -84,10 +84,10 @@ export default function Profile() {
           <p className="text-[14px] mt-3">{user.details.bio}</p>
           <div className="flex gap-4 mt-4">
             <Link to={routes.following + '/' + user.details.username}>
-            <p className="text-[#fff4]"><span>{user.following.length}</span> Following</p>
+              <p className="text-[#fff4]"><span>{user.following.length}</span> Following</p>
             </Link>
-            <Link to={routes.followers+'/'+user.details.username}>
-            <p className="text-[#fff4]"><span>{user.followers.length}</span> Followers</p>
+            <Link to={routes.followers + '/' + user.details.username}>
+              <p className="text-[#fff4]"><span>{user.followers.length}</span> Followers</p>
             </Link>
           </div>
         </section>
@@ -98,15 +98,15 @@ export default function Profile() {
           <li className={`${view == 'tweet' ? 'border-[#00acee] border-b border-b-2' : null} p-2`}
             onClick={() => setView('tweet')} >Tweets</li>
 
-          <li className={`${view == 'replies' ? 'border-[#00acee] border-b border-b-2' : null} p-2`}
-            onClick={() => setView('replies')}>Replies</li>
+          {/*  <li className={`${view == 'replies' ? 'border-[#00acee] border-b border-b-2' : null} p-2`}
+            onClick={() => setView('replies')}>Replies</li> */}
 
           <li className={`${view == 'likes' ? 'border-[#00acee] border-b border-b-2' : null} p-2`}
             onClick={() => setView('likes')}>Likes</li>
         </ul>
       </nav>
       <main className="w-full flex flex-col items-center">
-        {view == 'tweet' ? <Tweets /> : view == 'likes' ? <Likes /> : <Replies />}
+        {view == 'tweet' ? <Tweets id={user.details.id} /> : <Likes id={user.details.id} />}
       </main>
     </div>
   )

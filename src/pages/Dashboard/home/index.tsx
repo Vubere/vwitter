@@ -1,16 +1,16 @@
 import { useContext, useLayoutEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link} from 'react-router-dom'
 
 import { Sidenav } from '../index'
 import Avatar from "../../../components/icon"
-import TwitterIcon from "../../../components/twitterLogo"
-import PostItem, { PostItem as PItype } from './components/PostItem'
+
+import PostItem, { postType } from './components/PostItem'
 import Icon from '../../../components/icon'
 
 import * as routes from '../../../constants/route'
 import avatar from '../../../assets/avatar.jpg'
 import tweetIcon from '../../../assets/tweetIcon.png'
-import { twitterColor } from '../../../constants/color'
+
 import { UserCon } from '../../../context/UserContext'
 import getUserById from '../../../services/getUserById'
 import Load from '../../../components/load'
@@ -19,9 +19,9 @@ export default function Home() {
   const { sidenavOpen, setSidenav } = useContext(Sidenav)
 
   const context = useContext(UserCon)
-  const navigate = useNavigate()
+ 
 
-  const [posts, setPosts] = useState<string[]>([])
+  const [posts, setPosts] = useState<postType[]>([])
   const [loading, setLoading] = useState(false)
 
 
@@ -31,7 +31,7 @@ export default function Home() {
       arr.push(context.user.id)
 
 
-      let postArr: string[] = [];
+      let postArr: postType[] = [];
       arr.forEach((id) => {
 
         (async () => {
@@ -50,7 +50,7 @@ export default function Home() {
       })
     }
 
-  }, [])
+  }, [context])
   
   if (context == undefined || context.user == undefined) {
     
@@ -62,8 +62,8 @@ export default function Home() {
   }
 
   return (
-    <main className='overflow-y-auto h-[100vh] w-[100vw] pb-[100px]'>
-      <header className="pl-3 pt-1 pb-1 border-b border-[#fff2] flex gap-4 relative min-h-[50px] items-center">
+    <main className='overflow-y-auto h-[100vh] w-[100vw] pb-[100px] pt-[55px]'>
+      <header className="pl-3 pt-1 pb-1 border-b border-[#fff2] flex gap-4 fixed top-0 min-h-[50px] items-center bg-black w-full">
         <Avatar
           width="30px"
           height="30px"
@@ -75,7 +75,7 @@ export default function Home() {
       <section className='w-full '>
         {posts.length ? posts.map((item) => {
           return (
-            <PostItem id={item} />
+            <PostItem id={item.id} key={item.id} type={item.type} />
           )
         }
         ) : <p className='text-[#fff6] m-3 text-[14px]'>Follow users to see feed content...

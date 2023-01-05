@@ -1,4 +1,4 @@
-import { Comments} from "../../home/components/PostItem";
+import { Comments } from "../../home/components/PostItem";
 import { user_info } from "../../../../context/UserContext";
 
 import Avatar from "../../../../components/icon"
@@ -11,39 +11,64 @@ import { getAuth } from "firebase/auth";
 
 import like from '../../home/components/Reactions/like.png'
 import likeFilled from '../../home/components/Reactions/likeFilled.png'
-import { useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { details } from "../../../Signup/signupFlow";
 import { formatDistanceToNow } from "date-fns";
+import { minimalDistance } from "../../../../helpers/date";
+import { Link } from "react-router-dom";
 
-export default function Comment({details, postowner}:{details:Comments, postowner:{
-  name: string,
-  username: string,
-  avatar: string,
-  id: string
-}}){
+import * as routes from '../../../../constants/route'
+import { user_basic_info } from "../../../Chat";
+import getUserById from "../../../../services/getUserById";
+
+export default function Comment({ details, postowner:poId }: {
+  details: Comments, postowner: string}) {
   const [likedCheck, setLikes] = useState<string[]>(details.likes)
+  const [commentOwner,setCommentOwner] = useState<user_basic_info>()
+  const [postowner, setPostOwner] = useState<user_basic_info>()
 
-  const {text, likes, commentOwner, photoUrl, replies,date } = details
+  const { text, likes,  photoUrl, date } = details
 
-  const {currentUser} = getAuth()
+  const { currentUser } = getAuth()
 
+  useLayoutEffect(()=>{
+    (async () => {
+      const cO = await getUserById(details.commentOwner)
+      const pO = await getUserById(poId)
+      if(cO&&pO){
+        setCommentOwner(cO.details)
+        setPostOwner(cO.details)
+      }
 
-  return(
+    })
+  },[])
+
+  if(!commentOwner||!postowner){
+    return null
+  }
+
+  return (
     <div>
       <section className="w-full p-3 pt-6 pb-2 flex gap-3 border-b border-[#fff2]">
         <div>
-          <Avatar
-            src={`${commentOwner.avatar != '' ? commentOwner.avatar : avatar}`}
-            width='45px'
-            height="45px"
-            className="rounded-full"
-          />
+          <Link to={routes.profile + '/' + commentOwner.username}>
+            <Avatar
+              src={`${commentOwner.avatar != '' ? commentOwner.avatar : avatar}`}
+              width='45px'
+              height="45px"
+              className="rounded-full"
+            />
+          </Link>
         </div>
         <div className="w-full pr-4">
           <div className="flex gap-1 text-[14px]">
-            <p className="font-[600]">{commentOwner.name}</p>
-            <p className="text-[#fff6]">@{commentOwner.username}</p>
-            <p className="text-[#fff6]">{formatDistanceToNow(Number(date))}</p>
+            <Link to={routes.profile + '/' + commentOwner.username}>
+              <p className="font-[600]">{commentOwner.name}</p>
+            </Link>
+            <Link to={routes.profile + '/' + commentOwner.username}>
+              <p className="text-[#fff6]">@{commentOwner.username}</p>
+            </Link>
+              <p className="text-[#fff6]">{minimalDistance(formatDistanceToNow(Number(date)))}</p>
           </div>
           <p><span className="text-[#fff3]">Replying to </span><span className="text-[#00acee]">@{postowner.username}</span></p>
           <div>

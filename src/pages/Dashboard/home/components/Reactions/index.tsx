@@ -45,19 +45,14 @@ export default function Reactions({ details, id, likes, comments, retweets }: { 
             likes: arrayUnion(currentUser.uid)
           })
           await updateDoc(userRef, {
-            likes: arrayUnion(currentUser.uid)
+            likes: arrayUnion(id)
           })
-          const ownerRef = doc(db, 'users', details.post_owner.id)
+          const ownerRef = doc(db, 'users', details.post_owner)
           const notifId = id + 'l' + currentUser.uid
           const notifRef = doc(db, 'notifications', notifId)
           await setDoc(notifRef, {
             type: 'like',
-            user: {
-              username: user?.user?.details.id,
-              name: user?.user?.details.name,
-              avatar: user?.user?.details.avatar,
-              id: user?.user?.details.id
-            },
+            user:  user?.user?.details.id,
             ref: {
               res: 'tweet',
               info: `${details.caption}`
@@ -103,25 +98,18 @@ export default function Reactions({ details, id, likes, comments, retweets }: { 
           const retId = id + 'r' + currentUser.uid
           const retRef = doc(db, 'posts', retId)
           await setDoc(retRef, {
-            ...details,
             type: 'retweet',
-            retweeter: user.user.details,
-            retweets: arrayUnion(currentUser.uid)
+            id: details.id
           })
           await updateDoc(userRef, {
             posts: arrayUnion(retId),
           })
-          const ownerRef = doc(db, 'users', details.post_owner.id)
+          const ownerRef = doc(db, 'users', details.post_owner)
           const notifId = id + 'r' + currentUser.uid
           const notifRef = doc(db, 'notifications', notifId)
           await updateDoc(notifRef, {
             type: 'retweet',
-            user: {
-              username: user?.user?.details.id,
-              name: user?.user?.details.name,
-              avatar: user?.user?.details.avatar,
-              id: user?.user?.details.id
-            },
+            user: user?.user?.details.id,
             ref: {
               res: 'tweet',
               info: `${details.caption}`
