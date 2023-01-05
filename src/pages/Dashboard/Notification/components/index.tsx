@@ -1,18 +1,18 @@
 import { useContext, useEffect, useState } from "react"
 
-import { Sidenav } from ".."
-import Icon from "../../../components/icon"
+import { Sidenav } from "../.."
+import Icon from "../../../../components/icon"
 import avatar from '../../../assets/avatar.jpg'
 
-import LikedNotif from "./components/NotifLiked"
-import Comment from "../PostPage/components/comment"
-import FollowedNotif from "./components/FollowedNotif"
-import { UserCon, user_info } from "../../../context/UserContext"
-import { details } from "../../Signup/signupFlow"
+import LikedNotif from "./NotifLiked"
+import Comment from "../../PostPage/components/comment"
+import FollowedNotif from "./FollowedNotif"
+import { UserCon, user_info } from "../../../../context/UserContext"
+import { details } from "../../../Signup/signupFlow"
 import { doc, getDoc } from "firebase/firestore"
-import { db } from "../../../main"
+import { db } from "../../../../main"
 import { useNavigate } from "react-router-dom"
-import Load from "../../../components/load"
+import Load from "../../../../components/load"
 
 
 
@@ -128,12 +128,12 @@ export default function Notification() {
           if (item.type == 'like') {
             return (<LikedNotif key={item.id} details={item} />)
           } else if (item.type == 'reply') {
-            return (<Comment key={item.id} details={item.ref.res} postowner={item.user} />)
+            return (<Comment key={item.id} details={item.ref.res} postowner={item.id} />)
           } else if (item.type == 'retweete') {
             return (<LikedNotif key={item.id} details={item} />)
           } else {
             return (
-              <FollowedNotif key={item.id} details={item.user} />
+              <FollowedNotif key={item.id} id={item.id} />
             )
           }
         }) : <p className="p-4 text-[#fff3]">you have no notifications...</p>}
@@ -143,12 +143,7 @@ export default function Notification() {
 
 export type notifications = {
   type: 'reply' | 'like' | 'follow' | 'retweete',
-  user: {
-    name: string,
-    id: string,
-    avatar: string,
-    username: string
-  },
+  user: string,
   ref: any,
   id: string
 }

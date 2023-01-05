@@ -42,7 +42,7 @@ export default function likes({ id }: { id: string }) {
       {
         posts?.length ? (
           posts.map((item) => (
-            <PostItem id={item} key={item} />
+            <PostItem type={'tweet'} id={item} key={item} />
           ))
         ) : <p className="p-2">no tweets...</p>
       }
