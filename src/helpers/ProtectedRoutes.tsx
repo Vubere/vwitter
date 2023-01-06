@@ -17,9 +17,14 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
       const user:user_info = JSON.parse(ls)
       if (auth.currentUser == null) { 
         (async () => {
-          if (user?.details)
-          await signInWithEmailAndPassword(auth, user.details.email, user.details.password)
-          setUserAuth(auth.currentUser)
+          if (user?.details){
+            try{
+              await signInWithEmailAndPassword(auth, user.details.email, user.details.password)
+              setUserAuth(auth.currentUser)
+            }catch(err){
+              navigate('/login')
+            }
+          }
           
         })()
       }

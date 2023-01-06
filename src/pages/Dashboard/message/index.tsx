@@ -25,33 +25,35 @@ export default function Messages() {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
 
-  if (!context?.user?.details) {
-    navigate('/login')
-    return null
-  }
   useLayoutEffect(() => {
-    let unsub:any
-    const fetchMessages = async () => {
-      setLoading(true)
-      if (context.user?.details) {
-        const docRef = doc(db, 'users', context.user.details.id)
-        const res = await getDoc(docRef)
-        unsub = onSnapshot(docRef, (doc)=>{
-          const data = res.data() as user_info|undefined
-          if(data){
-            setMessages(data.messages)
-          }
-        })
-        setLoading(false)
+    if (context?.user?.details) {
+      let unsub: any
+
+      const fetchMessages = async () => {
+        setLoading(true)
+        if (context.user?.details) {
+          const docRef = doc(db, 'users', context.user.details.id)
+          const res = await getDoc(docRef)
+          unsub = onSnapshot(docRef, (doc) => {
+            const data = res.data() as user_info | undefined
+            if (data) {
+              setMessages(data.messages)
+            }
+          })
+          setLoading(false)
+        }
+      }
+      fetchMessages()
+      if (unsub) {
+        return unsub
       }
     }
-    fetchMessages()
-    if(unsub){
-      return unsub
-    }
   }, [])
-  if(loading){
-    return <Load/>
+  if(!context?.user?.details){
+    return null
+  }
+  if (loading) {
+    return <Load />
   }
 
   return (
@@ -73,8 +75,8 @@ export default function Messages() {
           <button className='absolute left-3 top-[50%] transform translate-y-[-50%]'><Icon width='15px' height='14px' src={searchImg} className="" /></button>
         </form>
         <section className='mt-6 '>
-          {messages&&messages.length ?
-            messages.map((item:any) => <MessageDisplay key={item.id} id={item} />) :
+          {messages && messages.length ?
+            messages.map((item: any) => <MessageDisplay key={item.id} id={item} />) :
             <p className='text-[#fff8]'>You have no open chat...</p>}
         </section>
       </main>

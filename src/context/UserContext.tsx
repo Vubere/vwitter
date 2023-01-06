@@ -22,28 +22,26 @@ export default function UserContext({ children }: { children: React.ReactNode })
       localStorage.setItem('user', JSON.stringify(u))
       set(u)
     }
-  } 
+  }
 
 
 
   useEffect(() => {
-    let unsub:any
+    let unsub: any
     const ls = localStorage.getItem('user')
     if (ls) {
       const lsUser: user_info = JSON.parse(ls)
-      if (user == undefined)
-        (async () => {
-          const docRef = doc(db, 'users', lsUser.details.id)
-          unsub = onSnapshot(docRef, (doc) => {
-            const data = doc.data() as user_info | undefined
-            if (data) {
-              setUser(data)
-            }
-          })
-
-        })()
+      if (user == undefined) {
+        const docRef = doc(db, 'users', lsUser.details.id)
+        unsub = onSnapshot(docRef, (doc) => {
+          const data = doc.data() as user_info | undefined
+          if (data) {
+            setUser(data)
+          }
+        })
+      }
     }
-    if(unsub){
+    if (unsub) {
       return unsub
     }
   }, [])
