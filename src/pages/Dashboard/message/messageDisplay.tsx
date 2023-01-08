@@ -6,18 +6,25 @@ import { Chat, user_basic_info } from "../../Chat";
 
 
 import avatar from "../../../assets/avatar.jpg"
-import { useContext, useLayoutEffect, useState } from "react";
+import { useContext, useEffect, useLayoutEffect, useState } from "react";
 import { singleChat } from "../../Chat";
 import { UserCon } from "../../../context/UserContext";
 import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "../../../main";
 import { formatDistanceToNow } from "date-fns";
+import getUserById from "../../../services/getUserById";
+import Load from "../../../components/load";
+import { current } from "@reduxjs/toolkit";
+import { getAuth } from "firebase/auth";
 
 
 export default function MessageDisplay({ id }: { id: string }) {
 
   const [details, setDetails] = useState<singleChat>()
-  const context = useContext(UserCon)
+  const [sender, setSender] = useState<user_basic_info>()
+  const [receiver, setReceiver] = useState<user_basic_info>()
+
+  const {currentUser} = getAuth()
 
   useLayoutEffect(() => {
     let unsub: any
@@ -35,14 +42,25 @@ export default function MessageDisplay({ id }: { id: string }) {
     if (unsub) {
       return unsub
     }
-    console.log('here')
+    
   }, [])
+  useEffect(()=>{
+    if(details){
+      (async()=>{
+        const s = await getUserById(details.sender)
+        const r = await getUserById(details.receiver)
+        setSender(s.details)
+        setReceiver(r.details)
+      })()
+    }
+  },[details])
 
-  if (!details || !context?.user?.details) {
-    return null
+  console.log(details, currentUser, sender, receiver)
+  if (!details || !currentUser||!sender||!receiver) {
+    return <Load h='120px'/>
   }
-  const { user: { details: user } } = context
-  const party = user.id == details.sender.id ? details.receiver : details.sender
+  
+  const party = currentUser.uid == details.sender ? receiver : sender
   
 
   return (

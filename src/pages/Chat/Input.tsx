@@ -66,18 +66,8 @@ export default function Input({ id }: { id: string | undefined }) {
               text: message,
               time: Date.now(),
               photoUrl: path || '',
-              sender: {
-                username: user.username,
-                name: user.name,
-                avatar: user.avatar,
-                id: user.id
-              },
-              receiver: {
-                username: party.details.username,
-                name: party.details.name,
-                avatar: party.details.avatar,
-                id: party.details.id
-              },
+              sender: user.id,
+              receiver: party.details.id,
               id: chatId + '' + user.username + '' + Date.now()
             })
           }, {merge:true})

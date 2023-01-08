@@ -10,10 +10,12 @@ import { useContext, useEffect, useLayoutEffect, useRef, useState } from "react"
 
 import Input from "./Input"
 import { UserCon } from "../../context/UserContext"
-import { doc, getDoc, onSnapshot } from "firebase/firestore"
+import { doc, getDoc, onSnapshot, setDoc } from "firebase/firestore"
 import { db } from "../../main"
 import getUserByUsername from "../../services/getUserByUsername"
 import Load from "../../components/load"
+import getUserById from "../../services/getUserById"
+import { getAuth } from "firebase/auth"
 
 
 export default function Chat() {
@@ -21,26 +23,30 @@ export default function Chat() {
   const navigate = useNavigate()
   const lastMessage = useRef<any>()
   const [loading, setLoading] = useState(false)
-
-  const userContext = useContext(UserCon)
-
-  useEffect(() => {
-    if (lastMessage.current) {
-      lastMessage.current.scrollIntoView()
-    }
-  }, [lastMessage.current])
-
+  const [user, setUser] = useState<user_basic_info>()
+  const {currentUser} = getAuth()
   const [party, setParty] = useState<user_basic_info>()
 
   const [chat, setChat] = useState<Chat>()
-  if (!userContext?.user?.details) {
-    return <Load />
-  }
-  const user = userContext.user
-
 
   useLayoutEffect(() => {
-    if (chatId) {
+    if (lastMessage.current) {
+      lastMessage.current.scrollIntoView()
+    }
+    if(!user&&currentUser){
+      (async()=>{
+        const u = await getUserById(currentUser.uid)
+       
+        setUser(u.details)
+      })()
+    }
+  }, [lastMessage.current])
+
+  
+  
+  
+  useEffect(() => {
+    if (chatId&&user) {
       let resp
       const fetchChat = async () => {
         setLoading(true)
@@ -49,10 +55,22 @@ export default function Chat() {
           setParty(res.details)
           const id = [user.id, res.id].sort().join('')
           const chatRef = doc(db, 'chats', id)
+          await setDoc(chatRef, {}, {merge: true})
           resp = onSnapshot(chatRef, (doc) => {
             const chatDetails = doc.data() as Chat | undefined
-            if (chatDetails) {
+            if (chatDetails?.id) {
+          
               setChat(chatDetails)
+              setLoading(false)
+            }else{
+              setDoc(chatRef,{
+                id,
+                chat: []
+              })
+              setChat({
+                id,
+                chat: []
+              })
               setLoading(false)
             }
           })
@@ -63,8 +81,9 @@ export default function Chat() {
         return resp
       }
     }
-  }, [])
-  if (!party) {
+  }, [user])
+
+  if (!party||!user) {
     return <Load />
   }
 
@@ -83,7 +102,7 @@ export default function Chat() {
           <main className="pt-[50px] w-full overflow-auto mb-[50px] pb-[55px]" >
             {chat ? chat.chat.sort((a, b) => a.time - b.time).map((item, i) => (<ChatBubble details={item}
               refM={i == chat.chat.length - 1 ? lastMessage : undefined}
-              className={item.sender.id != user.id ? 'left' : 'right'} />
+              className={item.sender != user.id ? 'left' : 'right'} />
             )) : <p className="p-4 text-[#fff3]">send a message to start conversation... </p>}
           </main>
           <Input id={chatId} />
@@ -102,8 +121,8 @@ export type singleChat = {
   text: string,
   time: number,
   photoUrl: string,
-  sender: user_basic_info,
-  receiver: user_basic_info,
+  sender: string,
+  receiver: string,
   id: string
 }
 

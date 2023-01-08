@@ -37,7 +37,9 @@ export default function Messages() {
           unsub = onSnapshot(docRef, (doc) => {
             const data = res.data() as user_info | undefined
             if (data) {
-              setMessages(data.messages)
+              const h = new Set(data.messages)
+              const ar = Array.from(h)
+              setMessages(ar)
             }
           })
           setLoading(false)

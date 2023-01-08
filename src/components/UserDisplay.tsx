@@ -5,45 +5,57 @@ import avatarImg from "../assets/avatar.jpg"
 import { Link, useNavigate } from "react-router-dom"
 
 import { details } from "../pages/Signup/signupFlow"
-import { useContext, useState } from "react"
-import { UserCon } from "../context/UserContext"
+import { useContext, useEffect, useState } from "react"
+import { UserCon, user_info } from "../context/UserContext"
 import { arrayRemove, arrayUnion, doc, updateDoc } from "firebase/firestore"
 import { db } from "../main"
 import { user_basic_info } from "../pages/Chat"
+import getUserById from "../services/getUserById"
+import { getAuth } from "firebase/auth"
 
 export default function UserDisplay({ details }: { details: user_basic_info }) {
   const navigate = useNavigate()
-  const userContext = useContext(UserCon)
-  if (!userContext?.user?.details) {
+  const [user, setUser] = useState<user_info>()
+  const [following, setFollowing] = useState(false)
+  const {currentUser} = getAuth()
+
+  useEffect(()=>{
+    if(currentUser)
+    (async()=>{
+      const u = await getUserById(currentUser.uid)
+      setUser(u)
+      if(u.following.includes(details.id))
+      setFollowing(true)
+    })()
+  }, [])
+  if (!user) {
     return null
   }
-  const [following, setFollowing] = useState(userContext.user.following.includes(details.id))
-
-  const text = userContext.user.details.id == details.id ? 'profile' : following ? 'unfollow' : 'follow'
+  const text = user.details.id == details.id ? 'profile' : following ? 'unfollow' : 'follow'
 
   const click = async () => {
-    if(userContext.user?.details){
-      const userRef = doc(db, 'users', userContext.user?.details.id)
+    if (user) {
+      const userRef = doc(db, 'users', user.details.id)
       const docRef = doc(db, 'users', details.id)
-      const userId = userContext.user.details.id
-      if(text == 'profile'){
-        navigate('/profile/'+userContext.user?.details.username)
-      }else if(text=='unfollow'){
+      const userId = user.details.id
+      if (text == 'profile') {
+        navigate('/profile/' + user.details.username)
+      } else if (text == 'unfollow') {
         setFollowing(false)
         await updateDoc(userRef, {
           following: arrayRemove(details.id)
         })
         await updateDoc(docRef, {
           followers: arrayRemove(userId)
-        }) 
-      }else{
+        })
+      } else {
         setFollowing(true)
         await updateDoc(userRef, {
           following: arrayUnion(details.id)
         })
         await updateDoc(docRef, {
           followers: arrayUnion(userId)
-        }) 
+        })
       }
     }
   }
@@ -68,7 +80,7 @@ export default function UserDisplay({ details }: { details: user_basic_info }) {
         </Link>
       </div>
       <button className="min-w-[80px] h-[30px] font-[500] rounded-full bg-[#00acee]"
-      onClick={click}>
+        onClick={click}>
         {text}
       </button>
     </div>
