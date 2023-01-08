@@ -6,7 +6,7 @@ import Input from "../../components/input";
 
 import avatar from '../../assets/avatar.jpg'
 import camera from '../../assets/camera.png'
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { UserCon } from "../../context/UserContext";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../main";
@@ -20,24 +20,34 @@ export default function EditProfile() {
 
 
   const imageRef = useRef<any>()
-  const fileRef = useRef<any>()
+
 
   const navigate = useNavigate()
 
   const context = useContext(UserCon)
 
 
-  if (!context?.user?.details) {
-    return null
-  }
-  const [name, setName] = useState(context.user.details.name)
-  const [username, setUserName] = useState(context.user.details.username)
-  const [bio, setBio] = useState(context.user.details.bio)
+  
+  const [name, setName] = useState<string>()
+  const [username, setUserName] = useState<string>()
+  const [bio, setBio] = useState<string>()
   const {currentUser} = getAuth()
 
+  useEffect(()=>{
+    if(context?.user?.details){
+      const {name:n, username:u, bio:b, } = context.user.details
+      setName(n)
+      setUserName(u)
+      setBio(b)
+    }
+  }, [])
 
+  if(!name||!username||bio==undefined){
+    return null
+  }
 
   const handleFileChange = (e: any) => {
+    console.log('here', imageRef.current)
     const img = e.target.files
     if (img) {
       if (img[0]) {
@@ -45,7 +55,8 @@ export default function EditProfile() {
         const reader = new FileReader()
         reader.onload = (e) => {
           if (imageRef.current != undefined) {
-            imageRef.current.style.backgroundImage = `url(${e.target?.result || ''})`
+            console.log(imageRef.current, e.target?.result)
+            imageRef.current.style.backgroundImage = `url(${e.target?.result})`
           }
         }
         reader.readAsDataURL(img[0])
@@ -74,6 +85,7 @@ export default function EditProfile() {
         ['details.name']: name,
         ['details.avatar']: link,
       })
+
       navigate('/profile/'+context.user.details.username)
     }
 
@@ -94,9 +106,14 @@ export default function EditProfile() {
       <div className="relative h-[120px] w-full border-b border-[#fff1]">
         <div className="rounded-full outline outline-black absolute bottom-[-30px] left-[15px] w-[70px] h-[70px]">
           <div className="relative">
-            <Icon src={image || avatar}
+            <div style={{
+              backgroundImage: `url(${avatar})`,
+              backgroundSize: 'contain',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat'
+            }}
               ref={imageRef}
-              width='70px' height='70px' className='rounded-full outline outline-black' />
+           className='rounded-full outline outline-black w-[70px] h-[70px]'></div>
             <label htmlFor="avatar" className="absolute p-2 bg-[#0005] rounded-full top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]">
               <Icon src={camera} width='25px' height="25px" className="" />
               <input type='file' id="avatar" onChange={handleFileChange} className='hidden' />

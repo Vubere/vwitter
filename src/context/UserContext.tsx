@@ -32,13 +32,18 @@ export default function UserContext({ children }: { children: React.ReactNode })
     if (ls) {
       const lsUser: user_info = JSON.parse(ls)
       if (user == undefined) {
-        const docRef = doc(db, 'users', lsUser.details.id)
-        unsub = onSnapshot(docRef, (doc) => {
-          const data = doc.data() as user_info | undefined
-          if (data) {
-            setUser(data)
-          }
-        })
+        try {
+
+          const docRef = doc(db, 'users', lsUser.details.id)
+          unsub = onSnapshot(docRef, (doc) => {
+            const data = doc.data() as user_info | undefined
+            if (data) {
+              setUser(data)
+            }
+          })
+        } catch (err) {
+         
+        }
       }
     }
     if (unsub) {

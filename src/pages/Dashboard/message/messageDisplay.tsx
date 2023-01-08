@@ -11,6 +11,7 @@ import { singleChat } from "../../Chat";
 import { UserCon } from "../../../context/UserContext";
 import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "../../../main";
+import { formatDistanceToNow } from "date-fns";
 
 
 export default function MessageDisplay({ id }: { id: string }) {
@@ -62,7 +63,7 @@ export default function MessageDisplay({ id }: { id: string }) {
               <p className="text-[#fff6] text-[14px]">@{party.username.slice(0, 20)}</p>
             </div>
             <span className="flex items-center h-[14px] justify-center font-[700] text-[#fff6]">.</span>
-            <p className="text-[14px] text-[#fff6]">{details.time}</p>
+            <p className="text-[14px] text-[#fff6]">{formatDistanceToNow(details.time)}</p>
           </div>
           <div className="h-[14px] text-[#fff6] text-14px p-1">
             {details.text.length > 15 ? details.text.slice(0, 15) + '...' : details.text}

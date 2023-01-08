@@ -2,6 +2,7 @@ import { singleChat } from ".";
 import Icon from "../../components/icon";
 import avatar from '../../assets/avatar.jpg'
 import React, { useEffect } from "react";
+import { formatDistanceToNow } from "date-fns";
 
 export default function ChatBubble({ details, className, refM}: { details: singleChat, className: 'left' | 'right', refM:React.MutableRefObject<HTMLDivElement>|undefined}) {
 
@@ -22,7 +23,7 @@ export default function ChatBubble({ details, className, refM}: { details: singl
         </div>
         }
       </div>
-      <p className={`ml-4 mr-4 mt-0 float-${className} text-[#fff3] text-[13px]`}>{details.time}</p>
+      <p className={`ml-4 mr-4 mt-0 float-${className} text-[#fff3] text-[13px]`}>{formatDistanceToNow(details.time)}</p>
     </div>
   )
 }

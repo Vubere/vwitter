@@ -64,28 +64,32 @@ export default function stepFour({ close }: {
 
     const storage = getStorage();
     try {
-      if (ava != undefined)
+      if (ava != undefined) {
+        
         if (!ava.type.includes('image')) {
-          throw 'You can only send images or videos.'
+          throw 'You can only send images.'
         }
-      if (auth.currentUser != null) {
-        if (ava) return
-        const filePath = `users/${auth.currentUser.uid}/avatar`
-        const storageRef = ref(storage, filePath)
-        let path = ''
+      
+        if (userCon?.user?.details) {
+          
+          const filePath = `users/${userCon.user.details.id}/avatar`
+          const storageRef = ref(storage, filePath)
+          let path = ''
 
-        const res = await uploadBytes(storageRef, ava)
-        path = await getDownloadURL(res.ref)
-        const docRef = doc(db, 'users', auth.currentUser.uid)
-        await setDoc(docRef, {
-          ['details.avatar']: path
-        }, { merge: true })
-        updateProfile(auth.currentUser, {
-          photoURL: path
-        })
-        if (userCon) {
-          if (userCon.user)
-            userCon.setUser({ ...userCon.user, details: { ...userCon.user.details, avatar: path } })
+          const res = await uploadBytes(storageRef, ava)
+          path = await getDownloadURL(res.ref)
+          const docRef = doc(db, 'users', userCon.user.details.id)
+          await setDoc(docRef, {
+            ['details.avatar']: path
+          }, { merge: true })
+          if(auth.currentUser)
+          updateProfile(auth.currentUser, {
+            photoURL: path
+          })
+          if (userCon) {
+            if (userCon.user)
+              userCon.setUser({ ...userCon.user, details: { ...userCon.user.details, avatar: path } })
+          }
         }
       }
     } catch (error) {
@@ -160,19 +164,19 @@ export default function stepFour({ close }: {
           changeHandler={e => setDetails({ ...details, username: e.target.value })}
           className="mt-8" />
         <label htmlFor="file"
-          className='w-[120px] block mt-8 ml-auto mr-auto rounded full relative'>
-          <div>
+          className='w-[80px] block mt-8 ml-auto mr-auto rounded-full relative'>
+          
             <img src={camera} alt="camera icon"
-              className='absolute top-[50%] left-[50%] transform translate-y-[-50%] translate-x-[-50%]' />
-            <div className='w-[80px] h-[80px]'
+              className='absolute top-[50%] left-[50%] transform translate-y-[-50%] translate-x-[-50%] w-[30px] h-[30px]' />
+            <div className='w-[80px] h-[80px] rounded-full outline-[#fff4]'
               ref={imageRef}
               style={{
-                backgroundImage: avatar,
-                backgroundSize: 'cover',
+                backgroundImage:`url(${avatar})`,
+                backgroundSize: 'contain',
                 backgroundPosition: 'center',
                 backgroundRepeat: 'no-repeat'
               }}></div>
-          </div>
+      
           <input type="file" name="profile" id="file"
             ref={fileRef}
             onChange={handleFileChange}
