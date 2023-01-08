@@ -6,15 +6,15 @@ import { Chat, user_basic_info } from "../../Chat";
 
 
 import avatar from "../../../assets/avatar.jpg"
-import { useContext, useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { singleChat } from "../../Chat";
-import { UserCon } from "../../../context/UserContext";
+
 import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "../../../main";
 import { formatDistanceToNow } from "date-fns";
 import getUserById from "../../../services/getUserById";
 import Load from "../../../components/load";
-import { current } from "@reduxjs/toolkit";
+
 import { getAuth } from "firebase/auth";
 
 
