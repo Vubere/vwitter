@@ -28,7 +28,7 @@ import Load from '../../../components/load'
 
 
 export default function stepFour({ close }: {
-  close: () => void
+  close: () => void,
 }) {
   const { details, setDetails } = useContext(FlowContext)
   const userCon = useContext(UserCon)

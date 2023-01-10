@@ -21,9 +21,22 @@ export default function StepTwo({next, prev}:{
     e.preventDefault()
     if(!pwd){
       setError('you must fill in the password field')
+      setTimeout(()=>{
+        setError('')
+      }, 2000)
+      return
+    }
+    if(pwd.length<6){
+      setError('password length can not be less than six')
+      setTimeout(()=>{
+        setError('')
+      }, 2000)
       return
     }
     if(pwd!=conPwd){
+      setTimeout(()=>{
+        setError('')
+      }, 2000)
       setError('passwords do not match')
       return
     }
@@ -47,6 +60,7 @@ export default function StepTwo({next, prev}:{
       <h3 className='w-[90%] ml-auto mr-auto mt-8 font-[700] text-[22px]'>Choose your Password</h3>
       <form onSubmit={onSubmit}
       className='w-full flex flex-col items-center mt-6'>
+        {error&&<p className='text-[#f008] absolute w-[90%] mb-3'>{error}</p>}
         <Input
         type="password"
         name="Password"

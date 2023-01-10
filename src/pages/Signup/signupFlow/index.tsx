@@ -43,8 +43,8 @@ export default function SignupFlow({ close }: { close: () => void }) {
           : step == 2 ?
             <StepTwo next={increment} prev={decrement} />
             : step == 3 ?
-              <StepThree next={increment} prev={decrement} />
-              : <StepFour close={close} />
+              <StepThree next={increment} prev={decrement} reset={() => setStep(1)} />
+              : <StepFour close={close}/>
       }
     </FlowContext.Provider>
   )

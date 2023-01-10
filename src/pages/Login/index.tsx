@@ -38,30 +38,66 @@ export default function Login() {
         setError('email field is empty')
         return
       }
-      if (!pwd.length) {
-        setError('must input a password')
+      const pattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+      if (!pattern.test(email)) {
+        setError('invalid email')
+        setTimeout(() => {
+          setError('')
+        }, 2000)
         return
+      }
+      if (!pwd) {
+        setError('must input a password')
+        setTimeout(() => {
+          setError('')
+        }, 2000)
+        return
+      }
+      if (pwd.length < 6) {
+        setError('invalid password length')
+        setTimeout(() => {
+          setError('')
+        }, 2000)
       }
 
       if (userContext) {
         setLoading(true)
-        const h = await signInWithEmailAndPassword(auth, email, pwd)
+        try {
 
-        if (h) {
-          setLoginModal(false)
+          const h = await signInWithEmailAndPassword(auth, email, pwd)
+          if (h) {
+            setLoginModal(false)
+
+            const details = await getUserById(h.user.uid)
+            navigate('/home')
+            userContext.setUser(details)
+
+          }
+        } catch (err: any) {
+          const m: string = err.message
           
-          const details = await getUserById(h.user.uid)
-          navigate('/home')
-          userContext.setUser(details)
+          if (m.includes('user-not-found')) {
+            setError('invalid email address')
+            setTimeout(() => {
+              setError('')
+              setLoginModal(false)
+            }, 3000)
+          } else if (m.includes("wrong-password")) {
+            setError('wrong password')
+            setTimeout(() => {
+              setError('')
+            }, 2000)
 
+          }
         }
         setLoading(false)
+
       }
     })()
 
   }
-  if(loading){
-    return <Load/>
+  if (loading) {
+    return <Load />
   }
 
   return (
@@ -84,9 +120,25 @@ export default function Login() {
           </div>
           <form onSubmit={e => {
             e.preventDefault()
+            const pattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+            if (!email.length) {
+              setError('email field cannot be empty')
+              setTimeout(() => {
+                setError('')
+              }, 2000)
+              return
+            }
+            if (!pattern.test(email)) {
+              setError('invalid email')
+              setTimeout(() => {
+                setError('')
+              }, 2000)
+              return
+            }
             setLoginModal(true)
           }
           } className='w-[95%] mr-auto ml-auto flex flex-col items-center'>
+            {error && <p className='text-[#f008] '>{error}</p>}
             <Input
               type="email"
               name="Email"
@@ -116,6 +168,7 @@ export default function Login() {
 
           <h3 className='w-[90%] mdr-auto ml-auto font-[700] text-[24px]'>Enter your password</h3>
           <form onSubmit={e => e.preventDefault()} className="flex flex-col items-center">
+            {error && <p className='text-[#f008] '>{error}</p>}
             <p className="w-[90%] h-[60px] border pl-2 bg-transparent border-[#fff4] text-[#fff] rounded-[5px] flex flex-col justify-center mt-5 relative">
               <span className='text-[#fff8] text-[12px]'>Email</span>
               <span className='text-[#fff5] text-[14px]'>{email}</span>

@@ -24,11 +24,25 @@ export default function StepOne({ close, next }: {
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!name.length) {
-      setError('Fill in fasf field')
+      setError('Fill in name field')
+      setTimeout(()=>{
+        setError('')
+      }, 2000)
       return
     }
     if (!email.length) {
       setError('Fill in email field')
+      setTimeout(()=>{
+        setError('')
+      }, 2000)
+      return
+    }
+    const pattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+    if(!pattern.test(email)){
+      setError('invalid email')
+      setTimeout(()=>{
+        setError('')
+      }, 2000)
       return
     }
     if (!dob.year || !dob.month || !dob.day) {
@@ -53,6 +67,7 @@ export default function StepOne({ close, next }: {
         </h2>
         <form onSubmit={onSubmit}
           className='w-full flex flex-col'>
+            {error&&<p className='text-[#f008]  absolute'>{error}</p>}
           <Input
             type="name"
             name="Name"
@@ -65,7 +80,7 @@ export default function StepOne({ close, next }: {
             type="email"
             name="Email"
             value={email}
-            changeHandler={(e: any) => setEmail(e.target.value)}
+            changeHandler={(e: any) =>setEmail(e.target.value)}
             placeholder='Email'
             className="mt-8"
           />
