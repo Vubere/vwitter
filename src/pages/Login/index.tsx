@@ -15,7 +15,7 @@ import * as routes from '../../constants/route'
 import { twitterColor } from '../../constants/color';
 import { signInWithEmailAndPassword, getAuth, setPersistence } from 'firebase/auth';
 import { UserCon } from '../../context/UserContext';
-import getUserByUsername from '../../services/getUserByUsername';
+
 import getUserById from '../../services/getUserById';
 import Load from '../../components/load';
 

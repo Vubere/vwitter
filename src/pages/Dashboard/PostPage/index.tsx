@@ -177,7 +177,7 @@ export default function PostPage() {
   }
 
 
-  if(!postOwner){
+  if(!postOwner||loading){
     return <Load/>
   }
 

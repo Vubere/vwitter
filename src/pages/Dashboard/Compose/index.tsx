@@ -13,10 +13,12 @@ import { UserCon } from '../../../context/UserContext';
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
 
 import Cancel from '../../../components/CancelIcon';
+import Load from '../../../components/load';
 
 export default function SendPost() {
   const [post, setPost] = useState('')
   const [image, setImage] = useState<any>()
+  const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
   const input_ref = useRef<any>()
@@ -52,6 +54,7 @@ export default function SendPost() {
     e.preventDefault()
     if (currentUser && context?.user) {
       try {
+        setLoading(true)
         const user = context.user
         const id = currentUser.uid + '' + Date.now()
         const docRef = doc(db, 'posts', id)
@@ -78,15 +81,19 @@ export default function SendPost() {
           posts: arrayUnion({id, type: 'tweet'})
         })
         setImage(undefined)
+        if(imageRef.current)
         imageRef.current.value = undefined
         navigate('/home')
       } catch (err) {
         
       }
-
+      setLoading(false)
     }
   }
 
+  if(loading){
+    return <Load/>
+  }
   return (
     <section className='relative w-full flex gap-3 pt-[50px] p-3'>
       <Back

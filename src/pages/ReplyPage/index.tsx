@@ -86,13 +86,14 @@ export default function SendPost() {
     e.preventDefault()
     if (currentUser && context?.user && reply) {
       try {
+        setLoading(true)
         const user = context.user
         const docRef = doc(db, 'posts', reply)
-        const storage = getStorage()
-        const filePath = `users/${currentUser.uid}/post/replies/${Date.now}`
-        const storageRef = ref(storage, filePath)
         let path = ''
         if (image != undefined) {
+          const storage = getStorage()
+          const filePath = `users/${currentUser.uid}/post/replies/${Date.now}`
+          const storageRef = ref(storage, filePath)
           const res = await uploadBytes(storageRef, image)
           path = await getDownloadURL(res.ref)
         }
@@ -110,13 +111,15 @@ export default function SendPost() {
         }, {merge: true})
 
         setImage(undefined)
+        if(imageRef.current)
         imageRef.current.value = undefined
+        navigate(-1)
       } catch (err) {
 
       }
     }
   }
-  if(!postOwner){
+  if(!postOwner||loading){
     return <Load/>
   }
 
