@@ -4,7 +4,7 @@ import { Sidenav } from ".."
 import Icon from "../../../components/icon"
 import avatar from '../../../assets/avatar.jpg'
 
-import LikedNotif from "./components/NotifLiked"
+import NotifComp from "./components/notifComp"
 import Comment from "../PostPage/components/comment"
 import FollowedNotif from "./components/FollowedNotif"
 import { UserCon, user_info } from "../../../context/UserContext"
@@ -96,13 +96,14 @@ export default function Notification() {
           const notifRef = doc(db, 'notifications', id)
           const fetchNotifications = async () => {
             const res = await getDoc(notifRef)
-            console.log(res)
+           
             arr.push(res.data() as notifications)
+            if (i == notifArr.length - 1) {
+              setNotifications(arr)
+              console.log(arr)
+            }
           }
           fetchNotifications()
-          if (i == notifArr.length - 1) {
-            setNotifications(arr)
-          }
         })
         setLoading(false)
       }
@@ -132,11 +133,11 @@ export default function Notification() {
         {notifications?.length ? notifications.map((item) => {
           console.log(item)
           if (item.type == 'like') {
-            return (<LikedNotif key={item.id} details={item} />)
+            return (<NotifComp key={item.id} details={item} />)
           } else if (item.type == 'reply') {
-            return (<Comment key={item.id} details={item.ref.res} postowner={item.id} />)
+            return (<Comment key={item.id} details={item.ref.res} postowner={item.ref.og} />)
           } else if (item.type == 'retweet') {
-            return (<LikedNotif key={item.id} details={item} />)
+            return (<NotifComp key={item.id} details={item} />)
           } else {
             return (
               <FollowedNotif key={item.id} id={item.id} />

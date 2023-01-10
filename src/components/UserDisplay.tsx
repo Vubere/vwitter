@@ -7,7 +7,7 @@ import { Link, useNavigate } from "react-router-dom"
 
 import { useEffect, useState } from "react"
 import { user_info } from "../context/UserContext"
-import { arrayRemove, arrayUnion, doc, updateDoc } from "firebase/firestore"
+import { arrayRemove, arrayUnion, doc, setDoc, updateDoc } from "firebase/firestore"
 import { db } from "../main"
 import { user_basic_info } from "../pages/Chat"
 import getUserById from "../services/getUserById"
@@ -55,6 +55,17 @@ export default function UserDisplay({ details }: { details: user_basic_info }) {
         })
         await updateDoc(docRef, {
           followers: arrayUnion(userId)
+        })
+        const notifId = userId + 'f' + Date.now()
+        const notifRef = doc(db, 'notifications', details.id)
+        await setDoc(notifRef, {
+          type: 'follow',
+          user: user.details.id,
+          ref: '',
+          id: notifId
+        })
+        await updateDoc(docRef, {
+          notificatiions: arrayUnion(notifId)
         })
       }
     }

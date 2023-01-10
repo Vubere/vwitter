@@ -18,7 +18,7 @@ import Likes from "./likes";
 import { getAuth } from "firebase/auth";
 import mail from '../../components/assets/mail.png'
 import Load from "../../components/load";
-import { arrayRemove, arrayUnion, doc, onSnapshot, updateDoc } from "firebase/firestore";
+import { arrayRemove, arrayUnion, doc, onSnapshot, setDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../main";
 import { user_basic_info } from "../Chat";
 import getUserById from "../../services/getUserById";
@@ -99,6 +99,17 @@ export default function Profile() {
         })
         await updateDoc(curUserRef, {
           following: arrayUnion(userId)
+        })
+        const notifId = userId + 'f' + Date.now()
+        const notifRef = doc(db, 'notifications', userId)
+        await setDoc(notifRef, {
+          type: 'follow',
+          user: user.details.id,
+          ref: '',
+          id: notifId
+        })
+        await updateDoc(userRef, {
+          notificatiions: arrayUnion(notifId)
         })
       }
     }

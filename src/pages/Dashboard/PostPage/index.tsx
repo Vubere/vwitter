@@ -184,7 +184,7 @@ export default function PostPage() {
   return (
     <section className="overflow-auto pb-20 pt-10">
       <header className="w-full min-h-[20px] p-3 pl-14 bg-black fixed top-0">
-        <Back className="w-[20px] h-[20px] absolute top-4 left-3" click={() => navigate('/home')} />
+        <Back className="w-[20px] h-[20px] absolute top-4 left-3" click={() => navigate(-1)} />
         <h3 className="font-[600] text-[18px]">Thread</h3>
       </header>
       <section className="w-[100vw] p-4 pt-6 pb-0 flex flex-col gap-3 border-b border-[#fff2] items-center overflow-auto">

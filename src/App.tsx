@@ -29,7 +29,7 @@ const Followers = lazy(() => import('./pages/followers'))
 function App() {
 
   return (
-    <div className="App">
+    <div className="App max-w-[520px]">
       <Routes>
         <Route path={routes.signup} element={<Signup />} />
         <Route path={routes.login} element={<Login />} />

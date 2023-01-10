@@ -31,7 +31,7 @@ export default function Navbar() {
 
 
   return (
-    <nav className="fixed mt-auto flex justify-center items-center bottom-0 w-[100%] h-[50px] z-20 border-t border-[#fff4] bg-black">
+    <nav className="fixed mt-auto flex justify-center items-center bottom-0 w-full max-w-[520px] h-[50px] z-20 border-t border-[#fff4] bg-black">
       <ul className='flex justify-around align-center w-full mt-4'>
 
         <li className='flex gap-6 items-center mb-5 font-[600] text-[18px]'

@@ -1,5 +1,5 @@
-import { useContext, useLayoutEffect, useState } from 'react'
-import { Link} from 'react-router-dom'
+import { useContext, useEffect, useLayoutEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 
 import { Sidenav } from '../index'
 import Avatar from "../../../components/icon"
@@ -16,55 +16,56 @@ import getUserById from '../../../services/getUserById'
 import Load from '../../../components/load'
 import { doc, onSnapshot } from 'firebase/firestore'
 import { db } from '../../../main'
+import { notifications } from '../Notification'
 
 export default function Home() {
   const { sidenavOpen, setSidenav } = useContext(Sidenav)
 
   const context = useContext(UserCon)
- 
+
 
   const [posts, setPosts] = useState<postType[]>([])
   const [loading, setLoading] = useState(false)
 
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (context?.user) {
-      const arr = context.user.following
-      arr.push(context.user.id)
+      const arr = [...context.user.following, context.user.id]
 
 
       let postArr: postType[] = [];
-      arr.forEach((id) => {
+      arr.forEach((id, i) => {
         const docRef = doc(db, 'users', id);
         (async () => {
           setLoading(true)
           const { posts: p } = await getUserById(id)
+          const t: postType[] = []
 
           p.forEach((v, i) => {
             postArr.push(v)
             if (i == p.length - 1) {
-              const set = new Set(postArr)
-              setPosts(Array.from(set))
+              postArr.push(v)
             }
           })
+          if (i == arr.length - 1) {
+            setPosts(postArr)
+          }
           setLoading(false)
         })()
       })
     }
-
   }, [context])
-  
+
   if (context == undefined || context.user == undefined) {
-    
     return null
   }
-  
+
   if (loading) {
     return <Load />
   }
 
   return (
-    <main className='overflow-y-auto h-[100vh] w-[100vw] pb-[100px] pt-[55px]'>
+    <main className='overflow-y-auto h-[100vh] w-full pb-[100px] pt-[55px]'>
       <header className="pl-3 pt-1 pb-1 border-b border-[#fff2] flex gap-4 fixed top-0 min-h-[50px] items-center bg-black w-full">
         <Avatar
           width="30px"

@@ -12,7 +12,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   }
   
   return (
-    <div>
+    <div className='w-full max-w-[520px]'>
       <Sidenav snO={snCon.sidenavOpen} sSN={snCon.setSidenav} />
       {children}
       <Navbar />
