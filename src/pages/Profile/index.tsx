@@ -1,5 +1,5 @@
 import { Link, Outlet, useNavigate, useParams } from "react-router-dom";
-import { lazy, useContext, useDeferredValue, useLayoutEffect, useState } from "react";
+import { lazy, useContext, useDeferredValue, useLayoutEffect, useMemo, useState } from "react";
 
 
 import Icon from "../../components/icon";
@@ -18,6 +18,10 @@ import Likes from "./likes";
 import { getAuth } from "firebase/auth";
 import mail from '../../components/assets/mail.png'
 import Load from "../../components/load";
+import { arrayRemove, arrayUnion, doc, onSnapshot, updateDoc } from "firebase/firestore";
+import { db } from "../../main";
+import { user_basic_info } from "../Chat";
+import getUserById from "../../services/getUserById";
 
 
 
@@ -29,8 +33,11 @@ export default function Profile() {
 
   const [view, setView] = useState<'tweet' | 'likes'>('tweet')
   const { currentUser } = getAuth()
-  const UserInfo = useContext(UserCon)
+
   const [loading, setLoading] = useState(false)
+  const [curUser, setCurUser] = useState<user_basic_info>()
+
+  const [following, setFollowing] = useState(false)
 
   useLayoutEffect(() => {
     if (username) {
@@ -39,6 +46,20 @@ export default function Profile() {
         try {
           const userDetails = await getUserByUsername(username)
           setUser(userDetails)
+          const userRef = doc(db, 'users', userDetails.details.id)
+          if(currentUser){
+            setFollowing(userDetails.followers.includes(currentUser.uid))
+          }
+          const res = onSnapshot(userRef, (doc)=>{
+            const s = doc.data() as user_info|undefined
+            if(s){
+              setUser(s)
+            }
+          })
+          if (currentUser) {
+            const res = await getUserById(currentUser.uid)
+            setCurUser(res.details)
+          }
           setLoading(false)
         } catch (err) {
           setLoading(false)
@@ -48,14 +69,41 @@ export default function Profile() {
       fetchUser()
     }
   }, [username])
-
+  
   if (loading) {
     return <Load />
   }
-
+  
   if (!user || currentUser == null) {
     return null
   }
+  const text = following ? 'unfollow' : 'follow'
+
+  const toggleFollow = async () => {
+    if (user && curUser) {
+      const userRef = doc(db, 'users', user.details.id)
+      const curUserRef = doc(db, 'users', curUser.id)
+      const userId = user.details.id
+      if (text == 'unfollow') {
+        setFollowing(false)
+        await updateDoc(userRef, {
+          followers: arrayRemove(curUser.id)
+        })
+        await updateDoc(curUserRef, {
+          following: arrayRemove(userId)
+        })
+      } else {
+        setFollowing(true)
+        await updateDoc(userRef, {
+          followers: arrayUnion(curUser.id)
+        })
+        await updateDoc(curUserRef, {
+          following: arrayUnion(userId)
+        })
+      }
+    }
+  }
+
 
   return (
     <div>
@@ -74,8 +122,8 @@ export default function Profile() {
           <Link to={'/chat' + '/' + user.details.username}>
             <Icon src={mail} width='26px' height="26px" />
           </Link>
-          <button className=" border border-[#fff4]  rounded-full w-[90px] h-[35px] m-2">
-            {UserInfo?.user?.following.includes(user.id) ? 'unfollow' : 'follow'}
+          <button className=" border border-[#fff4]  rounded-full w-[90px] h-[35px] m-2" onClick={toggleFollow}>
+            {text}
           </button>
         </div>)}
         <section className="mt-14 pl-3 pr-3 pb-10">

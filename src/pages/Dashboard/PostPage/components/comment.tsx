@@ -37,12 +37,13 @@ export default function Comment({ details, postowner:poId }: {
       const pO = await getUserById(poId)
       if(cO&&pO){
         setCommentOwner(cO.details)
-        setPostOwner(cO.details)
+        setPostOwner(pO.details)
       }
 
-    })
+    })()
   },[])
 
+  
   if(!commentOwner||!postowner){
     return null
   }

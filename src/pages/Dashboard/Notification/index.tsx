@@ -13,6 +13,8 @@ import { doc, getDoc } from "firebase/firestore"
 import { db } from "../../../main"
 import { useNavigate } from "react-router-dom"
 import Load from "../../../components/load"
+import { getAuth } from "firebase/auth"
+import getUserById from "../../../services/getUserById"
 
 
 
@@ -75,14 +77,16 @@ export default function Notification() {
   const userContext = useContext(UserCon)
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
+  const {currentUser} = getAuth()
 
   useEffect(() => {
     const arr: notifications[] = []
     let notifArr: string[] = [];
     (async () => {
-      if (userContext?.user?.details) {
+      if (currentUser) {
         setLoading(true)
-        const res = await getDoc(doc(db, 'users', userContext.user.details.id))
+        const user = await getUserById(currentUser.uid)
+        const res = await getDoc(doc(db, 'users', user.details.id))
         const userInfo = res.data() as user_info | undefined
         if (userInfo) {
           notifArr = userInfo.notifications
@@ -92,6 +96,7 @@ export default function Notification() {
           const notifRef = doc(db, 'notifications', id)
           const fetchNotifications = async () => {
             const res = await getDoc(notifRef)
+            console.log(res)
             arr.push(res.data() as notifications)
           }
           fetchNotifications()
@@ -105,7 +110,7 @@ export default function Notification() {
   }, [])
   
   if (userContext?.user?.details == undefined) {
-    navigate('/login')
+
     return null
   }
 
@@ -125,6 +130,7 @@ export default function Notification() {
       </header>
       <main>
         {notifications?.length ? notifications.map((item) => {
+          console.log(item)
           if (item.type == 'like') {
             return (<LikedNotif key={item.id} details={item} />)
           } else if (item.type == 'reply') {

@@ -4,9 +4,9 @@ import avatarImg from "../assets/avatar.jpg"
 
 import { Link, useNavigate } from "react-router-dom"
 
-import { details } from "../pages/Signup/signupFlow"
-import { useContext, useEffect, useState } from "react"
-import { UserCon, user_info } from "../context/UserContext"
+
+import { useEffect, useState } from "react"
+import { user_info } from "../context/UserContext"
 import { arrayRemove, arrayUnion, doc, updateDoc } from "firebase/firestore"
 import { db } from "../main"
 import { user_basic_info } from "../pages/Chat"

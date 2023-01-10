@@ -1,4 +1,4 @@
-import { useContext, useLayoutEffect, useState } from "react"
+import { useContext, useEffect, useLayoutEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 
 
@@ -14,7 +14,7 @@ import Load from "../../components/load"
 export default function Users() {
   const navigate = useNavigate()
   const [users, setUsers] = useState<details[]>([])
-const [loading, setLoading] = useState(false)
+const [loading, setLoading] = useState(true)
   const userContext = useContext(UserCon)
 
   
@@ -24,7 +24,6 @@ const [loading, setLoading] = useState(false)
 
     if(res.length&&userContext?.user){
       const arr:details[] = []
-      setLoading(true)
       res.forEach((v, t)=>{
         const u = v.data().details as details
         if(u.id!=userContext.user?.details.id){
@@ -34,17 +33,18 @@ const [loading, setLoading] = useState(false)
           setUsers(users.concat(arr))
         }
       })
-      setLoading(false)
     }
   }
 
-  useLayoutEffect(()=>{
+  useEffect(()=>{
     getUsers()
+    setLoading(false)
   }, [])
   
   if(!userContext?.user?.details){
     return null
   }
+
 
   return (
     <section >

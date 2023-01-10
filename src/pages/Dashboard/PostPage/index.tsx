@@ -131,11 +131,11 @@ export default function PostPage() {
             retweets: arrayRemove(currentUser.uid)
           })
           const userRef = doc(db, 'users', currentUser.uid)
+          const userD = getUserById(currentUser.uid)
           await updateDoc(userRef, {
-            posts: arrayRemove(postId + '' + currentUser.uid)
+            posts: (await userD).posts.filter((v)=>v.id!=postId)
           })
-          const delRef = doc(db, 'posts', postId + '' + currentUser.uid)
-          await deleteDoc(delRef)
+        
         } catch (err) {
 
         }
@@ -146,14 +146,12 @@ export default function PostPage() {
             retweets: arrayUnion(currentUser.uid)
           })
           const userRef = doc(db, 'users', currentUser.uid)
-          const retId = postId + '' + currentUser.uid
-          const retRef = doc(db, 'posts', retId)
-          await setDoc(retRef, {
-            type: 'retweet',
-            id: postId
-          })
+          
           await updateDoc(userRef, {
-            posts: arrayUnion(retId),
+            posts: arrayUnion({
+              id:postId,
+              type: 'retweet'
+            }),
           })
           const ownerRef = doc(db, 'users', post.post_owner)
           const notifId = postId + 'r' + currentUser.uid
@@ -169,7 +167,7 @@ export default function PostPage() {
           })
           await updateDoc(ownerRef, {
             notifications: arrayUnion(notifId),
-            unread_messages: increment(1)
+            unread_notifications: increment(1)
           })
         } catch (err) {
 
@@ -252,7 +250,7 @@ export default function PostPage() {
         </section>
       </section>
       <section className="flex flex-col justify-center">
-        {post.comments.map((item) => <Comment details={item} postowner={post.post_owner} />)}
+        {post.comments.map((item) => <Comment details={item} postowner={post.post_owner} key={item.date}/>)}
       </section>
     </section>
   )

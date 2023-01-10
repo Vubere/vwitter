@@ -14,6 +14,7 @@ import { db } from '../../../../../main'
 import { getAuth } from 'firebase/auth'
 import { UserCon } from '../../../../../context/UserContext'
 import { Link } from 'react-router-dom'
+import getUserByUsername from '../../../../../services/getUserByUsername'
 
 export default function Reactions({ details, id, likes, comments, retweets }: { details: PostItem, id: string, likes: string[], comments: Comments[], retweets: string[] }) {
 
@@ -80,11 +81,10 @@ export default function Reactions({ details, id, likes, comments, retweets }: { 
             retweets: arrayRemove(currentUser.uid)
           })
           const userRef = doc(db, 'users', currentUser.uid)
+          const userD = await getUserByUsername(user.user.details.id)
           await updateDoc(userRef, {
-            posts: arrayRemove(id + '' + currentUser.uid)
+            posts: userD.posts.filter((i)=>i.id!=id)
           })
-          const delRef = doc(db, 'posts', id + 'r' + currentUser.uid)
-          await deleteDoc(delRef)
         } catch (err) {
 
         }
@@ -95,14 +95,12 @@ export default function Reactions({ details, id, likes, comments, retweets }: { 
             retweets: arrayUnion(currentUser.uid)
           })
           const userRef = doc(db, 'users', currentUser.uid)
-          const retId = id + 'r' + currentUser.uid
-          const retRef = doc(db, 'posts', retId)
-          await setDoc(retRef, {
-            type: 'retweet',
-            id: details.id
-          })
+          
           await updateDoc(userRef, {
-            posts: arrayUnion(retId),
+            posts: arrayUnion({
+              id: id,
+              type: 'retweet'
+            }),
           })
           const ownerRef = doc(db, 'users', details.post_owner)
           const notifId = id + 'r' + currentUser.uid
@@ -118,7 +116,7 @@ export default function Reactions({ details, id, likes, comments, retweets }: { 
           })
           await updateDoc(ownerRef, {
             notifications: arrayUnion(notifId),
-            unread_messages: increment(1)
+            unread_notifications: increment(1)
           })
         } catch (err) {
 

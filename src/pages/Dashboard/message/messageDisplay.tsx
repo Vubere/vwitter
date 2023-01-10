@@ -16,6 +16,7 @@ import getUserById from "../../../services/getUserById";
 import Load from "../../../components/load";
 
 import { getAuth } from "firebase/auth";
+import { minimalDistance } from "../../../helpers/date";
 
 
 export default function MessageDisplay({ id }: { id: string }) {
@@ -57,7 +58,7 @@ export default function MessageDisplay({ id }: { id: string }) {
 
   console.log(details, currentUser, sender, receiver)
   if (!details || !currentUser||!sender||!receiver) {
-    return <Load h='120px'/>
+    return null
   }
   
   const party = currentUser.uid == details.sender ? receiver : sender
@@ -81,7 +82,7 @@ export default function MessageDisplay({ id }: { id: string }) {
               <p className="text-[#fff6] text-[14px]">@{party.username.slice(0, 20)}</p>
             </div>
             <span className="flex items-center h-[14px] justify-center font-[700] text-[#fff6]">.</span>
-            <p className="text-[14px] text-[#fff6]">{formatDistanceToNow(details.time)}</p>
+            <p className="text-[14px] text-[#fff6]">{minimalDistance( formatDistanceToNow(details.time))}</p>
           </div>
           <div className="h-[14px] text-[#fff6] text-14px p-1">
             {details.text.length > 15 ? details.text.slice(0, 15) + '...' : details.text}

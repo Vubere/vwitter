@@ -10,6 +10,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   if(!snCon){
     return null
   }
+  
   return (
     <div>
       <Sidenav snO={snCon.sidenavOpen} sSN={snCon.setSidenav} />
