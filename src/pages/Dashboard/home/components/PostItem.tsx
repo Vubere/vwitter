@@ -19,13 +19,14 @@ import { minimalDistance } from "../../../../helpers/date"
 import { user_basic_info } from "../../../Chat"
 import getUserById from "../../../../services/getUserById"
 
-export type postType = { id: string, type: 'tweet' | 'retweet' }
+export type postType = { id: string, type: 'tweet' | 'retweet', retweeter?:string }
 
 
-export default function PostItem({ id, type }:postType) {
+export default function PostItem({ id, type, retweeter }:postType) {
   const [details, setDetails] = useState<PostItem>()
   const [postOwner, setPostOwner] = useState<user_basic_info>()
-  const [retweeter, setRetweeter] = useState<user_basic_info>()
+  const [retweetOwner, setRD] = useState<user_basic_info>()
+  
 
   useLayoutEffect(() => {
     let unsub: any
@@ -42,9 +43,9 @@ export default function PostItem({ id, type }:postType) {
       return unsub
     }
   }, [id])
-
-
-
+  
+  
+  
   useEffect(() => {
     if (details == undefined) {
       return 
@@ -54,16 +55,16 @@ export default function PostItem({ id, type }:postType) {
     };
     (async () => {
       const user = await getUserById(details.post_owner)
-      if (user)
+      if (user){
         setPostOwner(user.details)
-    })();
-    (async () => {
-      if (details.retweeter) {
-        const user = await getUserById(details.retweeter)
-        if (user)
-          setRetweeter(user.details)
       }
-    })()
+
+      if(retweeter){
+        const rd = await getUserById(retweeter)
+        if(rd) setRD(rd.details)
+      }
+    })();
+    
   }, [details])
 
   
@@ -73,12 +74,12 @@ export default function PostItem({ id, type }:postType) {
 
   return (
     <section className="w-full p-3 pt-2 pt-6 pb-5 flex gap-1 border-b border-[#fff2] flex-col">
-      {(type == 'retweet' && retweeter) && (
+      {(type == 'retweet' && retweetOwner) && (
         <div className="flex gap-2 pl-3">
           <Icon src={retweet} width='20px' height="20px" />
-          <Link to={routes.profile + '/' + retweeter.username}>
+          <Link to={routes.profile + '/' + retweetOwner.username}>
             <p className="text-[14px] text-[#fff4]">
-              {retweeter.username} retweeted
+              {retweetOwner.username} retweeted
             </p>
           </Link>
         </div>

@@ -49,7 +49,7 @@ export default function Reactions({ details, id, likes, comments, retweets }: { 
             likes: arrayUnion(id)
           })
           const ownerRef = doc(db, 'users', details.post_owner)
-          const notifId = id + 'l' + currentUser.uid
+          const notifId = id + 'l' + currentUser.uid + Date.now()
           const notifRef = doc(db, 'notifications', notifId)
           await setDoc(notifRef, {
             type: 'like',
@@ -61,7 +61,7 @@ export default function Reactions({ details, id, likes, comments, retweets }: { 
             id: notifId
           })
           await updateDoc(ownerRef, {
-            notifications: arrayUnion([notifId]),
+            notifications: arrayUnion(notifId),
             unread_notifications: increment(1)
           })
         } catch (err) {
@@ -83,7 +83,7 @@ export default function Reactions({ details, id, likes, comments, retweets }: { 
           const userRef = doc(db, 'users', currentUser.uid)
           const userD = await getUserByUsername(user.user.details.id)
           await updateDoc(userRef, {
-            posts: userD.posts.filter((i)=>i.id!=id)
+            posts: userD.posts.filter((i)=>i.id!=details.id)
           })
         } catch (err) {
 
@@ -99,11 +99,12 @@ export default function Reactions({ details, id, likes, comments, retweets }: { 
           await updateDoc(userRef, {
             posts: arrayUnion({
               id: id,
-              type: 'retweet'
+              type: 'retweet',
+              retweeter: currentUser.uid
             }),
           })
           const ownerRef = doc(db, 'users', details.post_owner)
-          const notifId = id + 'r' + currentUser.uid
+          const notifId = details.id + 'r' + currentUser.uid + Date.now()
           const notifRef = doc(db, 'notifications', notifId)
           await updateDoc(notifRef, {
             type: 'retweet',

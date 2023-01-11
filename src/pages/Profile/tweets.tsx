@@ -36,7 +36,7 @@ export default function tweets({ id }: { id: string }) {
       {
         posts?.length ? (
           posts.map((item) => (
-            <PostItem id={item.id} type={item.type} key={item.id} />
+            <PostItem id={item.id} type={item.type} key={item.id} retweeter={item?.retweeter}/>
           ))
         ) : <p className="p-2">no tweets...</p>
       }

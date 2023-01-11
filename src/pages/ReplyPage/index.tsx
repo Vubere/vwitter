@@ -113,10 +113,30 @@ export default function SendPost() {
         setImage(undefined)
         if(imageRef.current)
         imageRef.current.value = undefined
+        const notifId = details.id + 'rl' + currentUser.uid + Date.now()
+        const notifRef = doc(db, 'notifications', notifId)
+        await setDoc(notifRef, {
+          type:'reply',
+          user: currentUser.uid,
+          ref: {
+            res: {
+              text: post,
+              photoUrl: path,
+              replies: [],
+              likes: [],
+              commentOwner: user.details.id,
+              date: Date.now(),
+              postOwner: details.post_owner
+            },
+            og: details.post_owner
+          },
+          id: notifId
+        })
         navigate(-1)
       } catch (err) {
 
       }
+      setLoading(false)
     }
   }
   if(!postOwner||loading){

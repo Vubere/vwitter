@@ -78,7 +78,7 @@ export default function Home() {
       <section className='w-full '>
         {posts.length ? posts.map((item) => {
           return (
-            <PostItem id={item.id} key={item.id} type={item.type} />
+            <PostItem id={item.id} key={item.id} type={item.type} retweeter={item?.retweeter} />
           )
         }
         ) : <p className='text-[#fff6] m-3 text-[14px]'>Follow users to see feed content...

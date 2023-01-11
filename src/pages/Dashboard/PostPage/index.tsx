@@ -46,12 +46,12 @@ export default function PostPage() {
         const post = await getPostById(postId)
         if (post) {
           const pO = await getUserById(post.post_owner)
-          
+
           setPost(post)
           setLiked(post.likes)
           setRetweeted(post.retweets)
-          if(pO)
-          setPostOwner(pO.details)
+          if (pO)
+            setPostOwner(pO.details)
         }
         setLoading(false)
       })()
@@ -93,7 +93,7 @@ export default function PostPage() {
             likes: arrayUnion(postId)
           })
           const ownerRef = doc(db, 'users', post.post_owner)
-          const notifId = postId + 'l' + currentUser.uid
+          const notifId = postId + 'l' + currentUser.uid + Date.now()
           const notifRef = doc(db, 'notifications', notifId)
           await setDoc(notifRef, {
             type: 'like',
@@ -133,9 +133,9 @@ export default function PostPage() {
           const userRef = doc(db, 'users', currentUser.uid)
           const userD = getUserById(currentUser.uid)
           await updateDoc(userRef, {
-            posts: (await userD).posts.filter((v)=>v.id!=postId)
+            posts: (await userD).posts.filter((v) => v.id != postId)
           })
-        
+
         } catch (err) {
 
         }
@@ -146,15 +146,15 @@ export default function PostPage() {
             retweets: arrayUnion(currentUser.uid)
           })
           const userRef = doc(db, 'users', currentUser.uid)
-          
+
           await updateDoc(userRef, {
             posts: arrayUnion({
-              id:postId,
+              id: postId,
               type: 'retweet'
             }),
           })
           const ownerRef = doc(db, 'users', post.post_owner)
-          const notifId = postId + 'r' + currentUser.uid
+          const notifId = postId + 'r' + currentUser.uid + Date.now()
           const notifRef = doc(db, 'notifications', notifId)
           await setDoc(notifRef, {
             type: 'retweet',
@@ -177,8 +177,8 @@ export default function PostPage() {
   }
 
 
-  if(!postOwner||loading){
-    return <Load/>
+  if (!postOwner || loading) {
+    return <Load />
   }
 
   return (
@@ -250,7 +250,7 @@ export default function PostPage() {
         </section>
       </section>
       <section className="flex flex-col justify-center">
-        {post.comments.map((item) => <Comment details={item} postowner={post.post_owner} key={item.date}/>)}
+        {post.comments.map((item) => <Comment details={item} postowner={post.post_owner} key={item.date} />)}
       </section>
     </section>
   )
