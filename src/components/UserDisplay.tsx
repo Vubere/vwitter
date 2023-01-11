@@ -7,7 +7,7 @@ import { Link, useNavigate } from "react-router-dom"
 
 import { useEffect, useState } from "react"
 import { user_info } from "../context/UserContext"
-import { arrayRemove, arrayUnion, doc, setDoc, updateDoc } from "firebase/firestore"
+import { arrayRemove, arrayUnion, doc, increment, setDoc, updateDoc } from "firebase/firestore"
 import { db } from "../main"
 import { user_basic_info } from "../pages/Chat"
 import getUserById from "../services/getUserById"
@@ -65,7 +65,8 @@ export default function UserDisplay({ details }: { details: user_basic_info }) {
           id: notifId
         })
         await updateDoc(docRef, {
-          notificatiions: arrayUnion(notifId)
+          notificatiions: arrayUnion(notifId),
+          unread_notifications: increment(1)
         })
       }
     }

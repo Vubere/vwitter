@@ -8,7 +8,7 @@ import Cancel from '../../components/CancelIcon';
 import avatar from '../../assets/avatar.jpg'
 import imagePic from '../../assets/image.png'
 
-import { arrayUnion, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import { arrayUnion, doc, getDoc, increment, setDoc, updateDoc } from 'firebase/firestore';
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
 import { getAuth } from 'firebase/auth';
 import { db } from '../../main';
@@ -131,6 +131,10 @@ export default function SendPost() {
             og: details.post_owner
           },
           id: notifId
+        })
+        await updateDoc(doc(db, 'users', details.post_owner), {
+          notifications: arrayUnion(notifId),
+          unread_notifications: increment(1)
         })
         navigate(-1)
       } catch (err) {
