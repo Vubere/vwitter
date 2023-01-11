@@ -101,7 +101,7 @@ export default function Profile() {
           following: arrayUnion(userId)
         })
         const notifId = userId + 'f' + Date.now()
-        const notifRef = doc(db, 'notifications', userId)
+        const notifRef = doc(db, 'notifications', notifId)
         await setDoc(notifRef, {
           type: 'follow',
           user: user.details.id,

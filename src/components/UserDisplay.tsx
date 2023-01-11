@@ -57,7 +57,7 @@ export default function UserDisplay({ details }: { details: user_basic_info }) {
           followers: arrayUnion(userId)
         })
         const notifId = userId + 'f' + Date.now()
-        const notifRef = doc(db, 'notifications', details.id)
+        const notifRef = doc(db, 'notifications', notifId)
         await setDoc(notifRef, {
           type: 'follow',
           user: user.details.id,
