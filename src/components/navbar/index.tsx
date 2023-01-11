@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useState } from 'react'
+import { useContext, useEffect, useLayoutEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
 import home from '../assets/home.png'
@@ -11,10 +11,17 @@ import mail from '../assets/mail.png'
 import mailFilled from '../assets/mailFilled.png'
 
 import * as routes from '../../constants/route'
+import { doc, onSnapshot } from 'firebase/firestore'
+import { db } from '../../main'
+import { UserCon, user_info } from '../../context/UserContext'
+import { getAuth } from 'firebase/auth'
 
 export default function Navbar() {
   const [currentTab, setCurrentTab] = useState('home')
   const navigate = useNavigate()
+  const user = useContext(UserCon)
+  const [un, setUn] = useState(0)
+  const [um, setUm] = useState(0)
 
 
   useLayoutEffect(()=>{
@@ -27,6 +34,25 @@ export default function Navbar() {
       navigate('/home')
     }
   }, [])
+
+  useEffect(()=>{
+    
+    if(user?.user){
+    
+      const ref = doc(db, 'users', user.user.details.id)
+      onSnapshot(ref, (doc)=>{
+        const res = doc.data() as user_info|undefined
+        if(res){
+          if(um!=res.unread_messages){
+            setUm(res.unread_messages)
+          }
+          if(un!= res.unread_notifications){
+            setUn(res.unread_notifications)
+          }
+        }
+      })
+    }
+  }, [user?.user])
 
 
 
@@ -64,7 +90,7 @@ export default function Navbar() {
         </li>
         <li className='flex gap-6 items-center mb-5 font-[600] text-[18px]'
           onClick={() => setCurrentTab('notifications')} >
-          <Link to={routes.notifications}>
+          <Link to={routes.notifications} className='relative'>
 
             <div
               className='w-[25px] h-[25px]'
@@ -74,11 +100,13 @@ export default function Navbar() {
                 backgroundPosition: 'center',
                 backgroundSize: 'cover',
               }}></div>
+              {!!un?(<div className='absolute text-[8px] bg-[#00acee] top-[-2px] right-[-1px] rounded-full p-[2px]'>{un}</div>): null
+              }
           </Link>
         </li>
         <li className='flex gap-6 items-center mb-5 font-[600] text-[18px]'
           onClick={() => setCurrentTab('messages')} >
-          <Link to={routes.messages}>
+          <Link to={routes.messages} className='relative'>
 
             <div
               className='w-[25px] h-[25px]'
@@ -88,6 +116,8 @@ export default function Navbar() {
                 backgroundPosition: 'center',
                 backgroundSize: 'cover',
               }}></div>
+              { !!um?(<div className='absolute text-[8px] bg-[#00acee] top-[-2px] right-[-1px] rounded-full p-[2px]'>{um}</div>): null
+              }
           </Link>
         </li>
 

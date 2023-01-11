@@ -3,7 +3,7 @@ import picture from "../../assets/image.png"
 import React, { useContext, useLayoutEffect, useRef, useState } from "react";
 import { UserCon } from "../../context/UserContext";
 import getUserByUsername from "../../services/getUserByUsername";
-import { arrayUnion, doc, setDoc, updateDoc } from "firebase/firestore";
+import { arrayUnion, doc, increment, setDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../main";
 import Cancel from "../../components/CancelIcon";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
@@ -74,7 +74,8 @@ export default function Input({ id }: { id: string | undefined }) {
           setMessage('')
         const userRef = doc(db, 'users', user.id)
         await updateDoc(userRef, {
-          messages: arrayUnion(chatId)
+          messages: arrayUnion(chatId),
+          unread_messages: increment(1)
         })
         const partyRef = doc(db, 'users', party.id)
         await updateDoc(partyRef, {

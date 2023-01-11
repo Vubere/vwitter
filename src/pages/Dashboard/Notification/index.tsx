@@ -9,7 +9,7 @@ import Comment from "../PostPage/components/comment"
 import FollowedNotif from "./components/FollowedNotif"
 import { UserCon, user_info } from "../../../context/UserContext"
 
-import { doc, getDoc } from "firebase/firestore"
+import { doc, getDoc, updateDoc } from "firebase/firestore"
 import { db } from "../../../main"
 import { useNavigate } from "react-router-dom"
 import Load from "../../../components/load"
@@ -59,6 +59,17 @@ export default function Notification() {
     })()
   }, [])
   
+  useEffect(()=>{
+    (async()=>{
+      if(userContext?.user){
+
+        const userRef = doc(db, 'users', userContext.user?.details.id)
+        await updateDoc(userRef, {
+          unread_notifications: 0
+        })
+      }
+    })()
+  }, [])
   if (userContext?.user?.details == undefined) {
 
     return null
@@ -67,6 +78,7 @@ export default function Notification() {
   if(loading){
     return <Load/>
   }
+
   return (
     <section className="mb-10">
       <header className="pl-3 pt-1 pb-1 border-b border-[#fff2] flex gap-4 relative min-h-[50px] items-center">

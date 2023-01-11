@@ -1,4 +1,4 @@
-import { useState, useContext, useLayoutEffect } from 'react'
+import { useState, useContext, useLayoutEffect, useEffect } from 'react'
 import Icon from '../../../components/icon'
 
 import MessageDisplay from './messageDisplay'
@@ -10,7 +10,7 @@ import searchImg from '../../../components/assets/search.png'
 
 
 import UserContext, { UserCon, user_info } from '../../../context/UserContext'
-import { doc, getDoc, onSnapshot } from 'firebase/firestore'
+import { doc, getDoc, onSnapshot, updateDoc } from 'firebase/firestore'
 import { db } from '../../../main'
 import { useNavigate } from 'react-router-dom'
 import Load from '../../../components/load'
@@ -50,6 +50,17 @@ export default function Messages() {
         return unsub
       }
     }
+  }, [])
+  useEffect(() => {
+    (async () => {
+      if (context?.user) {
+
+        const userRef = doc(db, 'users', context.user?.details.id)
+        await updateDoc(userRef, {
+          unread_messages: 0
+        })
+      }
+    })()
   }, [])
   if(!context?.user?.details){
     return null
