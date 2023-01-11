@@ -1,4 +1,4 @@
-import Icon from '../../../../../components/icon'
+import Icon from '../icon'
 
 import like from './like.png'
 import likeFilled from './likeFilled.png'
@@ -10,11 +10,11 @@ import { PostItem } from '../PostItem'
 import { Comments } from '../PostItem'
 import { useContext, useState } from 'react'
 import { arrayRemove, arrayUnion, deleteDoc, doc, increment, setDoc, updateDoc } from 'firebase/firestore'
-import { db } from '../../../../../main'
+import { db } from '../../main'
 import { getAuth } from 'firebase/auth'
-import { UserCon } from '../../../../../context/UserContext'
+import { UserCon } from '../../context/UserContext'
 import { Link } from 'react-router-dom'
-import getUserByUsername from '../../../../../services/getUserByUsername'
+import getUserByUsername from '../../services/getUserByUsername'
 
 export default function Reactions({ details, id, likes, comments, retweets }: { details: PostItem, id: string, likes: string[], comments: Comments[], retweets: string[] }) {
 
@@ -53,12 +53,13 @@ export default function Reactions({ details, id, likes, comments, retweets }: { 
           const notifRef = doc(db, 'notifications', notifId)
           await setDoc(notifRef, {
             type: 'like',
-            user:  user?.user?.details.id,
+            user: user?.user?.details.id,
             ref: {
               res: 'tweet',
               info: `${details.caption}`
             },
-            id: notifId
+            id: notifId,
+            time: Date.now()
           })
           await updateDoc(ownerRef, {
             notifications: arrayUnion(notifId),
@@ -83,7 +84,7 @@ export default function Reactions({ details, id, likes, comments, retweets }: { 
           const userRef = doc(db, 'users', currentUser.uid)
           const userD = await getUserByUsername(user.user.details.id)
           await updateDoc(userRef, {
-            posts: userD.posts.filter((i)=>i.id!=details.id)
+            posts: userD.posts.filter((i) => i.id != details.id)
           })
         } catch (err) {
 
@@ -95,7 +96,7 @@ export default function Reactions({ details, id, likes, comments, retweets }: { 
             retweets: arrayUnion(currentUser.uid)
           })
           const userRef = doc(db, 'users', currentUser.uid)
-          
+
           await updateDoc(userRef, {
             posts: arrayUnion({
               id: id,
@@ -113,7 +114,8 @@ export default function Reactions({ details, id, likes, comments, retweets }: { 
               res: 'tweet',
               info: `${details.caption}`
             },
-            id: notifId
+            id: notifId,
+            time: Date.now()
           })
           await updateDoc(ownerRef, {
             notifications: arrayUnion(notifId),
@@ -129,7 +131,7 @@ export default function Reactions({ details, id, likes, comments, retweets }: { 
   return (
     <div className='flex justify-between pt-3 w-[85%]'>
       <p className='text-[12px] text-[#fff4] flex gap-1 items-center'>
-        <Link to={'/reply/'+id}>
+        <Link to={'/reply/' + id}>
           <Icon
             src={reply}
             width="20px"

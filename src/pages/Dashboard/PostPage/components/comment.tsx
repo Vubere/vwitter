@@ -1,4 +1,4 @@
-import { Comments } from "../../home/components/PostItem";
+import { Comments } from "../../../../components/PostItem";
 import { user_info } from "../../../../context/UserContext";
 
 import Avatar from "../../../../components/icon"

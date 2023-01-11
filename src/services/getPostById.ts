@@ -1,6 +1,6 @@
 import { doc, getDoc } from "firebase/firestore"
 import { db } from "../main"
-import { PostItem } from "../pages/Dashboard/home/components/PostItem"
+import { PostItem } from "../components/PostItem"
 
 
 export default async function getPostById(id:string) {

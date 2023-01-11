@@ -1,32 +1,32 @@
-import Avatar from "../../../../components/icon"
+import Avatar from "./icon"
 
 import avatar from '../../../../assets/avatar.jpg'
 import Reactions from "./Reactions"
-import Icon from "../../../../components/icon"
+import Icon from "./icon"
 
 import retweet from '../components/Reactions/retweet.png'
 import { useEffect, useLayoutEffect, useState } from "react"
-import getPostById from "../../../../services/getPostById"
-import { details } from "../../../Signup/signupFlow"
+import getPostById from "../services/getPostById"
+import { details } from "../pages/Signup/signupFlow"
 
-import * as routes from '../../../../constants/route'
+import * as routes from '../constants/route'
 import { Link } from "react-router-dom"
-import Load from "../../../../components/load"
+import Load from "./load"
 import { doc, onSnapshot } from "firebase/firestore"
-import { db } from "../../../../main"
+import { db } from "../main"
 import { formatDistanceToNow } from "date-fns"
-import { minimalDistance } from "../../../../helpers/date"
-import { user_basic_info } from "../../../Chat"
-import getUserById from "../../../../services/getUserById"
+import { minimalDistance } from "../helpers/date"
+import { user_basic_info } from "../pages/Chat"
+import getUserById from "../services/getUserById"
 
-export type postType = { id: string, type: 'tweet' | 'retweet', retweeter?:string }
+export type postType = { id: string, type: 'tweet' | 'retweet', retweeter?: string }
 
 
-export default function PostItem({ id, type, retweeter }:postType) {
+export default function PostItem({ id, type, retweeter }: postType) {
   const [details, setDetails] = useState<PostItem>()
   const [postOwner, setPostOwner] = useState<user_basic_info>()
   const [retweetOwner, setRD] = useState<user_basic_info>()
-  
+
 
   useLayoutEffect(() => {
     let unsub: any
@@ -43,31 +43,31 @@ export default function PostItem({ id, type, retweeter }:postType) {
       return unsub
     }
   }, [id])
-  
-  
-  
+
+
+
   useEffect(() => {
     if (details == undefined) {
-      return 
+      return
     }
     if (!('post_owner' in details)) {
-      return 
+      return
     };
     (async () => {
       const user = await getUserById(details.post_owner)
-      if (user){
+      if (user) {
         setPostOwner(user.details)
       }
 
-      if(retweeter){
+      if (retweeter) {
         const rd = await getUserById(retweeter)
-        if(rd) setRD(rd.details)
+        if (rd) setRD(rd.details)
       }
     })();
-    
+
   }, [details])
 
-  
+
   if (!postOwner || !details) {
     return null
   }

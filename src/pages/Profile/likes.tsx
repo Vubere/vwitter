@@ -1,8 +1,8 @@
 import { useContext, useEffect, useLayoutEffect, useState } from "react"
 
-import PostItem from "../Dashboard/home/components/PostItem"
+import PostItem from "../../components/PostItem"
 
-import { Comments, PostItem as PItype } from "../Dashboard/home/components/PostItem"
+import { Comments, PostItem as PItype } from "../../components/PostItem"
 import Comment from "../Dashboard/PostPage/components/comment"
 
 

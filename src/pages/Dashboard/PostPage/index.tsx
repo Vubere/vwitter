@@ -1,7 +1,7 @@
 import { useContext, useLayoutEffect, useState } from "react"
 import { Link, useNavigate, useParams } from "react-router-dom"
 
-import { PostItem } from "../home/components/PostItem"
+import { PostItem } from "../../../components/PostItem"
 import Icon from "../../../components/icon"
 
 
@@ -102,7 +102,8 @@ export default function PostPage() {
               res: 'tweet',
               info: `${post.caption}`
             },
-            id: notifId
+            id: notifId,
+            time: Date.now()
           })
           await updateDoc(ownerRef, {
             notifications: arrayUnion(notifId),
@@ -126,9 +127,9 @@ export default function PostPage() {
             retweets: arrayRemove(currentUser.uid)
           })
           const userRef = doc(db, 'users', currentUser.uid)
-          const userD = getUserById(currentUser.uid)
+          const userD = await getUserById(currentUser.uid)
           await updateDoc(userRef, {
-            posts: (await userD).posts.filter((v) => v.id != postId)
+            posts: userD.posts.filter((v) => v.id != postId)
           })
 
         } catch (err) {
@@ -158,7 +159,8 @@ export default function PostPage() {
               res: 'tweet',
               info: `${post.caption}`
             },
-            id: notifId
+            id: notifId,
+            time: Date.now()
           })
           await updateDoc(ownerRef, {
             notifications: arrayUnion(notifId),

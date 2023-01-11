@@ -1,6 +1,6 @@
 
 
-import { useLayoutEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useState } from 'react'
 import Icon from '../../../../components/icon'
 import Load from '../../../../components/load'
 import getUserById from '../../../../services/getUserById'
@@ -12,14 +12,16 @@ export default function FollowedNotif({id}:{id:string}){
   const [details, setDetails] = useState<user_basic_info>()
 
 
-  useLayoutEffect(()=>{
+  useEffect(()=>{
     (async()=>{
       const user = await getUserById(id)
       if(user?.details){
+      
         setDetails(user.details)
       }
     })()
   }, [])
+  console.log(details, id)
   if(!details){
     return null
   }

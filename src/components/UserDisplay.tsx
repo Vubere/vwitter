@@ -62,7 +62,8 @@ export default function UserDisplay({ details }: { details: user_basic_info }) {
           type: 'follow',
           user: user.details.id,
           ref: '',
-          id: notifId
+          id: notifId,
+          time: Date.now()
         })
         await updateDoc(docRef, {
           notifications: arrayUnion(notifId),

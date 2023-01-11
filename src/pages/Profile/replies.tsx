@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { user_basic_info } from "../Chat"
 
-import { Comments } from "../Dashboard/home/components/PostItem"
+import { Comments } from "../../components/PostItem"
 import Comment from "../Dashboard/PostPage/components/comment"
 
 export default function replies() {

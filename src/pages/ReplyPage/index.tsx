@@ -16,7 +16,7 @@ import { db } from '../../main';
 
 import { UserCon } from '../../context/UserContext';
 
-import Postshow, { PostItem } from '../Dashboard/home/components/PostItem';
+import { PostItem } from '../../components/PostItem';
 import Load from '../../components/load';
 import { user_basic_info } from '../Chat';
 import getUserById from '../../services/getUserById';
@@ -130,7 +130,8 @@ export default function SendPost() {
             },
             og: details.post_owner
           },
-          id: notifId
+          id: notifId,
+          time: Date.now()
         })
         await updateDoc(doc(db, 'users', details.post_owner), {
           notifications: arrayUnion(notifId),

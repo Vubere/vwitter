@@ -2,7 +2,7 @@ import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { doc, getDoc, onSnapshot } from "firebase/firestore";
 import React, { createContext, useEffect, useState } from "react";
 import { db } from "../main";
-import { postType } from "../pages/Dashboard/home/components/PostItem";
+import { postType } from "../components/PostItem";
 import { details } from "../pages/Signup/signupFlow";
 
 

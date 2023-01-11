@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { Sidenav } from '../index'
 import Avatar from "../../../components/icon"
 
-import PostItem, { postType } from './components/PostItem'
+import PostItem, { postType } from '../../../components/PostItem'
 import Icon from '../../../components/icon'
 
 import * as routes from '../../../constants/route'

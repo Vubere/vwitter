@@ -90,7 +90,7 @@ export default function Notification() {
         const userInfo = res.data() as user_info | undefined
         if (userInfo) {
           notifArr = userInfo.notifications
-          console.log(userInfo.notifications)
+        
         }
         notifArr.map((id, i) => {
           const notifRef = doc(db, 'notifications', id)
@@ -100,7 +100,7 @@ export default function Notification() {
             arr.push(res.data() as notifications)
             if (i == notifArr.length - 1) {
               setNotifications(arr)
-              console.log(arr)
+              
             }
           }
           fetchNotifications()
@@ -119,7 +119,7 @@ export default function Notification() {
     return <Load/>
   }
   return (
-    <section>
+    <section className="mb-10">
       <header className="pl-3 pt-1 pb-1 border-b border-[#fff2] flex gap-4 relative min-h-[50px] items-center">
         <Icon
           width="30px"
@@ -129,9 +129,10 @@ export default function Notification() {
           onClick={() => setSidenav(!sidenavOpen)} />
         <h2 className='font-[600] text-[18px]'>Notifications</h2>
       </header>
-      <main className="overflow-y-auto pb-4">
+      <main className="overflow-y-auto pb-10">
         {notifications?.length ? notifications.map((item) => {
           if(item==undefined){
+            
             return null
           }
           if (item.type == 'like') {
@@ -141,8 +142,9 @@ export default function Notification() {
           } else if (item.type == 'retweet') {
             return (<NotifComp key={item.id} details={item} />)
           } else {
+            console.log(item)
             return (
-              <FollowedNotif key={item.id} id={item.id} />
+              <FollowedNotif key={item.id} id={item.user} />
             )
           }
         }) : <p className="p-4 text-[#fff3]">you have no notifications...</p>}

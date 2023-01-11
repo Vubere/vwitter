@@ -1,5 +1,5 @@
 import { useContext, useEffect, useLayoutEffect, useState } from "react"
-import PostItem, { postType } from "../Dashboard/home/components/PostItem"
+import PostItem, { postType } from "../../components/PostItem"
 
 import avatar from '../../assets/avatar.jpg'
 import { UserCon } from "../../context/UserContext"

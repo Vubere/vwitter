@@ -106,7 +106,8 @@ export default function Profile() {
           type: 'follow',
           user: user.details.id,
           ref: '',
-          id: notifId
+          id: notifId,
+          time: Date.now()
         })
         await updateDoc(userRef, {
           notifications: arrayUnion(notifId),
