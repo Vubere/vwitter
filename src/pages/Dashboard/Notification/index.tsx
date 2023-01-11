@@ -131,7 +131,9 @@ export default function Notification() {
       </header>
       <main className="overflow-y-auto">
         {notifications?.length ? notifications.map((item) => {
-          console.log(item)
+          if(item==undefined){
+            return null
+          }
           if (item.type == 'like') {
             return (<NotifComp key={item.id} details={item} />)
           } else if (item.type == 'reply') {
