@@ -65,7 +65,7 @@ export default function UserDisplay({ details }: { details: user_basic_info }) {
           id: notifId
         })
         await updateDoc(docRef, {
-          notificatiions: arrayUnion(notifId),
+          notifications: arrayUnion(notifId),
           unread_notifications: increment(1)
         })
       }

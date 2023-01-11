@@ -106,7 +106,7 @@ export default function Reactions({ details, id, likes, comments, retweets }: { 
           const ownerRef = doc(db, 'users', details.post_owner)
           const notifId = details.id + 'r' + currentUser.uid + Date.now()
           const notifRef = doc(db, 'notifications', notifId)
-          await updateDoc(notifRef, {
+          await setDoc(notifRef, {
             type: 'retweet',
             user: user?.user?.details.id,
             ref: {

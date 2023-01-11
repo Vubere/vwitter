@@ -109,7 +109,7 @@ export default function Profile() {
           id: notifId
         })
         await updateDoc(userRef, {
-          notificatiions: arrayUnion(notifId),
+          notifications: arrayUnion(notifId),
           unread_notifications: increment(1)
         })
       }

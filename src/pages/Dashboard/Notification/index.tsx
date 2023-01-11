@@ -129,7 +129,7 @@ export default function Notification() {
           onClick={() => setSidenav(!sidenavOpen)} />
         <h2 className='font-[600] text-[18px]'>Notifications</h2>
       </header>
-      <main>
+      <main className="overflow-y-auto">
         {notifications?.length ? notifications.map((item) => {
           console.log(item)
           if (item.type == 'like') {

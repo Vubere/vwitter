@@ -97,12 +97,7 @@ export default function PostPage() {
           const notifRef = doc(db, 'notifications', notifId)
           await setDoc(notifRef, {
             type: 'like',
-            user: {
-              username: user?.user?.details.id,
-              name: user?.user?.details.name,
-              avatar: user?.user?.details.avatar,
-              id: user?.user?.details.id
-            },
+            user: user.user.details.id,
             ref: {
               res: 'tweet',
               info: `${post.caption}`
@@ -110,7 +105,7 @@ export default function PostPage() {
             id: notifId
           })
           await updateDoc(ownerRef, {
-            notifications: arrayUnion([notifId]),
+            notifications: arrayUnion(notifId),
             unread_notifications: increment(1)
           })
 
