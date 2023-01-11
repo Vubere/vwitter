@@ -101,7 +101,8 @@ export default function Reactions({ details, id, likes, comments, retweets }: { 
             posts: arrayUnion({
               id: id,
               type: 'retweet',
-              retweeter: currentUser.uid
+              retweeter: currentUser.uid,
+              time: Date.now()
             }),
           })
           const ownerRef = doc(db, 'users', details.post_owner)

@@ -1,13 +1,12 @@
 import Avatar from "./icon"
 
-import avatar from '../../../../assets/avatar.jpg'
+import avatar from '../assets/avatar.jpg'
 import Reactions from "./Reactions"
 import Icon from "./icon"
 
 import retweet from '../components/Reactions/retweet.png'
 import { useEffect, useLayoutEffect, useState } from "react"
-import getPostById from "../services/getPostById"
-import { details } from "../pages/Signup/signupFlow"
+
 
 import * as routes from '../constants/route'
 import { Link } from "react-router-dom"
@@ -19,7 +18,7 @@ import { minimalDistance } from "../helpers/date"
 import { user_basic_info } from "../pages/Chat"
 import getUserById from "../services/getUserById"
 
-export type postType = { id: string, type: 'tweet' | 'retweet', retweeter?: string }
+export type postType = { id: string, type: 'tweet' | 'retweet', retweeter?: string, time: number}
 
 
 export default function PostItem({ id, type, retweeter }: postType) {
@@ -112,7 +111,8 @@ export default function PostItem({ id, type, retweeter }: postType) {
               <p className="text-[#fff9] pb-3">{details.caption}</p>
               <div className="max-h-[300px] overflow-hidden flex items-center rounded-[10px]">
                 {details.photoUrl && <img src={details.photoUrl}
-                  width='100%' className='rounded-[10px]' />}
+                  width='100%' 
+                  className='rounded-[10px] min-h-[200px]' />}
               </div>
             </Link>
           </div>

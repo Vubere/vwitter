@@ -42,7 +42,7 @@ export default function Followers() {
         }
         setLoading(false)
       })()
-    }else{
+    } else {
       navigate(-1)
     }
   }, [])

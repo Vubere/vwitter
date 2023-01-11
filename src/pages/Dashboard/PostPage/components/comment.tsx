@@ -9,8 +9,8 @@ import Icon from "../../../../components/icon";
 
 import { getAuth } from "firebase/auth";
 
-import like from '../../home/components/Reactions/like.png'
-import likeFilled from '../../home/components/Reactions/likeFilled.png'
+import like from '../../../../components/Reactions/like.png'
+import likeFilled from '../../../../components/Reactions/likeFilled.png'
 import { useLayoutEffect, useState } from "react";
 import { details } from "../../../Signup/signupFlow";
 import { formatDistanceToNow } from "date-fns";

@@ -74,11 +74,11 @@ export default function SendPost() {
           retweets: [],
           caption: post,
           date: Date.now(),
-          id: id
+          id: id,
         })
         const userRef  = doc(db, 'users', currentUser.uid)
         await updateDoc(userRef, {
-          posts: arrayUnion({id, type: 'tweet'})
+          posts: arrayUnion({id, type: 'tweet', time: Date.now()})
         })
         setImage(undefined)
         if(imageRef.current)

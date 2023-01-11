@@ -76,9 +76,9 @@ export default function Home() {
         <h2 className='font-[600] text-[18px]'>Home</h2>
       </header>
       <section className='w-full '>
-        {posts.length ? posts.map((item) => {
+        {posts.length ? posts.sort((a,b)=> a.time-b.time).map((item) => {
           return (
-            <PostItem id={item.id} key={item.id} type={item.type} retweeter={item?.retweeter} />
+            <PostItem id={item.id} key={item.id} type={item.type} retweeter={item?.retweeter} time={item.time}/>
           )
         }
         ) : <p className='text-[#fff6] m-3 text-[14px]'>Follow users to see feed content...

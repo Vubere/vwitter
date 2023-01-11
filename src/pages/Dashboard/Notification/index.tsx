@@ -8,7 +8,7 @@ import NotifComp from "./components/notifComp"
 import Comment from "../PostPage/components/comment"
 import FollowedNotif from "./components/FollowedNotif"
 import { UserCon, user_info } from "../../../context/UserContext"
-import { details } from "../../Signup/signupFlow"
+
 import { doc, getDoc } from "firebase/firestore"
 import { db } from "../../../main"
 import { useNavigate } from "react-router-dom"
@@ -130,7 +130,7 @@ export default function Notification() {
         <h2 className='font-[600] text-[18px]'>Notifications</h2>
       </header>
       <main className="overflow-y-auto pb-10">
-        {notifications?.length ? notifications.map((item) => {
+        {notifications?.length ? notifications.sort((a,b)=>a.time-b.time).map((item) => {
           if(item==undefined){
             
             return null
@@ -156,5 +156,6 @@ export type notifications = {
   type: 'reply' | 'like' | 'follow' | 'retweet',
   user: string,
   ref: any,
-  id: string
+  id: string,
+  time: number
 }

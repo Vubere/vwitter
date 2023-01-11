@@ -1,8 +1,8 @@
 import { notifications } from "..";
 import Icon from "../../../../components/icon";
 
-import liked from "../../home/components/Reactions/likeFilled.png"
-import retweeted from '../../home/components/Reactions/retweetFilled.png'
+import liked from "../../../../components/Reactions/likeFilled.png"
+import retweeted from '../../../../components/Reactions/retweetFilled.png'
 
 import avatar from "../../../../assets/avatar.jpg"
 import { useLayoutEffect, useState } from "react";

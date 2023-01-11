@@ -146,7 +146,8 @@ export default function PostPage() {
           await updateDoc(userRef, {
             posts: arrayUnion({
               id: postId,
-              type: 'retweet'
+              type: 'retweet',
+              time: Date.now()
             }),
           })
           const ownerRef = doc(db, 'users', post.post_owner)
