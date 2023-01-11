@@ -6,6 +6,7 @@ import Load from '../../../../components/load'
 import getUserById from '../../../../services/getUserById'
 import { user_basic_info } from '../../../Chat'
 import profile from './profileFilled.png'
+import avatar from '../../../../assets/avatar.jpg'
 
 export default function FollowedNotif({id}:{id:string}){
 
@@ -34,7 +35,7 @@ export default function FollowedNotif({id}:{id:string}){
       />
       <div>
         <Icon
-        src={profile}
+        src={details.avatar||avatar}
         width='40px'
         height='40px'
           className='rounded-full mb-2 border border-[#fff3]'

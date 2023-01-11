@@ -76,7 +76,7 @@ export default function Home() {
         <h2 className='font-[600] text-[18px]'>Home</h2>
       </header>
       <section className='w-full '>
-        {posts.length ? posts.sort((a,b)=> a.time-b.time).map((item) => {
+        {posts.length ? posts.sort((a,b)=> b.time-a.time).map((item) => {
           return (
             <PostItem id={item.id} key={item.id} type={item.type} retweeter={item?.retweeter} time={item.time}/>
           )

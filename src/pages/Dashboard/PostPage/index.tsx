@@ -7,12 +7,16 @@ import Icon from "../../../components/icon"
 
 import avatar from '../../../assets/avatar.jpg'
 import Back from "../../../components/Back"
-import reply from '../home/components/Reactions/reply.png'
-import like from '../home/components/Reactions/like.png'
-import likeFilled from '../home/components/Reactions/likeFilled.png'
-import retweet from '../home/components/Reactions/retweet.png'
-import retweetFilled from '../home/components/Reactions/retweetFilled.png'
+
+import reply from '../../../components/Reactions/reply.png'
+import like from '../../../components/Reactions/like.png'
+import likeFilled from '../../../components/Reactions/likeFilled.png'
+import retweet from '../../../components/Reactions/retweet.png'
+import retweetFilled from '../../../components/Reactions/retweetFilled.png'
+
+
 import Comment from "./components/comment"
+
 import { arrayRemove, arrayUnion, deleteDoc, doc, increment, setDoc, updateDoc } from "firebase/firestore"
 import { getAuth } from "firebase/auth"
 import { UserCon } from "../../../context/UserContext"

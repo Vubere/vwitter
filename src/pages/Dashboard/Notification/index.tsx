@@ -21,58 +21,7 @@ import getUserById from "../../../services/getUserById"
 export default function Notification() {
   const { sidenavOpen, setSidenav } = useContext(Sidenav)
 
-  const [notifications, setNotifications] = useState<notifications[]>(/* [
-    {
-    type: 'like',
-    user: {
-      username: 'godab',
-      full_name: 'go dab',
-      avatar: '',
-      id: 'dad'
-    },
-    ref: {
-      res: 'Tweet',
-      info: 'i am a ewagoin'
-    },
-    id: 'dj'
-  },
-    {
-    type: 'follow',
-    user: {
-      username: 'godab',
-      full_name: 'go dab',
-      avatar: '',
-      id: 'dad'
-    },
-    ref: '',
-    id: 'audp'
-  },
-    {
-    type: 'reply',
-    user: {
-      username: 'godab',
-      full_name: 'go dab',
-      avatar: '',
-      id: 'dad'
-    },
-    ref: {
-      res: {
-        text: 'home',
-        likes: [''],
-        photoUrl: '',
-        date: '40d',
-        replies: ['', ''],
-        commentOwner: {
-          username: 'visd',
-          full_name: 'visd dsiv',
-          avatar: '',
-          id: ''
-        }
-      }
-    },
-    id: 'adufap'
-  },
-] */)
+  const [notifications, setNotifications] = useState<notifications[]>()
 
   const userContext = useContext(UserCon)
   const navigate = useNavigate()
@@ -131,6 +80,7 @@ export default function Notification() {
       </header>
       <main className="overflow-y-auto pb-10">
         {notifications?.length ? notifications.sort((a,b)=>a.time-b.time).map((item) => {
+          console.log(item)
           if(item==undefined){
             
             return null

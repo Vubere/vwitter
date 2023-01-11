@@ -7,8 +7,8 @@ import { Sidenav as SN_context } from "."
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const snCon = useContext(SN_context)
-  console.log('hee')
   if(!snCon){
+    console.log('hee')
     return null
   }
   
