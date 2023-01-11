@@ -4,6 +4,7 @@ import React, { createContext, useEffect, useState } from "react";
 import { db } from "../main";
 import { postType } from "../components/PostItem";
 import { details } from "../pages/Signup/signupFlow";
+import getUserById from "../services/getUserById";
 
 
 
@@ -34,13 +35,12 @@ export default function UserContext({ children }: { children: React.ReactNode })
       if (user == undefined) {
         try {
 
-          const docRef = doc(db, 'users', lsUser.details.id)
-          unsub = onSnapshot(docRef, (doc) => {
-            const data = doc.data() as user_info | undefined
-            if (data) {
-              setUser(data)
-            }
-          })
+          const docRef = doc(db, 'users', lsUser.details.id);
+          (async()=>{
+            const r = await getUserById(lsUser.details.id)
+            if(r) setUser(r)
+          })()
+          
         } catch (err) {
          
         }
