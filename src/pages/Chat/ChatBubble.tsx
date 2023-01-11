@@ -19,7 +19,7 @@ export default function ChatBubble({ details, className, refM}: { details: singl
         </div>
         {details.photoUrl&&
           <div className="max-w-400px flex justify-center align-center ">
-          <img src={details.photoUrl} alt="document" className="w-full rounded-[10px]"/>
+          <img src={details.photoUrl} alt="document" className="w-full rounded-[10px] min-h-[200px]"/>
         </div>
         }
       </div>
