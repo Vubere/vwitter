@@ -75,11 +75,11 @@ export default function Input({ id }: { id: string | undefined }) {
         const userRef = doc(db, 'users', user.id)
         await updateDoc(userRef, {
           messages: arrayUnion(chatId),
-          unread_messages: increment(1)
         })
         const partyRef = doc(db, 'users', party.id)
         await updateDoc(partyRef, {
-          messages: arrayUnion(chatId)
+          messages: arrayUnion(chatId),
+          unread_messages: increment(1)
         })
         setImage(undefined)
       }
