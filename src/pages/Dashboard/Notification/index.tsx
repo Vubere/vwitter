@@ -79,7 +79,7 @@ export default function Notification() {
         <h2 className='font-[600] text-[18px]'>Notifications</h2>
       </header>
       <main className="overflow-y-auto pb-10">
-        {notifications?.length ? notifications.sort((a,b)=>a.time-b.time).map((item) => {
+        {notifications?.length ? notifications.sort((a,b)=>b.time-a.time).map((item) => {
           console.log(item)
           if(item==undefined){
             
