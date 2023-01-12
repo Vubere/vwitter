@@ -18,7 +18,7 @@ export default function Signup() {
 
         <h2 className="w-[80vw] font-[700] text-white text-[24px] mb-6">Join Vwitter today</h2>
         <ul>
-          <Options >
+          <Options className='line-through text-[#0007]'>
             <img src={google} alt="google icon" 
             className="w-[20px] h-[20px] m-[8px]"/>
             Sign up with Google

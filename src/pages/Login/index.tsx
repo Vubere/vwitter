@@ -109,7 +109,7 @@ export default function Login() {
       <div className='flex flex-col justify-center h-[80vh]'>
         <h2 className="w-[80vw] font-[700] text-white text-[24px] mb-6">Sign in to Vwitter</h2>
         <ul>
-          <Options >
+          <Options className='line-through text-[#0007]'>
             <img src={google} alt="google icon"
               className="w-[20px] h-[20px] m-[8px]" />
             Sign in with Google
@@ -184,7 +184,7 @@ export default function Login() {
               value={pwd}
               changeHandler={({ target }) => setPwd(target.value)}
             />
-            <p className='w-[90%] text-[12px] text-[#00acee] mt-1'>forgot password?</p>
+            <p className='w-[90%] text-[12px] text-[#00acee] mt-1 line-through'>forgot password?</p>
           </form>
           <div className='fixed bottom-0 h-[150px] w-full flex flex-col items-center justify-center'>
 
