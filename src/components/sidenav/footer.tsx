@@ -10,8 +10,8 @@ export default function SN_footer() {
   const userContext = useContext(UserCon)
   const navigate = useNavigate()
 
-  const logout = () => {
-    signOut(auth)
+  const logout = async() => {
+    await signOut(auth)
     localStorage.removeItem('user')
     userContext?.setUser(undefined)
     navigate('/login')
