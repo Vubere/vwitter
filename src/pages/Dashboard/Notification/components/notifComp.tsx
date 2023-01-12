@@ -39,7 +39,7 @@ export default function LikedNotif ({
       height='32px'
       className='rounded-full'
       />
-      <div>
+      <div className="w-[80%]">
         <Icon src={user.avatar||avatar} width="40px" height="40px" className="rounded-full mb-2 border border-[#fff3]"/>
         <p className="mb-2"><span className="font-[700]">{user.name}</span> {details.type=='like'?'liked':'retweeted'} your {details.ref.res}</p>
         <p className="text-[#fff4]">{details.ref.info}</p>

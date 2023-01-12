@@ -48,13 +48,16 @@ export default function Input({ id }: { id: string | undefined }) {
       const party = await getUserByUsername(id)
       if (party) {
         
-        
+        const img:any = image
+        const txt = message
+        setMessage('')
+        setImage(undefined)
         const chatId = [party.id, userContext.user.id].sort().join('')
         const storage = getStorage()
         const filePath = `users/${user.id}/chats/${chatId}/${Date.now}`
         const storageRef = ref(storage, filePath)
         let path = ''
-        if (image != undefined) {
+        if (img != undefined) {
           const res = await uploadBytes(storageRef, image)
           path = await getDownloadURL(res.ref)
         }
@@ -63,7 +66,7 @@ export default function Input({ id }: { id: string | undefined }) {
           id: chatId,
           chat: arrayUnion(
             {
-              text: message,
+              text: txt,
               time: Date.now(),
               photoUrl: path || '',
               sender: user.id,

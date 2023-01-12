@@ -101,7 +101,7 @@ export default function MessageDisplay({ id }: { id: string }) {
             {details.text.length > 15 ? details.text.slice(0, 15) + '...' : details.text}
           </div>
         </Link>
-        <div className="absolute right-0"><VerticalMenu
+        <div className="absolute right-3"><VerticalMenu
           className="string"
           text="delete chat"
           click={deleteMessage} /></div>

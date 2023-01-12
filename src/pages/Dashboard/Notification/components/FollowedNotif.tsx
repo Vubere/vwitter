@@ -35,8 +35,9 @@ export default function FollowedNotif({id}:{id:string}){
       src={profile}
       width='30px'
       height='30px'
+      className='min-w-[30px]'
       />
-      <div>
+      <div className='w-[80%]'>
         <Icon
         src={details.avatar||avatar}
         width='40px'

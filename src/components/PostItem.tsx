@@ -137,7 +137,7 @@ export default function PostItem({ id, type, retweeter }: postType) {
           <div>
             <Link to={routes.postpage + '/' + id} >
 
-              <p className="text-[#fff9] pb-3">{details.caption}</p>
+              <p className="text-[#fff9] pb-3 text-[14px]">{details.caption}</p>
               <div className="max-h-[300px] overflow-hidden flex items-center rounded-[10px]">
                 {details.photoUrl && <img src={details.photoUrl}
                   width='100%'
