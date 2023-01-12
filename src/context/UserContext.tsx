@@ -1,6 +1,6 @@
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { doc, getDoc, onSnapshot } from "firebase/firestore";
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useEffect, useRef, useState } from "react";
 import { db } from "../main";
 import { postType } from "../components/PostItem";
 import { details } from "../pages/Signup/signupFlow";
@@ -24,6 +24,7 @@ export default function UserContext({ children }: { children: React.ReactNode })
       set(u)
     }
   }
+  const widthRef = useRef(window.innerWidth)
 
 
 
@@ -50,6 +51,14 @@ export default function UserContext({ children }: { children: React.ReactNode })
       return unsub
     }
   }, [])
+
+  if(widthRef.current>520){
+    return(
+      <div className="bg-black flex items-center justify-center w-[100vw] h-[100vh]">
+        <p>Switch to a smaller device with width of at most 520px</p>
+      </div>
+    )
+  }
 
   return (
     <UserCon.Provider value={{ user, setUser }}>
