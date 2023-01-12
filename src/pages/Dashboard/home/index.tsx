@@ -1,4 +1,4 @@
-import { useContext, useEffect, useLayoutEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import { Sidenav } from '../index'
@@ -11,12 +11,13 @@ import * as routes from '../../../constants/route'
 import avatar from '../../../assets/avatar.jpg'
 import tweetIcon from '../../../assets/tweetIcon.png'
 
-import { UserCon } from '../../../context/UserContext'
+import { UserCon, user_info } from '../../../context/UserContext'
 import getUserById from '../../../services/getUserById'
 import Load from '../../../components/load'
 import { doc, onSnapshot } from 'firebase/firestore'
 import { db } from '../../../main'
-import { notifications } from '../Notification'
+
+import { FeedContext } from '../../../context/feedContext'
 
 export default function Home() {
   const { sidenavOpen, setSidenav } = useContext(Sidenav)
@@ -26,33 +27,40 @@ export default function Home() {
 
   const [posts, setPosts] = useState<postType[]>([])
   const [loading, setLoading] = useState(false)
+  const feedContext = useContext(FeedContext)
 
 
   useEffect(() => {
     if (context?.user) {
+      if (feedContext) {
+        if (feedContext.feedList) {
+          setPosts(feedContext.feedList)
+        }
+      }
       const arr = [...context.user.following, context.user.id]
 
-
       let postArr: postType[] = [];
+      let temp: any
+      setLoading(true)
       arr.forEach((id, i) => {
-        const docRef = doc(db, 'users', id);
         (async () => {
-          setLoading(true)
-          const { posts: p } = await getUserById(id)
-          const t: postType[] = []
-
-          p.forEach((v, i) => {
-            postArr.push(v)
-            if (i == p.length - 1) {
-              postArr.push(v)
-            }
-          })
-          if (i == arr.length - 1) {
-            setPosts(postArr)
+          const u = await getUserById(id)
+          if (u) {
+            postArr.push(...u.posts)
           }
-          setLoading(false)
+          if (i == arr.length - 1) {
+            if (postArr.length > posts.length) {
+
+              setPosts(postArr)
+              if (feedContext) {
+
+                feedContext.setFeedList(postArr)
+              }
+            }
+          }
         })()
       })
+      setLoading(false)
     }
   }, [context])
 
@@ -76,9 +84,9 @@ export default function Home() {
         <h2 className='font-[600] text-[18px]'>Home</h2>
       </header>
       <section className='w-full '>
-        {posts.length ? posts.sort((a,b)=> b.time-a.time).map((item) => {
+        {posts.length ? posts.sort((a, b) => b.time - a.time).map((item) => {
           return (
-            <PostItem id={item.id} key={item.id} type={item.type} retweeter={item?.retweeter} time={item.time}/>
+            <PostItem id={item.id} key={item.id} type={item.type} retweeter={item?.retweeter} time={item.time} />
           )
         }
         ) : <p className='text-[#fff6] m-3 text-[14px]'>Follow users to see feed content...

@@ -9,7 +9,7 @@ import avatar from '../../../assets/avatar.jpg'
 import searchImg from '../../../components/assets/search.png'
 
 
-import UserContext, { UserCon, user_info } from '../../../context/UserContext'
+import { UserCon, user_info } from '../../../context/UserContext'
 import { doc, getDoc, onSnapshot, updateDoc } from 'firebase/firestore'
 import { db } from '../../../main'
 import { useNavigate } from 'react-router-dom'
@@ -22,7 +22,7 @@ export default function Messages() {
   const { sidenavOpen, setSidenav } = useContext(Sidenav)
   const [messages, setMessages] = useState<string[]>()
   const context = useContext(UserCon)
-  const navigate = useNavigate()
+  
   const [loading, setLoading] = useState(false)
 
   useLayoutEffect(() => {
@@ -92,6 +92,7 @@ export default function Messages() {
             messages.map((item: any) => <MessageDisplay key={item.id} id={item} />) :
             <p className='text-[#fff8]'>You have no open chat...</p>}
         </section>
+        
       </main>
     </section>
   )

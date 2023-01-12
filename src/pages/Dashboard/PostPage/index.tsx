@@ -17,9 +17,9 @@ import retweetFilled from '../../../components/Reactions/retweetFilled.png'
 
 import Comment from "./components/comment"
 
-import { arrayRemove, arrayUnion, deleteDoc, doc, increment, setDoc, updateDoc } from "firebase/firestore"
+import { arrayRemove, arrayUnion, deleteDoc, doc, getDoc, increment, setDoc, updateDoc } from "firebase/firestore"
 import { getAuth } from "firebase/auth"
-import { UserCon } from "../../../context/UserContext"
+import { UserCon, user_info } from "../../../context/UserContext"
 import { db } from "../../../main"
 import getUserById from "../../../services/getUserById"
 import getPostById from "../../../services/getPostById"
@@ -27,6 +27,7 @@ import Load from "../../../components/load"
 import { formatDistanceToNow } from "date-fns/esm"
 import * as routes from '../../../constants/route'
 import { user_basic_info } from "../../Chat"
+import VerticalMenu from "../../../components/verticalMenu"
 
 
 export default function PostPage() {
@@ -132,9 +133,10 @@ export default function PostPage() {
           })
           const userRef = doc(db, 'users', currentUser.uid)
           const userD = await getUserById(currentUser.uid)
-          await updateDoc(userRef, {
-            posts: userD.posts.filter((v) => v.id != postId)
-          })
+          const p = userD.posts.filter((item) => !(item.id == postId && item.type == 'retweet'))
+          await setDoc(userRef, {
+            posts: p
+          }, {merge:true})
 
         } catch (err) {
 
@@ -178,6 +180,24 @@ export default function PostPage() {
     }
   }
 
+  const deleteDocu = async () => {
+    if (currentUser) {
+
+      const docRef = doc(db, 'posts', postId)
+      await deleteDoc(docRef)
+      const userRef = doc(db, 'users', currentUser.uid)
+      const res = await getDoc(userRef) 
+      if(res.data()){
+        const {posts: pn} = res.data() as user_info
+        const p = pn.filter((v)=>v.id!=postId)
+        await updateDoc(userRef, {
+          posts: p
+        })
+        navigate(-1)
+      }
+    }
+
+  }
 
   if (!postOwner || loading) {
     return <Load />
@@ -207,6 +227,10 @@ export default function PostPage() {
               <p className="text-[#fff6]">@{postOwner.username}</p>
             </Link>
           </div>
+          <div className="absolute right-0"><VerticalMenu
+            className="string"
+            text="delete post"
+            click={deleteDocu} /></div>
         </div>
         <section className="w-full ">
           <div className="border-b border-[#fff4] w-full pb-3">

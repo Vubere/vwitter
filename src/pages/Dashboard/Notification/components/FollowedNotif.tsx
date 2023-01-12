@@ -1,10 +1,13 @@
 
 
 import { useEffect, useLayoutEffect, useState } from 'react'
+
 import Icon from '../../../../components/icon'
-import Load from '../../../../components/load'
+
 import getUserById from '../../../../services/getUserById'
+
 import { user_basic_info } from '../../../Chat'
+
 import profile from './profileFilled.png'
 import avatar from '../../../../assets/avatar.jpg'
 
@@ -22,7 +25,7 @@ export default function FollowedNotif({id}:{id:string}){
       }
     })()
   }, [])
-  console.log(details, id)
+
   if(!details){
     return null
   }

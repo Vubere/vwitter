@@ -9,13 +9,15 @@ import Load from './components/load'
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <ErrorBoundary>
-      <UserContext>
-        <BrowserRouter>
-          <Suspense fallback={<Load />}>
-            <App />
-          </Suspense>
-        </BrowserRouter>
-      </UserContext>
+      <FeedCache>
+        <UserContext>
+          <BrowserRouter>
+            <Suspense fallback={<Load />}>
+              <App />
+            </Suspense>
+          </BrowserRouter>
+        </UserContext>
+      </FeedCache>
     </ErrorBoundary>
   </React.StrictMode>,
 )
@@ -29,6 +31,7 @@ import { getAuth } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore'
 import { getStorage } from 'firebase/storage'
 import ErrorBoundary from './helpers/ErrorBoundaries'
+import FeedCache from './context/feedContext'
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 

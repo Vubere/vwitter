@@ -60,6 +60,7 @@ export default function Login() {
         }, 2000)
       }
 
+      console.log('here')
       if (userContext) {
         setLoading(true)
         try {

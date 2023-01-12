@@ -1,19 +1,22 @@
 import { useContext, useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
 
-import { Sidenav } from ".."
+import { doc, getDoc, updateDoc } from "firebase/firestore"
+import { getAuth } from "firebase/auth"
+import { db } from "../../../main"
+
 import Icon from "../../../components/icon"
 import avatar from '../../../assets/avatar.jpg'
+import Load from "../../../components/load"
+
+import { Sidenav } from ".."
+import { UserCon, user_info } from "../../../context/UserContext"
 
 import NotifComp from "./components/notifComp"
 import Comment from "../PostPage/components/comment"
 import FollowedNotif from "./components/FollowedNotif"
-import { UserCon, user_info } from "../../../context/UserContext"
 
-import { doc, getDoc, updateDoc } from "firebase/firestore"
-import { db } from "../../../main"
-import { useNavigate } from "react-router-dom"
-import Load from "../../../components/load"
-import { getAuth } from "firebase/auth"
+
 import getUserById from "../../../services/getUserById"
 
 

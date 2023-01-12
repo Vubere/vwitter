@@ -86,7 +86,7 @@ export default function EditProfile() {
         ['details.avatar']: link,
       })
 
-      navigate('/profile/'+context.user.details.username)
+      navigate(-1)
     }
 
   }

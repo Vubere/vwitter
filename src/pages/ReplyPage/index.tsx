@@ -20,6 +20,8 @@ import { PostItem } from '../../components/PostItem';
 import Load from '../../components/load';
 import { user_basic_info } from '../Chat';
 import getUserById from '../../services/getUserById';
+import { minimalDistance } from '../../helpers/date';
+import { formatDistanceToNow } from 'date-fns';
 
 export default function SendPost() {
   const { reply } = useParams()
@@ -169,7 +171,7 @@ export default function SendPost() {
             <div className="flex gap-1">
               <p className="font-[600]">{postOwner.name}</p>
               <p className="text-[#fff6]">@{postOwner.username}</p>
-              <p className="text-[#fff6]">{details.date}</p>
+              <p className="text-[#fff6]">{minimalDistance(formatDistanceToNow(Number(details.date)))}</p>
             </div>
             <div>
               <p className="text-[#fff9] pb-3">{details.caption}</p>

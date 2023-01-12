@@ -9,7 +9,7 @@ import avatar from "../../../assets/avatar.jpg"
 import { useEffect, useLayoutEffect, useState } from "react";
 import { singleChat } from "../../Chat";
 
-import { doc, onSnapshot } from "firebase/firestore";
+import { doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
 import { db } from "../../../main";
 import { formatDistanceToNow } from "date-fns";
 import getUserById from "../../../services/getUserById";
@@ -17,6 +17,7 @@ import Load from "../../../components/load";
 
 import { getAuth } from "firebase/auth";
 import { minimalDistance } from "../../../helpers/date";
+import VerticalMenu from "../../../components/verticalMenu";
 
 
 export default function MessageDisplay({ id }: { id: string }) {
@@ -56,12 +57,24 @@ export default function MessageDisplay({ id }: { id: string }) {
     }
   },[details])
 
-  console.log(details, currentUser, sender, receiver)
+  
   if (!details || !currentUser||!sender||!receiver) {
     return null
   }
   
   const party = currentUser.uid == details.sender ? receiver : sender
+
+  const deleteMessage = async () => {
+    const user = await getUserById(currentUser.uid)
+    if(user){
+      const m = user.messages
+      const mf = m.filter((v)=>v!=id)
+      await updateDoc(doc(db, 'users', currentUser.uid), {
+        messages: mf
+      })
+      setDetails(undefined)
+    }
+  }
   
 
   return (
@@ -88,6 +101,10 @@ export default function MessageDisplay({ id }: { id: string }) {
             {details.text.length > 15 ? details.text.slice(0, 15) + '...' : details.text}
           </div>
         </Link>
+        <div className="absolute right-0"><VerticalMenu
+          className="string"
+          text="delete chat"
+          click={deleteMessage} /></div>
       </div>
     </div>
   )

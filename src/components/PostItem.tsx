@@ -1,24 +1,29 @@
 import Avatar from "./icon"
 
-import avatar from '../assets/avatar.jpg'
+import VerticalMenu from "./verticalMenu"
 import Reactions from "./Reactions"
 import Icon from "./icon"
 
+import avatar from '../assets/avatar.jpg'
 import retweet from '../components/Reactions/retweet.png'
+
+
 import { useEffect, useLayoutEffect, useState } from "react"
 
 
 import * as routes from '../constants/route'
-import { Link } from "react-router-dom"
-import Load from "./load"
-import { doc, onSnapshot } from "firebase/firestore"
+import { Link, useNavigate } from "react-router-dom"
+
+import { deleteDoc, doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore"
 import { db } from "../main"
 import { formatDistanceToNow } from "date-fns"
 import { minimalDistance } from "../helpers/date"
 import { user_basic_info } from "../pages/Chat"
 import getUserById from "../services/getUserById"
+import { getAuth } from "firebase/auth"
+import { user_info } from "../context/UserContext"
 
-export type postType = { id: string, type: 'tweet' | 'retweet', retweeter?: string, time: number}
+export type postType = { id: string, type: 'tweet' | 'retweet', retweeter?: string, time: number }
 
 
 export default function PostItem({ id, type, retweeter }: postType) {
@@ -26,18 +31,18 @@ export default function PostItem({ id, type, retweeter }: postType) {
   const [postOwner, setPostOwner] = useState<user_basic_info>()
   const [retweetOwner, setRD] = useState<user_basic_info>()
 
+  const navigate = useNavigate()
 
   useLayoutEffect(() => {
     let unsub: any
-    (async () => {
-      const docRef = doc(db, 'posts', id)
-      unsub = onSnapshot(docRef, (doc) => {
-        const data = doc.data() as PostItem | undefined
-        if (data) {
-          setDetails(data)
-        }
-      })
-    })()
+    const docRef = doc(db, 'posts', id)
+    unsub = onSnapshot(docRef, (doc) => {
+      const data = doc.data() as PostItem | undefined
+      if (data) {
+        setDetails(data)
+      }
+    })
+
     if (unsub) {
       return unsub
     }
@@ -67,6 +72,27 @@ export default function PostItem({ id, type, retweeter }: postType) {
   }, [details])
 
 
+  const deleteDocu = async () => {
+    const { currentUser } = getAuth()
+    if (currentUser) {
+
+      const docRef = doc(db, 'posts', id)
+      await deleteDoc(docRef)
+      const userRef = doc(db, 'users', currentUser.uid)
+      const res = await getDoc(userRef)
+      if (res.data()) {
+        const { posts: pn } = res.data() as user_info
+        const p = pn.filter((v) => v.id != id)
+        await updateDoc(userRef, {
+          posts: p
+        })
+        setDetails(undefined)
+      }
+    }
+
+  }
+
+
   if (!postOwner || !details) {
     return null
   }
@@ -83,8 +109,11 @@ export default function PostItem({ id, type, retweeter }: postType) {
           </Link>
         </div>
       )}
-      <div className="flex gap-3">
-
+      <div className="flex gap-3 relative">
+        <div className="absolute right-0"><VerticalMenu
+        className="string"
+        text="delete post"
+        click={deleteDocu}/></div>
         <div>
           <Link to={routes.profile + '/' + postOwner.username}>
             <Avatar
@@ -111,7 +140,7 @@ export default function PostItem({ id, type, retweeter }: postType) {
               <p className="text-[#fff9] pb-3">{details.caption}</p>
               <div className="max-h-[300px] overflow-hidden flex items-center rounded-[10px]">
                 {details.photoUrl && <img src={details.photoUrl}
-                  width='100%' 
+                  width='100%'
                   className='rounded-[10px] min-h-[200px]' />}
               </div>
             </Link>

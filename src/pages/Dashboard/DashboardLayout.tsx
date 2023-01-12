@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 
 import Sidenav from "../../components/sidenav"
 import Navbar from "../../components/navbar"
@@ -11,9 +11,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate()
   const snCon = useContext(SN_context)
   if(!snCon){
-    navigate('/login')
     return null
   }
+  useEffect(()=>{
+    if(!snCon){
+      navigate('/login')
+    }
+  }, [])
   
   return (
     <div className='w-full max-w-[520px]'>

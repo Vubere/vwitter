@@ -15,6 +15,7 @@ import { getAuth } from 'firebase/auth'
 import { UserCon } from '../../context/UserContext'
 import { Link } from 'react-router-dom'
 import getUserByUsername from '../../services/getUserByUsername'
+import getUserById from '../../services/getUserById'
 
 export default function Reactions({ details, id, likes, comments, retweets }: { details: PostItem, id: string, likes: string[], comments: Comments[], retweets: string[] }) {
 
@@ -34,7 +35,7 @@ export default function Reactions({ details, id, likes, comments, retweets }: { 
             likes: arrayRemove(currentUser.uid)
           })
           await updateDoc(userRef, {
-            likes: arrayRemove(currentUser.uid)
+            likes: arrayRemove(details.id)
           })
         } catch (err) {
 
@@ -82,12 +83,14 @@ export default function Reactions({ details, id, likes, comments, retweets }: { 
             retweets: arrayRemove(currentUser.uid)
           })
           const userRef = doc(db, 'users', currentUser.uid)
-          const userD = await getUserByUsername(user.user.details.id)
-          await updateDoc(userRef, {
-            posts: userD.posts.filter((i) => i.id != details.id)
-          })
+          const userD = await getUserById(currentUser.uid)
+       
+          const p = userD.posts.filter((i)=> !(i.id==details.id&&i.type=='retweet'))
+          await setDoc(userRef, {
+            posts: p
+          }, { merge: true })
         } catch (err) {
-
+          console.log(err)
         }
       } else {
         try {

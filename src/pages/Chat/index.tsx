@@ -101,6 +101,7 @@ export default function Chat() {
           </header>
           <main className="pt-[50px] w-full overflow-auto mb-[50px] pb-[55px]" >
             {chat ? chat.chat.sort((a, b) => a.time - b.time).map((item, i) => (<ChatBubble details={item}
+            chatId={chat.id}
               refM={i == chat.chat.length - 1 ? lastMessage : undefined}
               className={item.sender != user.id ? 'left' : 'right'} />
             )) : <p className="p-4 text-[#fff3]">send a message to start conversation... </p>}

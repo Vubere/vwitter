@@ -1,12 +1,14 @@
-import { notifications } from "..";
+import { useLayoutEffect, useState } from "react";
 import Icon from "../../../../components/icon";
 
 import liked from "../../../../components/Reactions/likeFilled.png"
 import retweeted from '../../../../components/Reactions/retweetFilled.png'
-
 import avatar from "../../../../assets/avatar.jpg"
-import { useLayoutEffect, useState } from "react";
+
+
+import { notifications } from "..";
 import { user_basic_info } from "../../../Chat";
+
 import getUserById from "../../../../services/getUserById";
 
 
