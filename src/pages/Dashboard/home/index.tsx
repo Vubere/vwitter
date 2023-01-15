@@ -57,9 +57,9 @@ export default function Home() {
                 if (u) {
                   postArr.push(...u.posts)
                 }
-                console.log(id)
+               
                 if (i == arr.length - 1) {
-                  console.log(postArr)
+               
                   setPosts(postArr)
                   if (feedContext) {
 
@@ -69,6 +69,9 @@ export default function Home() {
                 }
               })()
             })
+            if(cu.following.length==0){
+              setPosts(postArr)
+            }
           } else {
             setPosts([])
           }

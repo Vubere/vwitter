@@ -39,6 +39,7 @@ export default function Profile() {
 
   const [following, setFollowing] = useState(false)
 
+  
   useLayoutEffect(() => {
     if (username) {
       const fetchUser = async () => {

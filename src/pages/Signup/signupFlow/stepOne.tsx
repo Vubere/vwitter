@@ -5,6 +5,8 @@ import Input from "../../../components/input"
 import Cancel from "../../../components/CancelIcon"
 
 import { FlowContext } from '.'
+import getUserById from '../../../services/getUserById'
+import getUserByUsername from '../../../services/getUserByUsername'
 
 
 export default function StepOne({ close, next }: {
@@ -21,26 +23,26 @@ export default function StepOne({ close, next }: {
   const [error, setError] = useState('')
   const { details, setDetails } = useContext(FlowContext)
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!name.length) {
       setError('Fill in name field')
-      setTimeout(()=>{
+      setTimeout(() => {
         setError('')
       }, 2000)
       return
     }
     if (!email.length) {
       setError('Fill in email field')
-      setTimeout(()=>{
+      setTimeout(() => {
         setError('')
       }, 2000)
       return
     }
     const pattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
-    if(!pattern.test(email)){
+    if (!pattern.test(email)) {
       setError('invalid email')
-      setTimeout(()=>{
+      setTimeout(() => {
         setError('')
       }, 2000)
       return
@@ -49,7 +51,17 @@ export default function StepOne({ close, next }: {
       setError('You must provide a birth date')
       return
     }
-    setDetails({ ...details, name, email, dob, username: name.split(' ').join('') })
+    let start = name.split(' ').join('')
+    let u = await getUserByUsername(start)
+    if (u) {
+      let n = 1
+      while (u) {
+        start += '' + n
+        u = await getUserByUsername(start)
+        n++
+      }
+    }
+    setDetails({ ...details, name, email, dob, username: start })
     next()
   }
   const date = new Date()
@@ -67,7 +79,7 @@ export default function StepOne({ close, next }: {
         </h2>
         <form onSubmit={onSubmit}
           className='w-full flex flex-col'>
-            {error&&<p className='text-[#f008]  absolute'>{error}</p>}
+          {error && <p className='text-[#f008]  absolute'>{error}</p>}
           <Input
             type="name"
             name="Name"
@@ -80,7 +92,7 @@ export default function StepOne({ close, next }: {
             type="email"
             name="Email"
             value={email}
-            changeHandler={(e: any) =>setEmail(e.target.value)}
+            changeHandler={(e: any) => setEmail(e.target.value)}
             placeholder='Email'
             className="mt-8"
           />

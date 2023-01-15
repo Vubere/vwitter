@@ -118,7 +118,7 @@ export default function stepFour({ close }: {
           }
         }
       } catch (err) {
-        console.log(err)
+        
       }
     }
   }
