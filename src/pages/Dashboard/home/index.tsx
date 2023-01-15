@@ -18,7 +18,7 @@ import { doc, onSnapshot } from 'firebase/firestore'
 import { db } from '../../../main'
 
 import { FeedContext } from '../../../context/feedContext'
-import { current } from '@reduxjs/toolkit'
+
 import { getAuth } from 'firebase/auth'
 
 export default function Home() {
