@@ -87,8 +87,8 @@ export default function UserDisplay({ details }: { details: user_basic_info }) {
         </Link>
         <Link to={`/profile/${details.username}`}>
           <div className="h-[40px]">
-            <p className="m-0 p-0 h-[20px] text-white break-words text-[12px]">{details.name}</p>
-            <p className="m-0 p-0 h-[15px] text-[#fff6] text-[12px]">@{details.username}</p>
+            <p className="m-0 p-0 h-[20px] text-white break-words text-[12px]">{details.name.length < 12 ? details.name : details.name.slice(0, 12) + '...' }</p>
+            <p className="m-0 p-0 h-[15px] text-[#fff6] text-[12px]">@{details.username.length < 12 ? details.username : details.username.slice(0, 12) + '...'}</p>
           </div>
         </Link>
       </div>

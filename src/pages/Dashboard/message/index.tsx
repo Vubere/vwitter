@@ -38,7 +38,7 @@ export default function Messages() {
             const data = res.data() as user_info | undefined
             if (data) {
               const h = new Set(data.messages)
-              const ar = Array.from(h)
+              const ar = Array.from(h).reverse()
               setMessages(ar)
             }
           })
@@ -89,7 +89,7 @@ export default function Messages() {
         </form>
         <section className='mt-6 pb-12'>
           {messages && messages.length ?
-            messages.reverse().map((item: any) => <MessageDisplay key={item.id} id={item} />) :
+            messages.map((item: any) => <MessageDisplay key={item.id} id={item} />) :
             <p className='text-[#fff8]'>You have no open chat...</p>}
         </section>
         

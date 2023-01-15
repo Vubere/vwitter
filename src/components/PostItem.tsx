@@ -127,10 +127,10 @@ export default function PostItem({ id, type, retweeter }: postType) {
         <div className="w-full pr-4 ">
           <div className="flex gap-2 flex items-center ">
             <Link to={routes.profile + '/' + postOwner.username}>
-              <p className="font-[600] text-wrap text-[14px]">{postOwner.name}</p>
+              <p className="font-[600] text-wrap text-[14px]">{postOwner.name.length < 12 ? postOwner.name : postOwner.name.slice(0, 12) + '...'}</p>
             </Link>
             <Link to={routes.profile + '/' + postOwner.username}>
-              <p className="text-[#fff6] text-[14px]">@{postOwner.username}</p>
+              <p className="text-[#fff6] text-[14px]">@{postOwner.username.length < 12 ? postOwner.username : postOwner.username.slice(0, 12) + '...'}</p>
             </Link>
             <p className="text-[#fff6] text-[12px]">{minimalDistance(formatDistanceToNow(Number(details.date)))}</p>
           </div>

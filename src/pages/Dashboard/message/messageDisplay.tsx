@@ -91,8 +91,8 @@ export default function MessageDisplay({ id }: { id: string }) {
           party.username}>
           <div className="flex h-[14px] gap-2">
             <div className="flex h-[16px] gap-[7px]">
-              <p className="font-[600] text-[14px]">{party.name}</p>
-              <p className="text-[#fff6] text-[14px]">@{party.username.slice(0, 20)}</p>
+              <p className="font-[600] text-[14px]">{party.name.length<12?party.name:party.name.slice(0, 12)+'...'}</p>
+              <p className="text-[#fff6] text-[14px]">@{party.username.length<12?party.username:party.username.slice(0, 12)+'...'}</p>
             </div>
             <span className="flex items-center h-[14px] justify-center font-[700] text-[#fff6]">.</span>
             <p className="text-[14px] text-[#fff6]">{minimalDistance( formatDistanceToNow(details.time))}</p>
