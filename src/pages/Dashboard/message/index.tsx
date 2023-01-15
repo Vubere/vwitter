@@ -71,7 +71,7 @@ export default function Messages() {
 
   return (
     <section>
-      <header className='p-3 flex gap-4 items-center border-b border-[#fff1]'>
+      <header className='p-3 flex gap-4 items-center border-b border-[#fff1] fixed w-full top-0 bg-black'>
         <Icon
           src={context.user.details.avatar || avatar}
           width='30px'
@@ -80,16 +80,16 @@ export default function Messages() {
           onClick={() => setSidenav(!sidenavOpen)} />
         <h2 className='font-[700] text-[18px]'>Messages</h2>
       </header>
-      <main className='p-3 w-full'>
+      <main className='p-3 w-full mt-12'>
         <form onSubmit={() => null} className="relative ml-auto mr-auto w-[100%]">
           <input type="text"
             className='bg-transparent w-[100%] rounded-full h-[40px] pl-9 placeholder-[#fff4] border border-[#fff4]'
             placeholder='Search Direct Messages' />
           <button className='absolute left-3 top-[50%] transform translate-y-[-50%]'><Icon width='15px' height='14px' src={searchImg} className="" /></button>
         </form>
-        <section className='mt-6 '>
+        <section className='mt-6 pb-12'>
           {messages && messages.length ?
-            messages.map((item: any) => <MessageDisplay key={item.id} id={item} />) :
+            messages.reverse().map((item: any) => <MessageDisplay key={item.id} id={item} />) :
             <p className='text-[#fff8]'>You have no open chat...</p>}
         </section>
         

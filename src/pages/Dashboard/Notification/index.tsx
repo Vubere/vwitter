@@ -84,7 +84,7 @@ export default function Notification() {
 
   return (
     <section className="mb-10">
-      <header className="pl-3 pt-1 pb-1 border-b border-[#fff2] flex gap-4 relative min-h-[50px] items-center">
+      <header className="pl-3 pt-1 pb-1 border-b border-[#fff2] flex gap-4  min-h-[50px] items-center fixed top-0 w-full bg-black">
         <Icon
           width="30px"
           height="30px"
@@ -93,9 +93,9 @@ export default function Notification() {
           onClick={() => setSidenav(!sidenavOpen)} />
         <h2 className='font-[600] text-[18px]'>Notifications</h2>
       </header>
-      <main className="overflow-y-auto pb-10">
+      <main className="overflow-y-auto pb-10 mt-12">
         {notifications?.length ? notifications.sort((a,b)=>b.time-a.time).map((item) => {
-          console.log(item)
+          
           if(item==undefined){
             
             return null

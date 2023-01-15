@@ -13,7 +13,7 @@ import Load from "../../components/load"
 
 export default function Users() {
   const navigate = useNavigate()
-  const [users, setUsers] = useState<details[]>([])
+  const [users, setUsers] = useState<details[]|undefined>()
 const [loading, setLoading] = useState(true)
   const userContext = useContext(UserCon)
 
@@ -30,7 +30,7 @@ const [loading, setLoading] = useState(true)
           arr.push(u)
         }
         if(t==res.length-1){
-          setUsers(users.concat(arr))
+          setUsers(arr)
         }
       })
     }
@@ -44,16 +44,17 @@ const [loading, setLoading] = useState(true)
   if(!userContext?.user?.details){
     return null
   }
+  
 
 
   return (
-    <section >
-      <header className="flex gap-3 p-3 border-b border-[#fff2] items-center">
+    <section className="">
+      <header className="flex gap-3 p-3 border-b border-[#fff2] items-center fixed bg-black pt-3 w-full top-0">
         <Back click={() => navigate(-1)} className="w-[20px] h-[20px]" />
         <h3 className="font-[600] text-[18px]">Users</h3>
       </header>
-      <main className="p-3 flex flex-col gap-2">
-        {loading?<Load/>:users.length ? users.map((item) => (
+      <main className="p-3 flex flex-col gap-2 mt-12">
+        {loading||users==undefined?<Load/>:users.length ? users.map((item) => (
           <UserDisplay key={item.id} details={item} />
         )) : <p>Couldn't fetch users...</p>}
       </main>

@@ -24,7 +24,7 @@ export default function Navbar() {
   const [um, setUm] = useState(0)
 
 
-  useLayoutEffect(()=>{
+  useEffect(()=>{
     const pathname = window.location.pathname
    
     if(pathname.length>1){

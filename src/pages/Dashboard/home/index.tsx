@@ -18,6 +18,8 @@ import { doc, onSnapshot } from 'firebase/firestore'
 import { db } from '../../../main'
 
 import { FeedContext } from '../../../context/feedContext'
+import { current } from '@reduxjs/toolkit'
+import { getAuth } from 'firebase/auth'
 
 export default function Home() {
   const { sidenavOpen, setSidenav } = useContext(Sidenav)
@@ -25,42 +27,55 @@ export default function Home() {
   const context = useContext(UserCon)
 
 
-  const [posts, setPosts] = useState<postType[]>([])
+  const [posts, setPosts] = useState<postType[] | undefined>(undefined)
   const [loading, setLoading] = useState(false)
   const feedContext = useContext(FeedContext)
+  const { currentUser } = getAuth()
 
 
   useEffect(() => {
-    if (context?.user) {
+    if (currentUser) {
       if (feedContext) {
         if (feedContext.feedList) {
           setPosts(feedContext.feedList)
         }
-      }
-      const arr = [...context.user.following, context.user.id]
+      };
+      (async () => {
+        try {
+          setLoading(true)
+          const cu = await getUserById(currentUser.uid)
+          if (cu) {
 
-      let postArr: postType[] = [];
-      let temp: any
-      setLoading(true)
-      arr.forEach((id, i) => {
-        (async () => {
-          const u = await getUserById(id)
-          if (u) {
-            postArr.push(...u.posts)
+            const arr = cu.following
+            
+            
+            let postArr: postType[] = [...cu.posts];
+
+            cu.following.forEach((id, i) => {
+              (async () => {
+                const u = await getUserById(id)
+                if (u) {
+                  postArr.push(...u.posts)
+                }
+                console.log(id)
+                if (i == arr.length - 1) {
+                  console.log(postArr)
+                  setPosts(postArr)
+                  if (feedContext) {
+
+                    feedContext.setFeedList(postArr)
+                  }
+
+                }
+              })()
+            })
+          } else {
+            setPosts([])
           }
-          if (i == arr.length - 1) {
-            if (postArr.length > posts.length) {
-
-              setPosts(postArr)
-              if (feedContext) {
-
-                feedContext.setFeedList(postArr)
-              }
-            }
-          }
-        })()
-      })
-      setLoading(false)
+          setLoading(false)
+        } catch (err) {
+        }
+      })()
     }
   }, [context])
 
@@ -68,13 +83,13 @@ export default function Home() {
     return null
   }
 
-  if (loading) {
+  if (loading || posts == undefined) {
     return <Load />
   }
 
   return (
     <main className='overflow-y-auto h-[100vh] w-full pb-[100px] pt-[55px]'>
-      <header className="pl-3 pt-1 pb-1 border-b border-[#fff2] flex gap-4 fixed top-0 min-h-[50px] items-center bg-black w-full">
+      <header className="pl-3 pt-1 pb-1 border-b border-[#fff2] flex gap-4 fixed top-0 min-h-[50px] items-center bg-black w-full bg-black z-[99]">
         <Avatar
           width="30px"
           height="30px"
