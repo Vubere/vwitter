@@ -30,7 +30,9 @@ export default function PostItem({ id, type, retweeter }: postType) {
   const [details, setDetails] = useState<PostItem>()
   const [postOwner, setPostOwner] = useState<user_basic_info>()
   const [retweetOwner, setRD] = useState<user_basic_info>()
+  
 
+  const {currentUser} = getAuth()
   const navigate = useNavigate()
 
   useLayoutEffect(() => {
@@ -110,10 +112,13 @@ export default function PostItem({ id, type, retweeter }: postType) {
         </div>
       )}
       <div className="flex gap-3 relative">
-        <div className="absolute right-0"><VerticalMenu
-        className="string"
-        text="delete post"
-        click={deleteDocu}/></div>
+        {
+          postOwner.id==currentUser?.uid?
+          (<div className="absolute right-0"><VerticalMenu
+          className="string"
+          text="delete post"
+          click={deleteDocu}/></div>
+        ):null}
         <div>
           <Link to={routes.profile + '/' + postOwner.username}>
             <Avatar

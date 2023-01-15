@@ -12,7 +12,7 @@ import searchImg from '../../../components/assets/search.png'
 import { UserCon, user_info } from '../../../context/UserContext'
 import { doc, getDoc, onSnapshot, updateDoc } from 'firebase/firestore'
 import { db } from '../../../main'
-import { useNavigate } from 'react-router-dom'
+
 import Load from '../../../components/load'
 
 

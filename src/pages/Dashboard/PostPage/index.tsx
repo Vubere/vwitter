@@ -227,10 +227,13 @@ export default function PostPage() {
               <p className="text-[#fff6]">@{postOwner.username}</p>
             </Link>
           </div>
-          <div className="absolute right-0"><VerticalMenu
+          {
+            postOwner.id==currentUser?.uid?
+            (<div className="absolute right-0"><VerticalMenu
             className="string"
             text="delete post"
-            click={deleteDocu} /></div>
+            click={deleteDocu} /></div>):null
+          }
         </div>
         <section className="w-full ">
           <div className="border-b border-[#fff4] w-full pb-3">
