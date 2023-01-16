@@ -187,7 +187,7 @@ export default function SendPost() {
 
         <textarea name="post" id="post"
           value={post} onChange={({ target }) => setPost(target.value)}
-          ref={input_ref} className='resize-none border-b border-[#fff2] bg-transparent placeholder:text-[#fff4] w-[90%] h-[100px]' placeholder="What's happening?"></textarea>
+          ref={input_ref} className='resize-none border-b border-[#fff2] bg-transparent placeholder:text-[#fff4] w-[90%] h-[100px]' placeholder="type your reply..."></textarea>
         <button className='bg-[#447cef] w-[80px] h-[30px] rounded-full fixed top-2 right-3 '>
           Tweet
         </button>

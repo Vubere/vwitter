@@ -27,7 +27,7 @@ export default function Notification() {
   const [notifications, setNotifications] = useState<notifications[]>()
 
   const userContext = useContext(UserCon)
-  const navigate = useNavigate()
+ 
   const [loading, setLoading] = useState(false)
   const {currentUser} = getAuth()
 

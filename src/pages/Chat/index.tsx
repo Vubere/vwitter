@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
 
 import ChatBubble from "./ChatBubble"
 import Back from "../../components/Back"
@@ -95,8 +95,12 @@ export default function Chat() {
             <Back click={() => navigate(-1)}
               className='w-[30px] h-[20px]' />
             <div className="ml-5 flex items-center gap-3">
+              <Link to={`/profile/${party.username}`}>
               <Icon src={party.avatar || avatar} width='30px' height='30px' className="rounded-full border border-[#fff3]" />
+              </Link>
+              <Link to={`/profile/${party.username}`}>
               <p className="font-[600]">{party.name}</p>
+              </Link>
             </div>
           </header>
           <main className="pt-[50px] w-full overflow-auto mb-[50px] pb-[55px]" >

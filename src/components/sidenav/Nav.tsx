@@ -30,7 +30,7 @@ export default function SN_Nav() {
             Profile
           </li>
         </Link>
-        <Link to={routes.todo}>
+        {/* <Link to={routes.todo}>
           <li className='flex gap-6 items-center mb-5 font-[600] text-[18px]'>
             <div
               className='w-[25px] h-[25px]'
@@ -42,7 +42,7 @@ export default function SN_Nav() {
               }}></div>
             Todo
           </li>
-        </Link>
+        </Link> */}
         <Link to={routes.users}>
           <li className='flex gap-6 items-center mb-5 font-[600] text-[18px]'>
             <div

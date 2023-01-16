@@ -81,12 +81,12 @@ export default function Comment({ details, postowner:poId }: {
           </div>
           <div className='flex justify-between pt-3 w-[85%]'>
             <p className='text-[12px] text-[#fff4] flex gap-1 items-center'>
-              <Icon
+             {/*  <Icon
                 src={currentUser ? likedCheck.includes(currentUser.uid) ? likeFilled : like : like}
                 width="20px"
                 height='20px'
               />{' '}
-              {likes.length}
+              {likes.length} */}
             </p>
           </div>
         </div>

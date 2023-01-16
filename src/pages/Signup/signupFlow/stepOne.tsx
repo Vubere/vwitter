@@ -56,8 +56,8 @@ export default function StepOne({ close, next }: {
     if (u) {
       let n = 1
       while (u) {
-        start += '' + n
-        u = await getUserByUsername(start)
+        let temp = start + '' + n
+        u = await getUserByUsername(temp)
         n++
       }
     }

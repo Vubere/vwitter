@@ -23,6 +23,7 @@ import {
 import { db } from '../../../main'
 import { useNavigate } from 'react-router-dom'
 import Load from '../../../components/load'
+import getUserByUsername from '../../../services/getUserByUsername'
 
 
 
@@ -41,6 +42,8 @@ export default function stepFour({ close }: {
   const fileRef = useRef<any>()
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
+
+  const [error, setError] = useState('')
 
 
 
@@ -101,6 +104,15 @@ export default function stepFour({ close }: {
     if (auth.currentUser) {
       try {
         const docRef = doc(db, 'users', auth.currentUser.uid)
+        let start = details.username 
+        let u = await getUserByUsername(start)
+        if(u){
+          setError('username is already taken pick another')
+          setTimeout(()=>{
+            setError('')
+          }, 4000)
+          throw('username is taken')
+        }
         await updateDoc(docRef, {
           ['details.username']: details.username,
         })
@@ -131,6 +143,7 @@ export default function stepFour({ close }: {
       await updateUsername()
       if (ava)
         await updateAvatar()
+      if(!error)
       done()
       setLoading(false)
     })()
@@ -155,7 +168,7 @@ export default function stepFour({ close }: {
       <h3 className='w-[90%] ml-auto mr-auto mt-8 font-[700] text-[22px]'>Pick Username and Profile Picture</h3>
       <form onSubmit={submit}
         className="w-[90%] flex flex-col items-center mr-auto ml-auto">
-
+          {error&&<p className='red w-full m-1'>{error}</p>}
         <Input
           type="username"
           name="Username"

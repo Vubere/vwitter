@@ -12,6 +12,7 @@ import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../main";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { getAuth, updateProfile } from "firebase/auth";
+import getUserByUsername from "../../services/getUserByUsername";
 
 
 export default function EditProfile() {
@@ -32,6 +33,8 @@ export default function EditProfile() {
   const [username, setUserName] = useState<string>()
   const [bio, setBio] = useState<string>()
   const {currentUser} = getAuth()
+
+  const [error, setError] = useState('')
 
   useEffect(()=>{
     if(context?.user?.details){
@@ -80,13 +83,23 @@ export default function EditProfile() {
         })
       }
       await updateDoc(docRef, {
-        ['details.username']: username,
         ['details.bio']: bio,
         ['details.name']: name,
         ['details.avatar']: link,
       })
 
-      navigate(-1)
+      let start = await getUserByUsername(username)
+      if(start){
+        setError('username is taken')
+        setTimeout(()=>{
+          setError('')
+        }, 4000)
+        return
+      }
+      await updateDoc(docRef,{
+        ['details.username']: username,
+      })
+      navigate(`/profile/${username}`)
     }
 
   }
@@ -122,6 +135,7 @@ export default function EditProfile() {
         </div>
       </div>
       <form onSubmit={e => e.preventDefault()} className='mt-14 flex flex-col items-center gap-3'>
+        {error&&<p className="text-red text-[12px]">{error}</p>}
         <Input
           name="Name"
           value={name}
