@@ -103,6 +103,7 @@ function App() {
         </Route>
         <Route path={`${routes.profile}/:username`} element={<Profile />} />
         <Route path={`${routes.edit_profile}/:username`} element={<EditProfile />} />
+        <Route path='*' element={<p>page not found...</p>}/>
       </Routes>
     </div>
   )
